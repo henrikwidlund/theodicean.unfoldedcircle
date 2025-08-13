@@ -1,0 +1,41 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnfoldedCircle.Models", "src\UnfoldedCircle.Models\UnfoldedCircle.Models.csproj", "{4652A46E-B9FF-451C-97F3-03588F0F2298}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnfoldedCircle.Server", "src\UnfoldedCircle.Server\UnfoldedCircle.Server.csproj", "{A954BC97-1844-4553-BAF1-60ED28719B66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{8BD298A3-150A-4CFE-AA94-56C04F6961E6}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "GitHub", "GitHub", "{A9FE8B73-77D2-4530-AAA4-5376CA416178}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\qodana_code_quality.yml = .github\workflows\qodana_code_quality.yml
+		.github\workflows\github-release.yml = .github\workflows\github-release.yml
+		.github\workflows\dependency-review.yml = .github\workflows\dependency-review.yml
+		.github\workflows\ci.yml = .github\workflows\ci.yml
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{110FF63A-72FC-43B7-826D-969599D839DC}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4652A46E-B9FF-451C-97F3-03588F0F2298}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4652A46E-B9FF-451C-97F3-03588F0F2298}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4652A46E-B9FF-451C-97F3-03588F0F2298}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4652A46E-B9FF-451C-97F3-03588F0F2298}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A954BC97-1844-4553-BAF1-60ED28719B66}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A954BC97-1844-4553-BAF1-60ED28719B66}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A954BC97-1844-4553-BAF1-60ED28719B66}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A954BC97-1844-4553-BAF1-60ED28719B66}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4652A46E-B9FF-451C-97F3-03588F0F2298} = {8BD298A3-150A-4CFE-AA94-56C04F6961E6}
+		{A954BC97-1844-4553-BAF1-60ED28719B66} = {8BD298A3-150A-4CFE-AA94-56C04F6961E6}
+	EndGlobalSection
+EndGlobal

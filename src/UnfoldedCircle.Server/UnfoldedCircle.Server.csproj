@@ -1,0 +1,43 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+        <IsTrimmable>true</IsTrimmable>
+        <IsAotCompatible>true</IsAotCompatible>
+
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+        <PackageId>Theodicean.UnfoldedCircle.Server</PackageId>
+        <Authors>Henrik Widlund</Authors>
+        <Copyright>© henrikwidlund</Copyright>
+        <Title>Multicast DNS</Title>
+        <Description>An SDK for hosting integration drivers for the Unfolded Circle remotes.</Description>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageReleaseNotes>https://github.com/henrikwidlund/theodicean.unfoldedcircle/releases</PackageReleaseNotes>
+        <PackageTags>unfolded circle remote</PackageTags>
+        <IncludeSymbols>True</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PackageProjectUrl>https://github.com/henrikwidlund/theodicean.unfoldedcircle</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/henrikwidlund/theodicean.unfoldedcircle.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\UnfoldedCircle.Models\UnfoldedCircle.Models.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.1" />
+    </ItemGroup>
+
+</Project>

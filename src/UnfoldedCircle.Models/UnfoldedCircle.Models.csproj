@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net9.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+        <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+        <IsTrimmable>true</IsTrimmable>
+        <IsAotCompatible>true</IsAotCompatible>
+
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <DisableImplicitNuGetFallbackFolder>true</DisableImplicitNuGetFallbackFolder>
+        <PackageId>Theodicean.UnfoldedCircle.Models</PackageId>
+        <Authors>Henrik Widlund</Authors>
+        <Copyright>© henrikwidlund</Copyright>
+        <Title>Multicast DNS</Title>
+        <Description>Models for the Unfolded Circle integration API.</Description>
+        <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+        <PackageReleaseNotes>https://github.com/henrikwidlund/theodicean.unfoldedcircle/releases</PackageReleaseNotes>
+        <PackageTags>unfolded circle remote</PackageTags>
+        <IncludeSymbols>True</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <PackageProjectUrl>https://github.com/henrikwidlund/theodicean.unfoldedcircle</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/henrikwidlund/theodicean.unfoldedcircle.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageLicenseExpression>MIT</PackageLicenseExpression>
+
+        <NoWarn>CS1591</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Meziantou.Analyzer" Version="2.0.212">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Theodicean.SourceGenerators" Version="0.0.1" PrivateAssets="all" ExcludeAssets="runtime">
+            <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
+</Project>
