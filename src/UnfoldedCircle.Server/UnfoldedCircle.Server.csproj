@@ -33,6 +33,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <None Include="..\..\README.md" Pack="true" PackagePath="\" />
       <ProjectReference Include="..\UnfoldedCircle.Models\UnfoldedCircle.Models.csproj" />
     </ItemGroup>
 
