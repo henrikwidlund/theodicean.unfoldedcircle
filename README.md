@@ -4,7 +4,7 @@
 [![CI](https://img.shields.io/github/actions/workflow/status/henrikwidlund/theodicean.unfoldedcircle/ci.yml?label=CI&logo=github)](https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/workflows/ci.yml)
 ![Sonar Quality Gate](https://img.shields.io/sonar/quality_gate/henrikwidlund_theodicean.unfoldedcircle?server=https%3A%2F%2Fsonarcloud.io&label=Sonar%20Quality%20Gate&logo=sonarqube)
 [![Qodana](https://img.shields.io/github/actions/workflow/status/henrikwidlund/theodicean.unfoldedcircle/qodana_code_quality.yml?branch=main&label=Qodana&logo=github)](https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/workflows/qodana_code_quality.yml)
-[![Version](https://img.shields.io/nuget/v/Theodicean.UnfoldedCircle.svg)](https://www.nuget.org/packages/Theodicean.UnfoldedCircle)
+[![Version](https://img.shields.io/nuget/v/Theodicean.UnfoldedCircle.Server.svg)](https://www.nuget.org/packages/Theodicean.UnfoldedCircle.Server)
 
 ASP.NET SDK for hosting integration drivers for the [Unfolded Circle Remotes](https://www.unfoldedcircle.com).
 
@@ -27,12 +27,12 @@ ASP.NET SDK for hosting integration drivers for the [Unfolded Circle Remotes](ht
 ## Install
 
 - **Package (project using the generator):**
-    - Add a PackageReference to `Theodicean.UnfoldedCircle`
+    - Add a PackageReference to `Theodicean.UnfoldedCircle.Server`
     - Example `csproj` snippet:
 
       ```xml
       <ItemGroup>
-        <PackageReference Include="Theodicean.UnfoldedCircle" Version="x.y.z" />
+        <PackageReference Include="Theodicean.UnfoldedCircle.Server" Version="x.y.z" />
       </ItemGroup>
       ```
 ## Usage
