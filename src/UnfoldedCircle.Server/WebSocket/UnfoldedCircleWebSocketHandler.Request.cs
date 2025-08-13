@@ -192,7 +192,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<UnsubscribeEventsMsg>(MessageEvent.UnsubscribeEvents)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.UnsubscribeEventsMsg)!;
                 await OnUnsubscribeEvents(payload, wsId, cancellationTokenWrapper.RequestAborted);
-                await RemoveConfiguration(new RemoveInstruction(payload.MsgData?.DeviceId.GetNullableBaseIdentifier(), payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()!), null), cancellationTokenWrapper.ApplicationStopping);
+                await RemoveConfiguration(new RemoveInstruction(payload.MsgData?.DeviceId.GetNullableBaseIdentifier(), payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), null), cancellationTokenWrapper.ApplicationStopping);
                 await SendAsync(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,

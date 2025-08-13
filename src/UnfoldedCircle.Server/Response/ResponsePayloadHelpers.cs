@@ -1,7 +1,6 @@
 using UnfoldedCircle.Models.Events;
 using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Models.Sync;
-using UnfoldedCircle.Server.Configuration;
 using UnfoldedCircle.Server.Extensions;
 using UnfoldedCircle.Server.Json;
 

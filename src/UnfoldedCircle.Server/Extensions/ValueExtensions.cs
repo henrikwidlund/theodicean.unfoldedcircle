@@ -14,7 +14,6 @@ public static class ValueExtensions
     /// <param name="key">The key to get the value for.</param>
     /// <param name="defaultValue">The value returned if the key is not found, is null, empty or only contains whitespaces.</param>
     /// <typeparam name="TKey"></typeparam>
-    /// <returns></returns>
     public static string GetValueOrNull<TKey>(this IReadOnlyDictionary<TKey, string> dictionary, TKey key, string defaultValue)
     {
         string value = dictionary.GetValueOrDefault(key, defaultValue);

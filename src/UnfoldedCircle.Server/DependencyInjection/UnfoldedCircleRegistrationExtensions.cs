@@ -92,7 +92,6 @@ public static class UnfoldedCircleRegistrationExtensions
     /// <param name="webSocketOptions">Optional options to customize the websocket behaviour.</param>
     /// <typeparam name="TUnfoldedCircleWebSocketHandler">The type of socket handler to use.</typeparam>
     /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
-    /// <returns></returns>
     public static IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TConfigurationItem>(this IApplicationBuilder builder,
         WebSocketOptions? webSocketOptions = null)
         where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<MediaPlayerCommandId, TConfigurationItem>
@@ -107,7 +106,6 @@ public static class UnfoldedCircleRegistrationExtensions
     /// <typeparam name="TUnfoldedCircleWebSocketHandler">The type of socket handler to use.</typeparam>
     /// <typeparam name="TMediaPlayerCommandId">The type of media player command id to use.</typeparam>
     /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
-    /// <returns></returns>
     public static IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>(this IApplicationBuilder builder,
         WebSocketOptions? webSocketOptions = null)
         where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>

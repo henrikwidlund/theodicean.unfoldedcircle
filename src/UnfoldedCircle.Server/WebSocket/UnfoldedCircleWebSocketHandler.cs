@@ -59,7 +59,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="buffer">The content to send.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    /// <returns></returns>
     protected Task SendAsync(
         System.Net.WebSockets.WebSocket socket,
         ArraySegment<byte> buffer,
