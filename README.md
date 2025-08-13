@@ -42,7 +42,7 @@ See [here](https://github.com/unfoldedcircle/core-api/blob/main/doc/integration-
 You must make sure that the file is copied as part of the publishing process.
 
 ### Note
-If you're publishing with NativeAOT, you must add the following to your server's `.csproj` file to ensure the `driver.json` is included in the output:
+If you're publishing with NativeAOT, you must add the following to your server's `.csproj` file to ensure the `appsettings.json` and `driver.json` are included in the output:
 
 ```xml
 <PropertyGroup>
