@@ -1,6 +1,4 @@
-name: Qodana
-on:
-  workflow_dispatch:
+workflow_dispatch:
   pull_request:
   push:
     branches:
@@ -26,7 +24,7 @@ jobs:
           pr-mode: true
           args: --baseline,qodana.sarif.json
         env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_23020140 }}
+          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_587988454 }}
           QODANA_ENDPOINT: 'https://qodana.cloud'
       - uses: github/codeql-action/upload-sarif@v3
         with:
