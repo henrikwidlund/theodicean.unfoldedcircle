@@ -1,6 +1,6 @@
 # Theodicean.UnfoldedCircle
 
-[![Release](https://img.shields.io/github/actions/workflow/status/henrikwidlund/theodicean.unfoldedcircle/github-release.yml?label=Release&logo=github)](https://github.com/henrikwidlund/theodicean.sourcegenerators/actions/workflows/github-release.yml)
+[![Release](https://img.shields.io/github/actions/workflow/status/henrikwidlund/theodicean.unfoldedcircle/github-release.yml?label=Release&logo=github)](https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/workflows/github-release.yml)
 [![CI](https://img.shields.io/github/actions/workflow/status/henrikwidlund/theodicean.unfoldedcircle/ci.yml?label=CI&logo=github)](https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/workflows/ci.yml)
 ![Sonar Quality Gate](https://img.shields.io/sonar/quality_gate/henrikwidlund_theodicean.unfoldedcircle?server=https%3A%2F%2Fsonarcloud.io&label=Sonar%20Quality%20Gate&logo=sonarqube)
 [![Qodana](https://img.shields.io/github/actions/workflow/status/henrikwidlund/theodicean.unfoldedcircle/qodana_code_quality.yml?branch=main&label=Qodana&logo=github)](https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/workflows/qodana_code_quality.yml)
