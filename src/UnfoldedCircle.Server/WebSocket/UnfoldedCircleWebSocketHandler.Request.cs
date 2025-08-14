@@ -77,7 +77,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// Deserializes the payload of a media player command message.
     /// </summary>
     /// <param name="jsonDocument">The <see cref="JsonDocument"/> that should be deserialized.</param>
-    protected abstract MediaPlayerEntityCommandMsgData<TMediaPlayerCommandId> DeserializeMediaPlayerCommandPayload(JsonDocument jsonDocument);
+    protected abstract MediaPlayerEntityCommandMsgData<TMediaPlayerCommandId>? DeserializeMediaPlayerCommandPayload(JsonDocument jsonDocument);
 
     /// <summary>
     /// Deserializes the payload of a remote entity command message.
@@ -265,7 +265,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 if (entityType == EntityType.MediaPlayer)
                 {
                     var payload = DeserializeMediaPlayerCommandPayload(jsonDocument);
-                    await HandleEntityCommand(socket, payload, wsId, cancellationTokenWrapper);
+                    if (payload is not null)
+                        await HandleEntityCommand(socket, payload, wsId, cancellationTokenWrapper);
                 }
                 else if (entityType == EntityType.Remote)
                 {
