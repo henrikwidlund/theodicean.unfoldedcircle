@@ -76,7 +76,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="entityId">The entity_id.</param>
-    protected void MapEntityIdToSocket(string wsId, string entityId) => SessionHolder.SocketIdEntityIpMap[wsId] = entityId.GetBaseIdentifier();
+    protected static void MapEntityIdToSocket(string wsId, string entityId) => SessionHolder.SocketIdEntityIpMap[wsId] = entityId.GetBaseIdentifier();
 
     /// <summary>
     /// Tries to get the entity_id from the <paramref name="wsId"/>.
@@ -84,7 +84,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="entityId">The entity_id.</param>
     /// <returns><see langword="true"/> if found, otherwise <see langword="false"/>.</returns>
-    protected bool TryGetEntityIdFromSocket(string wsId, [NotNullWhen(true)] out string? entityId)
+    protected static bool TryGetEntityIdFromSocket(string wsId, [NotNullWhen(true)] out string? entityId)
         => SessionHolder.SocketIdEntityIpMap.TryGetValue(wsId, out entityId) && !string.IsNullOrEmpty(entityId);
 
     /// <summary>
@@ -92,27 +92,27 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="entityId"></param>
-    protected bool RemoveSocketFromMap(string wsId, [NotNullWhen(true)] out string? entityId)
+    protected static bool RemoveSocketFromMap(string wsId, [NotNullWhen(true)] out string? entityId)
         => SessionHolder.SocketIdEntityIpMap.TryRemove(wsId, out entityId);
 
     /// <summary>
     /// Marks the <paramref name="wsId"/> to receive events from the integration.
     /// </summary>
     /// <param name="wsId">ID of the websocket.</param>
-    protected void AddSocketToEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap[wsId] = true;
+    protected static void AddSocketToEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap[wsId] = true;
 
     /// <summary>
     /// Checks if the <paramref name="wsId"/> is subscribed to receive events.
     /// </summary>
     /// <param name="wsId">ID of the websocket.</param>
-    protected bool IsSocketSubscribedToEvents(string wsId)
+    protected static bool IsSocketSubscribedToEvents(string wsId)
         => SessionHolder.SubscribeEventsMap.TryGetValue(wsId, out var isSubscribed) && isSubscribed;
 
     /// <summary>
     /// Removes the <paramref name="wsId"/> from the list of event receivers.
     /// </summary>
     /// <param name="wsId"></param>
-    protected void RemoveSocketFromEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap.TryRemove(wsId, out _);
+    protected static void RemoveSocketFromEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap.TryRemove(wsId, out _);
 
     internal async Task<WebSocketReceiveResult> HandleWebSocketAsync(
         System.Net.WebSockets.WebSocket socket,
