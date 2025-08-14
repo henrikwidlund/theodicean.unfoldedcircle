@@ -1,5 +1,6 @@
 using Microsoft.Extensions.Logging;
 
+using UnfoldedCircle.Models.Events;
 using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Models.Sync;
 using UnfoldedCircle.Server.Event;
@@ -99,8 +100,30 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// Record representing the result of a lookup of configuration item during setup.
     /// </summary>
     /// <param name="Entity">The configuration item.</param>
-    /// <param name="IsConnected">Whether the entity is connected or not.</param>
-    protected sealed record OnSetupResult(TConfigurationItem Entity, bool IsConnected);
+    /// <param name="SetupDriverResult">Result of the current setup step.</param>
+    /// <param name="NextSetupStep">Information about the next setup step. Must be sent if <paramref name="SetupDriverResult"/> is set to <see cref="SetupDriverResult.UserInputRequired"/>.</param>
+    protected sealed record OnSetupResult(TConfigurationItem Entity, in SetupDriverResult SetupDriverResult, DriverSetupChange? NextSetupStep = null);
+
+    /// <summary>
+    /// Setup driver result.
+    /// </summary>
+    protected enum SetupDriverResult
+    {
+        /// <summary>
+        /// Setup finished successfully.
+        /// </summary>
+        Finalized,
+
+        /// <summary>
+        /// User input is required to continue the setup process.
+        /// </summary>
+        UserInputRequired,
+
+        /// <summary>
+        /// Error occurred during setup.
+        /// </summary>
+        Error
+    }
 
     private async Task HandleRequestMessage(
         System.Net.WebSockets.WebSocket socket,
@@ -233,6 +256,22 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     return;
                 }
                 MapEntityIdToSocket(wsId, setupResult.Entity.EntityId);
+                if (setupResult.SetupDriverResult == SetupDriverResult.UserInputRequired)
+                {
+                    if (setupResult.NextSetupStep is not { RequireUserAction: not null })
+                    {
+                        _logger.LogError("[{WSId}] WS: Setup driver user input required but no next setup step provided. Setup will be aborted. Payload: {@Payload}.",
+                            wsId, payload.MsgData);
+                    }
+                    else
+                    {
+                        await SendAsync(socket,
+                            ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.NextSetupStep.RequireUserAction),
+                            wsId,
+                            cancellationTokenWrapper.RequestAborted);
+                        return;
+                    }
+                }
 
                 await Task.WhenAll(
                     SendAsync(socket,
@@ -240,7 +279,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         wsId,
                         cancellationTokenWrapper.RequestAborted),
                     SendAsync(socket,
-                        ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.IsConnected),
+                        ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized),
                         wsId,
                         cancellationTokenWrapper.RequestAborted),
                     SendAsync(socket,

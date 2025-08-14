@@ -146,11 +146,11 @@ public static class ResponsePayloadHelpers
     }
 
     /// <summary>
-    /// Creates an event payload used when setting up the driver..
+    /// Creates an event payload used when setting up the driver.
     /// </summary>
-    /// <param name="isConnected"></param>
+    /// <param name="userAction">Instruction for the next setup step.</param>
     public static byte[] CreateDeviceSetupChangeResponsePayload(
-        in bool isConnected) =>
+        RequireUserAction userAction) =>
         JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
         {
             Kind = EventKind,
@@ -159,9 +159,29 @@ public static class ResponsePayloadHelpers
             TimeStamp = DateTime.UtcNow,
             MsgData = new DriverSetupChange
             {
-                State = isConnected ? DriverSetupChangeState.Ok : DriverSetupChangeState.Error,
+                State = DriverSetupChangeState.WaitUserAction,
+                EventType = DriverSetupChangeEventType.Setup,
+                RequireUserAction = userAction
+            }
+        }, UnfoldedCircleJsonSerializerContext.Default.DriverSetupChangeEvent);
+
+    /// <summary>
+    /// Creates an event payload used when setting up the driver.
+    /// </summary>
+    /// <param name="isSuccess">Whether the setup process succeeded or not.</param>
+    public static byte[] CreateDeviceSetupChangeResponsePayload(
+        in bool isSuccess) =>
+        JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
+        {
+            Kind = EventKind,
+            Msg = "driver_setup_change",
+            Cat = "DEVICE",
+            TimeStamp = DateTime.UtcNow,
+            MsgData = new DriverSetupChange
+            {
+                State = isSuccess ? DriverSetupChangeState.Ok : DriverSetupChangeState.Error,
                 EventType = DriverSetupChangeEventType.Stop,
-                Error = isConnected ? null : DriverSetupChangeError.NotFound
+                Error = isSuccess ? null : DriverSetupChangeError.NotFound
             }
         }, UnfoldedCircleJsonSerializerContext.Default.DriverSetupChangeEvent);
 
