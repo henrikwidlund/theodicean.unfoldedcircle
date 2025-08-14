@@ -79,6 +79,15 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected void MapEntityIdToSocket(string wsId, string entityId) => SessionHolder.SocketIdEntityIpMap[wsId] = entityId.GetBaseIdentifier();
 
     /// <summary>
+    /// Tries to get the entity_id from the <paramref name="wsId"/>.
+    /// </summary>
+    /// <param name="wsId">ID of the websocket.</param>
+    /// <param name="entityId">The entity_id.</param>
+    /// <returns><see langword="true"/> if found, otherwise <see langword="false"/>.</returns>
+    protected bool TryGetEntityIdFromSocket(string wsId, [NotNullWhen(true)] out string? entityId)
+        => SessionHolder.SocketIdEntityIpMap.TryGetValue(wsId, out entityId) && !string.IsNullOrEmpty(entityId);
+
+    /// <summary>
     /// Removes the mapping of the <paramref name="wsId"/>.
     /// </summary>
     /// <param name="wsId">ID of the websocket.</param>

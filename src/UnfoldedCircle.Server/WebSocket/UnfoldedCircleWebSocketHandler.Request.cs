@@ -66,11 +66,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <summary>
     /// Called when a <c>set_driver_user_data</c> request is received.
     /// </summary>
+    /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> to send events on.</param>
     /// <param name="payload">Payload of the request.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
     /// <remarks>Any additional steps needed must be handled manually here by sending the instructions through <see cref="SendAsync"/>.</remarks>
-    protected abstract ValueTask OnSetupDriverUserData(SetDriverUserDataMsg payload, string wsId, CancellationToken cancellationToken);
+    protected abstract ValueTask OnSetupDriverUserData(System.Net.WebSockets.WebSocket socket, SetDriverUserDataMsg payload, string wsId, CancellationToken cancellationToken);
 
     /// <summary>
     /// Deserializes the payload of a media player command message.
@@ -254,7 +255,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SetDriverUserDataMsg>(MessageEvent.SetupDriverUserData)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.SetDriverUserDataMsg)!;
-                await OnSetupDriverUserData(payload, wsId, cancellationTokenWrapper.RequestAborted);
+                await OnSetupDriverUserData(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
 
                 return;
             }
