@@ -102,7 +102,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="Entity">The configuration item.</param>
     /// <param name="SetupDriverResult">Result of the current setup step.</param>
     /// <param name="NextSetupStep">Information about the next setup step. Must be sent if <paramref name="SetupDriverResult"/> is set to <see cref="SetupDriverResult.UserInputRequired"/>.</param>
-    protected sealed record OnSetupResult(TConfigurationItem Entity, in SetupDriverResult SetupDriverResult, DriverSetupChange? NextSetupStep = null);
+    protected sealed record OnSetupResult(TConfigurationItem Entity, in SetupDriverResult SetupDriverResult, RequireUserAction? NextSetupStep = null);
 
     /// <summary>
     /// Setup driver result.
@@ -258,7 +258,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 MapEntityIdToSocket(wsId, setupResult.Entity.EntityId);
                 if (setupResult.SetupDriverResult == SetupDriverResult.UserInputRequired)
                 {
-                    if (setupResult.NextSetupStep is not { RequireUserAction: not null })
+                    if (setupResult.NextSetupStep is null)
                     {
                         _logger.LogError("[{WSId}] WS: Setup driver user input required but no next setup step provided. Setup will be aborted. Payload: {@Payload}.",
                             wsId, payload.MsgData);
@@ -266,7 +266,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     else
                     {
                         await SendAsync(socket,
-                            ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.NextSetupStep.RequireUserAction),
+                            ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.NextSetupStep),
                             wsId,
                             cancellationTokenWrapper.RequestAborted);
                         return;
