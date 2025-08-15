@@ -282,10 +282,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized),
                         wsId,
                         cancellationTokenWrapper.RequestAborted),
-                    SendAsync(socket,
-                        ResponsePayloadHelpers.CreateConnectEventResponsePayload(await GetDeviceState(setupResult.Entity, wsId, cancellationTokenWrapper.RequestAborted)),
-                        wsId,
-                        cancellationTokenWrapper.RequestAborted)
+                    setupResult.SetupDriverResult == SetupDriverResult.Error
+                        ? Task.CompletedTask
+                        : SendAsync(socket,
+                            ResponsePayloadHelpers.CreateConnectEventResponsePayload(await GetDeviceState(setupResult.Entity, wsId, cancellationTokenWrapper.RequestAborted)),
+                            wsId,
+                            cancellationTokenWrapper.RequestAborted)
                 );
                 
                 return;
