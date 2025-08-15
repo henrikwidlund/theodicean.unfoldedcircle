@@ -7,6 +7,7 @@ using UnfoldedCircle.Models.Sync;
 using UnfoldedCircle.Server.Configuration;
 using UnfoldedCircle.Server.DependencyInjection;
 using UnfoldedCircle.Server.Dns;
+using UnfoldedCircle.Server.Extensions;
 using UnfoldedCircle.Server.WebSocket;
 
 // ReSharper disable once CheckNamespace
@@ -65,6 +66,8 @@ public static class UnfoldedCircleRegistrationExtensions
     {
         var unfoldedCircleOptions = new UnfoldedCircleOptions();
         configureOptions?.Invoke(unfoldedCircleOptions);
+        if (unfoldedCircleOptions.DisableEntityIdPrefixing)
+            ValueExtensions.DisableEntityIdPrefixing = true;
 
         builder.Services.AddOptions<UnfoldedCircleOptions>();
         if (configureOptions is not null)

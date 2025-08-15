@@ -10,6 +10,13 @@ namespace UnfoldedCircle.Server.DependencyInjection;
 public class UnfoldedCircleOptions
 {
     /// <summary>
+    /// Set to true if you want entity_ids and device_ids to be returned without a prefix.
+    /// This should only be used if your integration has devices setup before prefixing was introduced.
+    /// </summary>
+    /// <remarks>This will disable the prefixes for all entity types and will cause duplicates if your integration supports multiple entity types.</remarks>
+    public bool DisableEntityIdPrefixing { get; set; }
+
+    /// <summary>
     /// The default port to listen to for incoming connections.
     /// <remarks>This setting will only be used if the <c>UC_INTEGRATION_HTTP_PORT</c> environment variable is not set.</remarks>
     /// </summary>
