@@ -22,9 +22,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected abstract ValueTask<DeviceState> OnGetDeviceState(GetDeviceStateMsg payload, string wsId, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Gets the device state for the given <paramref name="entity"/>.
+    /// Gets the entity state for the given <paramref name="entity"/>.
     /// </summary>
-    /// <param name="entity">The entity to get device state for.</param>
+    /// <param name="entity">The entity to get the state for.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
     protected abstract ValueTask<EntityState> GetEntityState(TConfigurationItem entity, string wsId, CancellationToken cancellationToken);
