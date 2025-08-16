@@ -41,17 +41,6 @@ Start by adding a `driver.json` file in the root of your server project.
 See [here](https://github.com/unfoldedcircle/core-api/blob/main/doc/integration-driver/driver-installation.md#metadata-file) for documentation on the file format.
 You must make sure that the file is copied as part of the publishing process.
 
-### Note
-If you're publishing with NativeAOT, you must add the following to your server's `.csproj` file to ensure the `appsettings.json` and `driver.json` are included in the output:
-
-```xml
-<PropertyGroup>
-    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
-    <ExcludeFromSingleFile>appsettings.json</ExcludeFromSingleFile>
-    <ExcludeFromSingleFile>driver.json</ExcludeFromSingleFile>
-</PropertyGroup>
-```
-
 The integration requires that you implement a few abstract classes and register them in your `Program.cs`:
 
 - `UnfoldedCircle.Server.Configuration.ConfigurationService<TConfigurationItem>` - Handles configuration for the integration.
@@ -72,6 +61,37 @@ builder.AddUnfoldedCircleServer<CustomWebSocketHandler, CustomCommandId, CustomC
 
 ...
 app.UseUnfoldedCircleServer<CustomWebSocketHandler, CustomCommandId, CustomConfigurationItem>();
+```
+
+### Customization
+You can customize some of the behaviour of the integration by using the `configureOptions` overload when registering via `AddUnfoldedCircleServer`.
+
+```csharp
+builder.AddUnfoldedCircleServer<CustomWebSocketHandler, CustomConfigurationService, CustomConfigurationItem>(options =>
+{
+    // Disable the prefixes for identifiers (e.g. "REMOTE:"). This is useful if you already have an integration driver and want to start using this SDK.
+    DisableEntityIdPrefixing = true,
+
+    // Override the default port (UC_INTEGRATION_HTTP_PORT environment variable takes precedence)
+    ListeningPort = 4242,
+
+    // Allows you to override the deserializer used for different message events.
+    MessageEventDeserializeOverrides = new Dictionary<MessageEvent, JsonTypeInfo>
+    {
+        [MessageEvent.Connect] = CustomJsonSerializerContext.Default.ConnectEvent
+    }
+}
+````
+
+### Note
+If you're publishing with NativeAOT, you must add the following to your server's `.csproj` file to ensure the `appsettings.json` and `driver.json` are included in the output:
+
+```xml
+<PropertyGroup>
+    <IncludeAllContentForSelfExtract>true</IncludeAllContentForSelfExtract>
+    <ExcludeFromSingleFile>appsettings.json</ExcludeFromSingleFile>
+    <ExcludeFromSingleFile>driver.json</ExcludeFromSingleFile>
+</PropertyGroup>
 ```
 
 ## Useful links
