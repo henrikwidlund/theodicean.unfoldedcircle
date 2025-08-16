@@ -133,25 +133,19 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSource();
         var configuration = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
-        var lastDeviceState = DeviceState.Disconnected;
         if (configuration is { Entities.Count: > 0 })
         {
             foreach (var unfoldedCircleConfigurationItem in configuration.Entities)
             {
-                var deviceState = await GetDeviceState(unfoldedCircleConfigurationItem, wsId, cancellationTokenWrapper.RequestAborted);
-                if (lastDeviceState != deviceState)
-                {
-                    if (lastDeviceState != DeviceState.Connected && deviceState == DeviceState.Connected)
-                        await SendAsync(socket,
-                            ResponsePayloadHelpers.CreateConnectEventResponsePayload(deviceState),
-                            wsId,
-                            cancellationTokenWrapper.RequestAborted);
-                    lastDeviceState = deviceState;
-                }
-
-                if (deviceState is DeviceState.Connected)
+                var entityState = await GetEntityState(unfoldedCircleConfigurationItem, wsId, cancellationTokenWrapper.RequestAborted);
+                if (entityState is DeviceState.Connected)
                     _ = HandleEventUpdates(socket, unfoldedCircleConfigurationItem.EntityId, wsId, cancellationTokenWrapper);
             }
         }
+
+        await SendAsync(socket,
+            ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
+            wsId,
+            cancellationTokenWrapper.RequestAborted);
     }
 }

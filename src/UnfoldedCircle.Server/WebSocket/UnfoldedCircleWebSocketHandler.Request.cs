@@ -27,7 +27,28 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="entity">The entity to get device state for.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    protected abstract ValueTask<DeviceState> GetDeviceState(TConfigurationItem entity, string wsId, CancellationToken cancellationToken);
+    protected abstract ValueTask<EntityState> GetEntityState(TConfigurationItem entity, string wsId, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Represents the current state of an entity.
+    /// </summary>
+    protected enum EntityState
+    {
+        /// <summary>
+        /// Entity is connected and operational.
+        /// </summary>
+        Connected,
+
+        /// <summary>
+        /// Entity is in a disconnected state.
+        /// </summary>
+        Disconnected,
+
+        /// <summary>
+        /// Error while processing the entity state.
+        /// </summary>
+        Error
+    }
 
     /// <summary>
     /// Called when a <c>get_available_entities</c> request is received.
@@ -285,7 +306,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     setupResult.SetupDriverResult == SetupDriverResult.Error
                         ? Task.CompletedTask
                         : SendAsync(socket,
-                            ResponsePayloadHelpers.CreateConnectEventResponsePayload(await GetDeviceState(setupResult.Entity, wsId, cancellationTokenWrapper.RequestAborted)),
+                            ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
                             wsId,
                             cancellationTokenWrapper.RequestAborted)
                 );
