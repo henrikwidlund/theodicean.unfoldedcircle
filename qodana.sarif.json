@@ -73793,8 +73793,8 @@
       "versionControlProvenance": [
         {
           "repositoryUri": "https://github.com/henrikwidlund/theodicean.unfoldedcircle.git",
-          "revisionId": "36f485981c253158d6e82cba2d780cbb357d44a6",
-          "branch": "feature/improve_api",
+          "revisionId": "fddee93e79c8104c8ef5ee31e3d7dd29289d6d7d",
+          "branch": "main",
           "properties": {
             "repoUrl": "https://github.com/henrikwidlund/theodicean.unfoldedcircle.git",
             "lastAuthorName": "Henrik Widlund",
@@ -73900,22 +73900,22 @@
                   "uriBaseId": "solutionDir"
                 },
                 "region": {
-                  "startLine": 16,
+                  "startLine": 30,
                   "startColumn": 37,
-                  "endLine": 16,
+                  "endLine": 30,
                   "endColumn": 41,
-                  "charOffset": 527,
+                  "charOffset": 1153,
                   "charLength": 4,
                   "snippet": {
                     "text": "set;"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 15,
+                  "startLine": 29,
                   "startColumn": 1,
-                  "endLine": 17,
+                  "endLine": 31,
                   "endColumn": 1,
-                  "charOffset": 472,
+                  "charOffset": 1098,
                   "charLength": 70,
                   "snippet": {
                     "text": "    /// </summary>\n    public int ListeningPort { get; set; } = 9001;\n"
@@ -73983,111 +73983,6 @@
           "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 9.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "ClassNeverInstantiated.Global",
-          "ruleIndex": 334,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Record 'OnSetupResult' is never instantiated"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.Request.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 2
-                },
-                "region": {
-                  "startLine": 103,
-                  "startColumn": 29,
-                  "endLine": 103,
-                  "endColumn": 42,
-                  "charOffset": 5867,
-                  "charLength": 13,
-                  "snippet": {
-                    "text": "OnSetupResult"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 102,
-                  "startColumn": 1,
-                  "endLine": 104,
-                  "endColumn": 1,
-                  "charOffset": 5757,
-                  "charLength": 170,
-                  "snippet": {
-                    "text": "    /// <param name=\"IsConnected\">Whether the entity is connected or not.</param>\n    protected sealed record OnSetupResult(TConfigurationItem Entity, bool IsConnected);\n"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "98504B1487285D28E2D852941B64D60E66289490FA0679FE83F248C9A89CF4AE"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 9.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "CollectionNeverUpdated.Global",
-          "ruleIndex": 343,
-          "kind": "fail",
-          "level": "warning",
-          "message": {
-            "text": "Content of collection 'MessageEventDeserializeOverrides' is never updated"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/DependencyInjection/UnfoldedCircleOptions.cs",
-                  "uriBaseId": "solutionDir"
-                },
-                "region": {
-                  "startLine": 21,
-                  "startColumn": 51,
-                  "endLine": 21,
-                  "endColumn": 83,
-                  "charOffset": 718,
-                  "charLength": 32,
-                  "snippet": {
-                    "text": "MessageEventDeserializeOverrides"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 20,
-                  "startColumn": 1,
-                  "endLine": 22,
-                  "endColumn": 2,
-                  "charOffset": 649,
-                  "charLength": 121,
-                  "snippet": {
-                    "text": "    /// </summary>\n    public Dictionary<MessageEvent, JsonTypeInfo> MessageEventDeserializeOverrides { get; } = new();\n}"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "5BE61AF6F94F894F7ED4B114E784C143FF2F01E53A72101D5D82AD96C3D73941"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "High",
             "tags": [
               "C#",
               ".NET 9.0"
@@ -74259,59 +74154,6 @@
           "kind": "fail",
           "level": "note",
           "message": {
-            "text": "Method 'AddSocketToEventReceivers' can be made private"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 3
-                },
-                "region": {
-                  "startLine": 102,
-                  "startColumn": 5,
-                  "endLine": 102,
-                  "endColumn": 14,
-                  "charOffset": 4688,
-                  "charLength": 9,
-                  "snippet": {
-                    "text": "protected"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 101,
-                  "startColumn": 1,
-                  "endLine": 103,
-                  "endColumn": 1,
-                  "charOffset": 4628,
-                  "charLength": 164,
-                  "snippet": {
-                    "text": "    /// <param name=\"wsId\">ID of the websocket.</param>\n    protected void AddSocketToEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap[wsId] = true;\n"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "676710B82119028584B458C5B4D56043357B6D6F0B79CAF2BD36EC7954272F43"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 9.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "MemberCanBePrivate.Global",
-          "ruleIndex": 2278,
-          "kind": "fail",
-          "level": "note",
-          "message": {
             "text": "Method 'AddUnfoldedCircleServer' can be made private"
           },
           "locations": [
@@ -74323,22 +74165,22 @@
                   "index": 4
                 },
                 "region": {
-                  "startLine": 54,
+                  "startLine": 55,
                   "startColumn": 5,
-                  "endLine": 54,
+                  "endLine": 55,
                   "endColumn": 11,
-                  "charOffset": 3078,
+                  "charOffset": 3118,
                   "charLength": 6,
                   "snippet": {
                     "text": "public"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 53,
+                  "startLine": 54,
                   "startColumn": 1,
-                  "endLine": 55,
+                  "endLine": 56,
                   "endColumn": 120,
-                  "charOffset": 2964,
+                  "charOffset": 3004,
                   "charLength": 294,
                   "snippet": {
                     "text": "    /// <returns>A <see cref=\"WebApplicationBuilder\"/> with the Unfolded Circle server added to it.</returns>\n    public static WebApplicationBuilder AddUnfoldedCircleServer<\n        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TUnfoldedCircleWebSocketHandler,"
@@ -74429,22 +74271,22 @@
                   "index": 6
                 },
                 "region": {
-                  "startLine": 56,
+                  "startLine": 86,
                   "startColumn": 5,
-                  "endLine": 56,
+                  "endLine": 86,
                   "endColumn": 11,
-                  "charOffset": 3547,
+                  "charOffset": 4609,
                   "charLength": 6,
                   "snippet": {
                     "text": "public"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 55,
+                  "startLine": 85,
                   "startColumn": 1,
-                  "endLine": 57,
+                  "endLine": 87,
                   "endColumn": 104,
-                  "charOffset": 3524,
+                  "charOffset": 4586,
                   "charLength": 225,
                   "snippet": {
                     "text": "    /// </returns>\n    public static string? GetNullableIdentifier(this string? baseIdentifier, in EntityType entityType)\n        => string.IsNullOrWhiteSpace(baseIdentifier) ? null : baseIdentifier.GetIdentifier(entityType);"
@@ -74455,112 +74297,6 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v1": "A3029F46DB28EA33BA96F2A6F5C9DDC4FB061A1ACF831C1B141E157829CC90BC"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 9.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "MemberCanBePrivate.Global",
-          "ruleIndex": 2278,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Method 'MapEntityIdToSocket' can be made private"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 3
-                },
-                "region": {
-                  "startLine": 79,
-                  "startColumn": 5,
-                  "endLine": 79,
-                  "endColumn": 14,
-                  "charOffset": 3480,
-                  "charLength": 9,
-                  "snippet": {
-                    "text": "protected"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 78,
-                  "startColumn": 1,
-                  "endLine": 80,
-                  "endColumn": 1,
-                  "charOffset": 3422,
-                  "charLength": 198,
-                  "snippet": {
-                    "text": "    /// <param name=\"entityId\">The entity_id.</param>\n    protected void MapEntityIdToSocket(string wsId, string entityId) => SessionHolder.SocketIdEntityIpMap[wsId] = entityId.GetBaseIdentifier();\n"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "D21D6F28F2245A2989A18A47D5CA1CC53100A92F826C427127F11F76E80ADAE7"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 9.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "MemberCanBePrivate.Global",
-          "ruleIndex": 2278,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Method 'RemoveSocketFromMap' can be made private"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 3
-                },
-                "region": {
-                  "startLine": 95,
-                  "startColumn": 5,
-                  "endLine": 95,
-                  "endColumn": 14,
-                  "charOffset": 4342,
-                  "charLength": 9,
-                  "snippet": {
-                    "text": "protected"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 94,
-                  "startColumn": 1,
-                  "endLine": 96,
-                  "endColumn": 76,
-                  "charOffset": 4298,
-                  "charLength": 209,
-                  "snippet": {
-                    "text": "    /// <param name=\"entityId\"></param>\n    protected bool RemoveSocketFromMap(string wsId, [NotNullWhen(true)] out string? entityId)\n        => SessionHolder.SocketIdEntityIpMap.TryRemove(wsId, out entityId);"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "A89CE1FA18B63AA3EBE28705C7F4EED88D6D6A525F453032C1C07C7171FC93CD"
           },
           "baselineState": "unchanged",
           "properties": {
@@ -75012,22 +74748,22 @@
                   "index": 4
                 },
                 "region": {
-                  "startLine": 54,
+                  "startLine": 55,
                   "startColumn": 5,
-                  "endLine": 54,
+                  "endLine": 55,
                   "endColumn": 11,
-                  "charOffset": 3078,
+                  "charOffset": 3118,
                   "charLength": 6,
                   "snippet": {
                     "text": "public"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 53,
+                  "startLine": 54,
                   "startColumn": 1,
-                  "endLine": 55,
+                  "endLine": 56,
                   "endColumn": 120,
-                  "charOffset": 2964,
+                  "charOffset": 3004,
                   "charLength": 294,
                   "snippet": {
                     "text": "    /// <returns>A <see cref=\"WebApplicationBuilder\"/> with the Unfolded Circle server added to it.</returns>\n    public static WebApplicationBuilder AddUnfoldedCircleServer<\n        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TUnfoldedCircleWebSocketHandler,"
@@ -75038,112 +74774,6 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v1": "DB78026E47A14C8BD4346EA4F1A376F54E3383A6C59ECD4AF65880C956736F5F"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 9.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "UnusedMember.Global",
-          "ruleIndex": 2738,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Method 'IsSocketSubscribedToEvents' is never used"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 3
-                },
-                "region": {
-                  "startLine": 108,
-                  "startColumn": 20,
-                  "endLine": 108,
-                  "endColumn": 46,
-                  "charOffset": 4984,
-                  "charLength": 26,
-                  "snippet": {
-                    "text": "IsSocketSubscribedToEvents"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 107,
-                  "startColumn": 1,
-                  "endLine": 109,
-                  "endColumn": 101,
-                  "charOffset": 4909,
-                  "charLength": 215,
-                  "snippet": {
-                    "text": "    /// <param name=\"wsId\">ID of the websocket.</param>\n    protected bool IsSocketSubscribedToEvents(string wsId)\n        => SessionHolder.SubscribeEventsMap.TryGetValue(wsId, out var isSubscribed) && isSubscribed;"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "B45C76368556AE17EB23DB81D4025F9494DF1CC4CA17141D9F425473F1701918"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 9.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "UnusedMember.Global",
-          "ruleIndex": 2738,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Method 'RemoveSocketFromEventReceivers' is never used"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 3
-                },
-                "region": {
-                  "startLine": 115,
-                  "startColumn": 20,
-                  "endLine": 115,
-                  "endColumn": 50,
-                  "charOffset": 5296,
-                  "charLength": 30,
-                  "snippet": {
-                    "text": "RemoveSocketFromEventReceivers"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 114,
-                  "startColumn": 1,
-                  "endLine": 116,
-                  "endColumn": 1,
-                  "charOffset": 5241,
-                  "charLength": 159,
-                  "snippet": {
-                    "text": "    /// <param name=\"wsId\"></param>\n    protected void RemoveSocketFromEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap.TryRemove(wsId, out _);\n"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "AB8FE00BCFEBF8C39CF5443E5547AD8064671764B1D2503C992F536BCA3D98C8"
           },
           "baselineState": "unchanged",
           "properties": {
@@ -75277,22 +74907,22 @@
                   "index": 4
                 },
                 "region": {
-                  "startLine": 18,
+                  "startLine": 19,
                   "startColumn": 21,
-                  "endLine": 18,
+                  "endLine": 19,
                   "endColumn": 57,
-                  "charOffset": 552,
+                  "charOffset": 592,
                   "charLength": 36,
                   "snippet": {
                     "text": "UnfoldedCircleRegistrationExtensions"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 17,
+                  "startLine": 18,
                   "startColumn": 1,
-                  "endLine": 19,
+                  "endLine": 20,
                   "endColumn": 2,
-                  "charOffset": 517,
+                  "charOffset": 557,
                   "charLength": 73,
                   "snippet": {
                     "text": "/// </summary>\npublic static class UnfoldedCircleRegistrationExtensions\n{"
@@ -75436,22 +75066,22 @@
                   "index": 4
                 },
                 "region": {
-                  "startLine": 109,
+                  "startLine": 112,
                   "startColumn": 5,
-                  "endLine": 109,
+                  "endLine": 112,
                   "endColumn": 11,
-                  "charOffset": 6721,
+                  "charOffset": 6882,
                   "charLength": 6,
                   "snippet": {
                     "text": "public"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 108,
+                  "startLine": 111,
                   "startColumn": 1,
-                  "endLine": 110,
+                  "endLine": 113,
                   "endColumn": 51,
-                  "charOffset": 6621,
+                  "charOffset": 6782,
                   "charLength": 318,
                   "snippet": {
                     "text": "    /// <typeparam name=\"TConfigurationItem\">The type of configuration item to use.</typeparam>\n    public static IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>(this IApplicationBuilder builder,\n        WebSocketOptions? webSocketOptions = null)"
@@ -75489,22 +75119,22 @@
                   "index": 6
                 },
                 "region": {
-                  "startLine": 17,
+                  "startLine": 21,
                   "startColumn": 26,
-                  "endLine": 17,
+                  "endLine": 21,
                   "endColumn": 40,
-                  "charOffset": 737,
+                  "charOffset": 836,
                   "charLength": 14,
                   "snippet": {
                     "text": "GetValueOrNull"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 16,
+                  "startLine": 20,
                   "startColumn": 1,
-                  "endLine": 18,
+                  "endLine": 22,
                   "endColumn": 6,
-                  "charOffset": 668,
+                  "charOffset": 767,
                   "charLength": 177,
                   "snippet": {
                     "text": "    /// <typeparam name=\"TKey\"></typeparam>\n    public static string GetValueOrNull<TKey>(this IReadOnlyDictionary<TKey, string> dictionary, TKey key, string defaultValue)\n    {"
@@ -75515,6 +75145,640 @@
           ],
           "partialFingerprints": {
             "equalIndicator/v1": "BAA4A04F9FE1BC60B32B9061E7DF2B517EE379C1AE4EEBA3CC8729FA653F9469"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2738,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Method 'UseUnfoldedCircleServer' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/DependencyInjection/UnfoldedCircleRegistrationExtensions.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 98,
+                  "startColumn": 39,
+                  "endLine": 98,
+                  "endColumn": 62,
+                  "charOffset": 5788,
+                  "charLength": 23,
+                  "snippet": {
+                    "text": "UseUnfoldedCircleServer"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 97,
+                  "startColumn": 1,
+                  "endLine": 99,
+                  "endColumn": 51,
+                  "charOffset": 5654,
+                  "charLength": 295,
+                  "snippet": {
+                    "text": "    /// <typeparam name=\"TConfigurationItem\">The type of configuration item to use.</typeparam>\n    public static IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TConfigurationItem>(this IApplicationBuilder builder,\n        WebSocketOptions? webSocketOptions = null)"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "BDA1C5CC979A0A2DD10673F31728F090F62E512433485B2FF54FB3AD9BFA3618"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "ClassNeverInstantiated.Global",
+          "ruleIndex": 334,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Record 'OnSetupResult' is never instantiated"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.Request.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 126,
+                  "startColumn": 29,
+                  "endLine": 126,
+                  "endColumn": 42,
+                  "charOffset": 6574,
+                  "charLength": 13,
+                  "snippet": {
+                    "text": "OnSetupResult"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 125,
+                  "startColumn": 1,
+                  "endLine": 127,
+                  "endColumn": 1,
+                  "charOffset": 6349,
+                  "charLength": 348,
+                  "snippet": {
+                    "text": "    /// <param name=\"NextSetupStep\">Information about the next setup step. Must be sent if <paramref name=\"SetupDriverResult\"/> is set to <see cref=\"SetupDriverResult.UserInputRequired\"/>.</param>\n    protected sealed record OnSetupResult(TConfigurationItem Entity, in SetupDriverResult SetupDriverResult, RequireUserAction? NextSetupStep = null);\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "5763DFDCB873EE5EB5A2CE209314B9CFFE770FBFDE10C7D41B1C3DDA89683C00"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "MemberCanBePrivate.Global",
+          "ruleIndex": 2278,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Method 'AddSocketToEventReceivers' can be made private"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 102,
+                  "startColumn": 5,
+                  "endLine": 102,
+                  "endColumn": 14,
+                  "charOffset": 4709,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "protected"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 101,
+                  "startColumn": 1,
+                  "endLine": 103,
+                  "endColumn": 1,
+                  "charOffset": 4649,
+                  "charLength": 171,
+                  "snippet": {
+                    "text": "    /// <param name=\"wsId\">ID of the websocket.</param>\n    protected static void AddSocketToEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap[wsId] = true;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "EF7B5FAC3325F50170A300AE4495F4D4D71B11465E5E8372DE75DF579F142E5D"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "MemberCanBePrivate.Global",
+          "ruleIndex": 2278,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Method 'MapEntityIdToSocket' can be made private"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 79,
+                  "startColumn": 5,
+                  "endLine": 79,
+                  "endColumn": 14,
+                  "charOffset": 3480,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "protected"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 78,
+                  "startColumn": 1,
+                  "endLine": 80,
+                  "endColumn": 1,
+                  "charOffset": 3422,
+                  "charLength": 205,
+                  "snippet": {
+                    "text": "    /// <param name=\"entityId\">The entity_id.</param>\n    protected static void MapEntityIdToSocket(string wsId, string entityId) => SessionHolder.SocketIdEntityIpMap[wsId] = entityId.GetBaseIdentifier();\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "43182618CE94E1987E240ABCEBF6455852C39A682813C5E3409DF0B8016C5626"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "MemberCanBePrivate.Global",
+          "ruleIndex": 2278,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Method 'RemoveSocketFromMap' can be made private"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 95,
+                  "startColumn": 5,
+                  "endLine": 95,
+                  "endColumn": 14,
+                  "charOffset": 4356,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "protected"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 94,
+                  "startColumn": 1,
+                  "endLine": 96,
+                  "endColumn": 76,
+                  "charOffset": 4312,
+                  "charLength": 216,
+                  "snippet": {
+                    "text": "    /// <param name=\"entityId\"></param>\n    protected static bool RemoveSocketFromMap(string wsId, [NotNullWhen(true)] out string? entityId)\n        => SessionHolder.SocketIdEntityIpMap.TryRemove(wsId, out entityId);"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "346B85898D0720E6361C480084A2005DFCFEBFEC6111BD17B2FE45684948E272"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "UnusedAutoPropertyAccessor.Global",
+          "ruleIndex": 2729,
+          "kind": "fail",
+          "level": "warning",
+          "message": {
+            "text": "Auto-property accessor 'DisableEntityIdPrefixing.set' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/DependencyInjection/UnfoldedCircleOptions.cs",
+                  "uriBaseId": "solutionDir"
+                },
+                "region": {
+                  "startLine": 22,
+                  "startColumn": 49,
+                  "endLine": 22,
+                  "endColumn": 53,
+                  "charOffset": 833,
+                  "charLength": 4,
+                  "snippet": {
+                    "text": "set;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 21,
+                  "startColumn": 1,
+                  "endLine": 23,
+                  "endColumn": 1,
+                  "charOffset": 766,
+                  "charLength": 74,
+                  "snippet": {
+                    "text": "    /// </remarks>\n    public bool DisableEntityIdPrefixing { get; set; }\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "1447200F49BF028C5BDA71DDE5DD5171528F757D70FBA412EC9D2DE0D021E5C7"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "High",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2738,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Accessor 'MessageEventDeserializeOverrides.set' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/DependencyInjection/UnfoldedCircleOptions.cs",
+                  "uriBaseId": "solutionDir"
+                },
+                "region": {
+                  "startLine": 38,
+                  "startColumn": 9,
+                  "endLine": 38,
+                  "endColumn": 12,
+                  "charOffset": 1448,
+                  "charLength": 3,
+                  "snippet": {
+                    "text": "set"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 37,
+                  "startColumn": 1,
+                  "endLine": 39,
+                  "endColumn": 6,
+                  "charOffset": 1383,
+                  "charLength": 120,
+                  "snippet": {
+                    "text": "        get => _messageEventDeserializeOverrides ??= [];\n        set => _messageEventDeserializeOverrides = value;\n    }"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "1A514979BA0F9DFF1BA1222338635DEBAE077BFD4042D73C84AC46D75DD1ACB5"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2738,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Enum member 'Connected' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.Request.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 40,
+                  "startColumn": 9,
+                  "endLine": 40,
+                  "endColumn": 18,
+                  "charOffset": 1637,
+                  "charLength": 9,
+                  "snippet": {
+                    "text": "Connected"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 39,
+                  "startColumn": 1,
+                  "endLine": 41,
+                  "endColumn": 1,
+                  "charOffset": 1606,
+                  "charLength": 42,
+                  "snippet": {
+                    "text": "        /// </summary>\n        Connected,\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "BB2A1E630E9AC491DCDB107563E9C93E6B509DD702869C831B3DFA68C72CDD17"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2738,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Enum member 'Disconnected' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.Request.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 45,
+                  "startColumn": 9,
+                  "endLine": 45,
+                  "endColumn": 21,
+                  "charOffset": 1749,
+                  "charLength": 12,
+                  "snippet": {
+                    "text": "Disconnected"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 44,
+                  "startColumn": 1,
+                  "endLine": 46,
+                  "endColumn": 1,
+                  "charOffset": 1718,
+                  "charLength": 45,
+                  "snippet": {
+                    "text": "        /// </summary>\n        Disconnected,\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "70600DC74E0891662C244EA78B3109D17DD96A53BAA46CF618943A99F48C330D"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2738,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Enum member 'Error' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.Request.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 2
+                },
+                "region": {
+                  "startLine": 50,
+                  "startColumn": 9,
+                  "endLine": 50,
+                  "endColumn": 14,
+                  "charOffset": 1870,
+                  "charLength": 5,
+                  "snippet": {
+                    "text": "Error"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 49,
+                  "startColumn": 1,
+                  "endLine": 51,
+                  "endColumn": 6,
+                  "charOffset": 1839,
+                  "charLength": 42,
+                  "snippet": {
+                    "text": "        /// </summary>\n        Error\n    }"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "C8653D575B37B60522E4B6AC289A6E6F4163526421E671FBE46E2EC38B443ED0"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2738,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Method 'IsSocketSubscribedToEvents' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 108,
+                  "startColumn": 27,
+                  "endLine": 108,
+                  "endColumn": 53,
+                  "charOffset": 5019,
+                  "charLength": 26,
+                  "snippet": {
+                    "text": "IsSocketSubscribedToEvents"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 107,
+                  "startColumn": 1,
+                  "endLine": 109,
+                  "endColumn": 101,
+                  "charOffset": 4937,
+                  "charLength": 222,
+                  "snippet": {
+                    "text": "    /// <param name=\"wsId\">ID of the websocket.</param>\n    protected static bool IsSocketSubscribedToEvents(string wsId)\n        => SessionHolder.SubscribeEventsMap.TryGetValue(wsId, out var isSubscribed) && isSubscribed;"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "E88C9B147369B91EEEFEE5D0F965F4E290B1C27A73C5815968550854EA0A32E2"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2738,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Method 'RemoveSocketFromEventReceivers' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 115,
+                  "startColumn": 27,
+                  "endLine": 115,
+                  "endColumn": 57,
+                  "charOffset": 5338,
+                  "charLength": 30,
+                  "snippet": {
+                    "text": "RemoveSocketFromEventReceivers"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 114,
+                  "startColumn": 1,
+                  "endLine": 116,
+                  "endColumn": 1,
+                  "charOffset": 5276,
+                  "charLength": 166,
+                  "snippet": {
+                    "text": "    /// <param name=\"wsId\"></param>\n    protected static void RemoveSocketFromEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap.TryRemove(wsId, out _);\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "A9B479725366F32D5BC79C7A929C1D01CEA584CB5A4789917D9AEF15129EC20D"
           },
           "baselineState": "unchanged",
           "properties": {
@@ -75543,10 +75807,10 @@
                 },
                 "region": {
                   "startLine": 87,
-                  "startColumn": 20,
+                  "startColumn": 27,
                   "endLine": 87,
-                  "endColumn": 44,
-                  "charOffset": 3951,
+                  "endColumn": 51,
+                  "charOffset": 3965,
                   "charLength": 24,
                   "snippet": {
                     "text": "TryGetEntityIdFromSocket"
@@ -75557,70 +75821,17 @@
                   "startColumn": 1,
                   "endLine": 88,
                   "endColumn": 113,
-                  "charOffset": 3837,
-                  "charLength": 306,
+                  "charOffset": 3844,
+                  "charLength": 313,
                   "snippet": {
-                    "text": "    /// <returns><see langword=\"true\"/> if found, otherwise <see langword=\"false\"/>.</returns>\n    protected bool TryGetEntityIdFromSocket(string wsId, [NotNullWhen(true)] out string? entityId)\n        => SessionHolder.SocketIdEntityIpMap.TryGetValue(wsId, out entityId) && !string.IsNullOrEmpty(entityId);"
+                    "text": "    /// <returns><see langword=\"true\"/> if found, otherwise <see langword=\"false\"/>.</returns>\n    protected static bool TryGetEntityIdFromSocket(string wsId, [NotNullWhen(true)] out string? entityId)\n        => SessionHolder.SocketIdEntityIpMap.TryGetValue(wsId, out entityId) && !string.IsNullOrEmpty(entityId);"
                   }
                 }
               }
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v1": "2E1AC769A80EAD8F478B2211C70E366FC563501D098D3CD9269E6BB3B087CF80"
-          },
-          "baselineState": "new",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 9.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "UnusedMember.Global",
-          "ruleIndex": 2738,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Method 'UseUnfoldedCircleServer' is never used"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/DependencyInjection/UnfoldedCircleRegistrationExtensions.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 4
-                },
-                "region": {
-                  "startLine": 95,
-                  "startColumn": 39,
-                  "endLine": 95,
-                  "endColumn": 62,
-                  "charOffset": 5627,
-                  "charLength": 23,
-                  "snippet": {
-                    "text": "UseUnfoldedCircleServer"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 94,
-                  "startColumn": 1,
-                  "endLine": 96,
-                  "endColumn": 51,
-                  "charOffset": 5493,
-                  "charLength": 295,
-                  "snippet": {
-                    "text": "    /// <typeparam name=\"TConfigurationItem\">The type of configuration item to use.</typeparam>\n    public static IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TConfigurationItem>(this IApplicationBuilder builder,\n        WebSocketOptions? webSocketOptions = null)"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "BDA1C5CC979A0A2DD10673F31728F090F62E512433485B2FF54FB3AD9BFA3618"
+            "equalIndicator/v1": "E9BB334FC6B37E1CCBA1A262B29EC17A5D515EC023E4273F51F1A23A79EF655A"
           },
           "baselineState": "unchanged",
           "properties": {
@@ -75633,10 +75844,10 @@
         }
       ],
       "automationDetails": {
-        "id": "QDNETC/qodana/2025-08-14",
-        "guid": "e50b9425-7e88-405c-b6f5-5fe719356ae9",
+        "id": "QDNETC/qodana/2025-08-16",
+        "guid": "53b8d70d-7317-4847-9688-097fdc2751e6",
         "properties": {
-          "jobUrl": "https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/runs/16972389569"
+          "jobUrl": "https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/runs/17008210560"
         }
       },
       "newlineSequences": [
