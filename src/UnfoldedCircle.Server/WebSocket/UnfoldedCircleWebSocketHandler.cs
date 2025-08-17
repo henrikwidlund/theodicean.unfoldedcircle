@@ -112,8 +112,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// Marks the <paramref name="entityId"/> to receive events from the integration.
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
-    protected static void AddEntityIdToBroadcastingEvents(string entityId)
-        => SessionHolder.BroadcastingEvents[entityId] = true;
+    /// <returns><see langword="true"/> if the key was added, otherwise <see langword="fakse"/>.</returns>
+    protected static bool TryAddEntityIdToBroadcastingEvents(string entityId) => SessionHolder.BroadcastingEvents.TryAdd(entityId, true);
 
     /// <summary>
     /// Removes the <paramref name="entityId"/> from receivers of events from the integration.
