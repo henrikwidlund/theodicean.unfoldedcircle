@@ -135,17 +135,22 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         var configuration = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
         if (configuration is { Entities.Count: > 0 })
         {
-            foreach (var unfoldedCircleConfigurationItem in configuration.Entities)
-            {
-                var entityState = await GetEntityState(unfoldedCircleConfigurationItem, wsId, cancellationTokenWrapper.RequestAborted);
-                if (entityState is DeviceState.Connected)
-                    _ = HandleEventUpdates(socket, unfoldedCircleConfigurationItem.EntityId, wsId, cancellationTokenWrapper);
-            }
+            var entityStateCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            await Task.WhenAll(configuration.Entities.Select(x => GetEntityStateLocal(x, entityStateCancellationTokenSource.Token)));
         }
 
         await SendAsync(socket,
             ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
             wsId,
             cancellationTokenWrapper.RequestAborted);
+        return;
+
+        async Task GetEntityStateLocal(TConfigurationItem unfoldedCircleConfigurationItem, CancellationToken cancellationToken)
+        {
+            var entityState = await GetEntityState(unfoldedCircleConfigurationItem, wsId, cancellationToken);
+            if (entityState is DeviceState.Connected && SupportedEntityTypes.Contains(EntityType.MediaPlayer))
+                _ = Task.Factory.StartNew(() => HandleEventUpdates(socket, unfoldedCircleConfigurationItem.EntityId, wsId, cancellationTokenWrapper),
+                    TaskCreationOptions.LongRunning);
+        }
     }
 }

@@ -142,7 +142,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                             cancellationTokenWrapper.RequestAborted);
 
                         if (entityCommandResult == EntityCommandResult.PowerOn)
-                            _ = HandleEventUpdates(socket, entityId, wsId, cancellationTokenWrapper);
+                            _ = Task.Factory.StartNew(() => HandleEventUpdates(socket, entityId, wsId, cancellationTokenWrapper),
+                                TaskCreationOptions.LongRunning);
                         else
                             await (cancellationTokenWrapper.GetCurrentBroadcastCancellationTokenSource()?.CancelAsync() ?? Task.CompletedTask);
                     }
@@ -217,7 +218,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                 wsId,
                                 cancellationTokenWrapper.RequestAborted);
 
-                            _ = HandleEventUpdates(socket, entityId, wsId, cancellationTokenWrapper);
+                            _ = Task.Factory.StartNew(() => HandleEventUpdates(socket, entityId, wsId, cancellationTokenWrapper),
+                                TaskCreationOptions.LongRunning);
                         }
                         else if (entityType == EntityType.Remote)
                         {
