@@ -140,12 +140,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                 EntityType.MediaPlayer),
                             wsId,
                             cancellationTokenWrapper.RequestAborted);
-
-                        if (entityCommandResult == EntityCommandResult.PowerOn)
-                            _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entityId, wsId, cancellationTokenWrapper),
-                                TaskCreationOptions.LongRunning);
-                        else
-                            await (cancellationTokenWrapper.GetCurrentBroadcastCancellationTokenSource()?.CancelAsync() ?? Task.CompletedTask);
                     }
                     else if (entityType == EntityType.Remote)
                     {
@@ -162,6 +156,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         _logger.LogError("[{WSId}] WS: Unsupported entity type {EntityType} for entity {EntityId}.",
                             wsId, entityType.ToString(), entityId);
                     }
+
+                    if (!IsBroadcastingEvents(entityId))
+                        _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entityId, wsId, cancellationTokenWrapper),
+                            TaskCreationOptions.LongRunning);
                 }
             }
         }
@@ -217,9 +215,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                     EntityType.MediaPlayer),
                                 wsId,
                                 cancellationTokenWrapper.RequestAborted);
-
-                            _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entityId, wsId, cancellationTokenWrapper),
-                                TaskCreationOptions.LongRunning);
                         }
                         else if (entityType == EntityType.Remote)
                         {
@@ -236,6 +231,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                             _logger.LogError("[{WSId}] WS: Unsupported entity type {EntityType} for entity {EntityId}.",
                                 wsId, entityType.ToString(), entityId);
                         }
+
+                        if (!IsBroadcastingEvents(entityId))
+                            _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entityId, wsId, cancellationTokenWrapper),
+                                TaskCreationOptions.LongRunning);
                     }
                 }
             }

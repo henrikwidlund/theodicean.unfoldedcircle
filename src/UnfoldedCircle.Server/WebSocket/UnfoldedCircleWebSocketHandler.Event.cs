@@ -161,7 +161,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 return;
             }
 
-            if (entityState is DeviceState.Connected)
+            if (entityState is EntityState.Connected)
                 _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, unfoldedCircleConfigurationItem.EntityId, wsId, cancellationTokenWrapper),
                     TaskCreationOptions.LongRunning);
         }
