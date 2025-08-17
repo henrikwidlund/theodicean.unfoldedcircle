@@ -121,47 +121,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         var entityCommandResult = await OnMediaPlayerCommandAsync(socket, payload, wsId, cancellationTokenWrapper);
         if (entityCommandResult != EntityCommandResult.Failure)
         {
-            await SendMessageAsync(socket,
-                ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                wsId,
-                cancellationTokenWrapper.RequestAborted);
-
-            if (entityCommandResult is EntityCommandResult.PowerOn or EntityCommandResult.PowerOff)
-            {
-                var entities = GetEntities(payload.MsgData.EntityId);
-                foreach ((string entityId, EntityType entityType) in entities)
-                {
-                    if (entityType == EntityType.MediaPlayer)
-                    {
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateStateChangedResponsePayload(
-                                new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
-                                entityId,
-                                EntityType.MediaPlayer),
-                            wsId,
-                            cancellationTokenWrapper.RequestAborted);
-                    }
-                    else if (entityType == EntityType.Remote)
-                    {
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateStateChangedResponsePayload(
-                                new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
-                                payload.MsgData.EntityId,
-                                EntityType.Remote),
-                            wsId,
-                            cancellationTokenWrapper.RequestAborted);
-                    }
-                    else
-                    {
-                        _logger.LogError("[{WSId}] WS: Unsupported entity type {EntityType} for entity {EntityId}.",
-                            wsId, entityType.ToString(), entityId);
-                    }
-
-                    if (!IsBroadcastingEvents(entityId))
-                        _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entityId, wsId, cancellationTokenWrapper),
-                            TaskCreationOptions.LongRunning);
-                }
-            }
+            await HandleCommandResultCoreAsync(socket, wsId, payload, entityCommandResult, cancellationTokenWrapper);
         }
         else
         {
@@ -196,47 +156,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
             if (entityCommandResult != EntityCommandResult.Failure)
             {
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                    wsId,
-                    cancellationTokenWrapper.RequestAborted);
-
-                if (entityCommandResult is EntityCommandResult.PowerOn or EntityCommandResult.PowerOff)
-                {
-                    var entities = GetEntities(payload.MsgData.EntityId);
-                    foreach ((string entityId, EntityType entityType) in entities)
-                    {
-                        if (entityType == EntityType.MediaPlayer)
-                        {
-                            await SendMessageAsync(socket,
-                                ResponsePayloadHelpers.CreateStateChangedResponsePayload(
-                                    new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
-                                    entityId,
-                                    EntityType.MediaPlayer),
-                                wsId,
-                                cancellationTokenWrapper.RequestAborted);
-                        }
-                        else if (entityType == EntityType.Remote)
-                        {
-                            await SendMessageAsync(socket,
-                                ResponsePayloadHelpers.CreateStateChangedResponsePayload(
-                                    new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
-                                    payload.MsgData.EntityId,
-                                    EntityType.Remote),
-                                wsId,
-                                cancellationTokenWrapper.RequestAborted);
-                        }
-                        else
-                        {
-                            _logger.LogError("[{WSId}] WS: Unsupported entity type {EntityType} for entity {EntityId}.",
-                                wsId, entityType.ToString(), entityId);
-                        }
-
-                        if (!IsBroadcastingEvents(entityId))
-                            _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entityId, wsId, cancellationTokenWrapper),
-                                TaskCreationOptions.LongRunning);
-                    }
-                }
+                await HandleCommandResultCoreAsync(socket, wsId, payload, entityCommandResult, cancellationTokenWrapper);
             }
             else
             {
@@ -263,6 +183,58 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     }),
                 wsId,
                 cancellationTokenWrapper.RequestAborted);
+        }
+    }
+
+    private async Task HandleCommandResultCoreAsync<TCommandId, TEntityCommandParams>(System.Net.WebSockets.WebSocket socket,
+        string wsId,
+        CommonReq<EntityCommandMsgData<TCommandId, TEntityCommandParams>> payload,
+        EntityCommandResult entityCommandResult,
+        CancellationTokenWrapper cancellationTokenWrapper)
+    {
+        await SendMessageAsync(socket,
+            ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+            wsId,
+            cancellationTokenWrapper.RequestAborted);
+
+        if (entityCommandResult is EntityCommandResult.PowerOn or EntityCommandResult.PowerOff)
+        {
+            await Task.WhenAll(GetEntities(payload.MsgData.EntityId)
+                .Select(SendPowerStatusAndBroadcastAsync));
+        }
+
+        return;
+        async Task SendPowerStatusAndBroadcastAsync((string EntityId, EntityType EntitType) entity)
+        {
+            if (entity.EntitType == EntityType.MediaPlayer)
+            {
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateStateChangedResponsePayload(
+                        new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
+                        entity.EntityId.GetIdentifier(EntityType.MediaPlayer),
+                        EntityType.MediaPlayer),
+                    wsId,
+                    cancellationTokenWrapper.RequestAborted);
+            }
+            else if (entity.EntitType == EntityType.Remote)
+            {
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateStateChangedResponsePayload(
+                        new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
+                        entity.EntityId.GetIdentifier(EntityType.Remote),
+                        EntityType.Remote),
+                    wsId,
+                    cancellationTokenWrapper.RequestAborted);
+            }
+            else
+            {
+                _logger.LogError("[{WSId}] WS: Unsupported entity type {EntityType} for entity {EntityId}.",
+                    wsId, entity.EntitType.ToString(), entity.EntityId);
+            }
+
+            if (!IsBroadcastingEvents(entity.EntityId))
+                _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entity.EntityId, wsId, cancellationTokenWrapper),
+                    TaskCreationOptions.LongRunning);
         }
     }
 

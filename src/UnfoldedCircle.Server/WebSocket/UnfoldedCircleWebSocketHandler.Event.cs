@@ -141,7 +141,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         if (configuration is { Entities.Count: > 0 })
         {
             var entityStateCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-            foreach (var entities in configuration.Entities.Chunk(Environment.ProcessorCount * 2))
+            foreach (var entities in configuration.Entities.Chunk(EnvironmentConstants.MaxConcurrency))
                 await Task.WhenAll(entities.Select(x => StartEventUpdatesAsync(x, entityStateCancellationTokenSource.Token)));
         }
 
