@@ -27,7 +27,7 @@ public abstract class ConfigurationService<TConfigurationItem>(IConfiguration co
 
     /// <inheritdoc />
     /// <exception cref="InvalidOperationException">Thrown when the configuration file can't be deserialized.</exception>
-    public async Task<UnfoldedCircleConfiguration<TConfigurationItem>> GetConfigurationAsync(CancellationToken cancellationToken = default)
+    public async Task<UnfoldedCircleConfiguration<TConfigurationItem>> GetConfiguration(CancellationToken cancellationToken)
     {
         if (_unfoldedCircleConfiguration is not null)
             return _unfoldedCircleConfiguration;
@@ -71,14 +71,15 @@ public abstract class ConfigurationService<TConfigurationItem>(IConfiguration co
     }
 
     /// <inheritdoc />
-    public async Task<UnfoldedCircleConfiguration<TConfigurationItem>> UpdateConfigurationAsync(UnfoldedCircleConfiguration<TConfigurationItem> configuration, CancellationToken cancellationToken = default)
+    public async Task<UnfoldedCircleConfiguration<TConfigurationItem>> UpdateConfiguration(UnfoldedCircleConfiguration<TConfigurationItem> configuration, CancellationToken cancellationToken)
     {
         await _semaphore.WaitAsync(cancellationToken);
         
         try
         {
             await using var configurationFileStream = File.Create(ConfigurationFilePath);
-            await JsonSerializer.SerializeAsync(configurationFileStream, configuration, GetSerializer(), cancellationToken);
+            // Do not use the cancellation token here, the file must always finish writing to ensure that the configuration is saved correctly.
+            await JsonSerializer.SerializeAsync(configurationFileStream, configuration, GetSerializer(), CancellationToken.None);
             _unfoldedCircleConfiguration = configuration;
             return _unfoldedCircleConfiguration;
         }
@@ -92,7 +93,7 @@ public abstract class ConfigurationService<TConfigurationItem>(IConfiguration co
 
     /// <inheritdoc />
     /// <exception cref="InvalidOperationException">Thrown when the driver.json file can't be deserialized.</exception>
-    public async ValueTask<DriverMetadata> GetDriverMetadataAsync(CancellationToken cancellationToken)
+    public async ValueTask<DriverMetadata> GetDriverMetadata(CancellationToken cancellationToken)
     {
         if (_driverMetadata is not null)
             return _driverMetadata;

@@ -132,7 +132,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     private async ValueTask HandleConnectOrExitStandby(System.Net.WebSockets.WebSocket socket, string wsId, CancellationTokenWrapper cancellationTokenWrapper)
     {
         cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSource();
-        var configuration = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
+        var configuration = await _configurationService.GetConfiguration(cancellationTokenWrapper.RequestAborted);
         if (configuration is { Entities.Count: > 0 })
         {
             var entityStateCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));

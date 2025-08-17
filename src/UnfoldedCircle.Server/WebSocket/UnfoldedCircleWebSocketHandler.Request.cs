@@ -159,7 +159,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.GetDriverVersion)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
-                var driverMetadata = await _configurationService.GetDriverMetadataAsync(cancellationTokenWrapper.RequestAborted);
+                var driverMetadata = await _configurationService.GetDriverMetadata(cancellationTokenWrapper.RequestAborted);
                 await SendAsync(socket,
                     ResponsePayloadHelpers.CreateDriverVersionResponsePayload(
                         payload,
@@ -182,7 +182,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
                 
                 await SendAsync(socket,
-                    ResponsePayloadHelpers.CreateDriverMetaDataResponsePayload(payload, await _configurationService.GetDriverMetadataAsync(cancellationTokenWrapper.RequestAborted)),
+                    ResponsePayloadHelpers.CreateDriverMetaDataResponsePayload(payload, await _configurationService.GetDriverMetadata(cancellationTokenWrapper.RequestAborted)),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
                 

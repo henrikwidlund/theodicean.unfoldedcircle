@@ -172,7 +172,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         RemoveInstruction removeInstruction,
         CancellationToken cancellationToken)
     {
-        var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
+        var configuration = await _configurationService.GetConfiguration(cancellationToken);
 
         var entities = configuration.Entities.Where(x => (x.DeviceId != null && string.Equals(x.DeviceId, removeInstruction.DeviceId, StringComparison.Ordinal))
                                                          || removeInstruction.EntityIds?.Contains(x.EntityId, StringComparer.OrdinalIgnoreCase) is true
@@ -185,7 +185,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             configuration.Entities.Remove(entity);
         }
 
-        await _configurationService.UpdateConfigurationAsync(configuration, cancellationToken);
+        await _configurationService.UpdateConfiguration(configuration, cancellationToken);
     }
 
     private JsonTypeInfo<T>? GetCustomJsonTypeInfo<T>(in MessageEvent messageEvent)
