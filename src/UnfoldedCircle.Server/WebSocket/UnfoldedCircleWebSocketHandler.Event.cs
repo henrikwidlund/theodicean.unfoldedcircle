@@ -147,7 +147,18 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
         async Task GetEntityStateLocal(TConfigurationItem unfoldedCircleConfigurationItem, CancellationToken cancellationToken)
         {
-            var entityState = await GetEntityState(unfoldedCircleConfigurationItem, wsId, cancellationToken);
+            EntityState entityState;
+            try
+            {
+                entityState = await GetEntityState(unfoldedCircleConfigurationItem, wsId, cancellationToken);
+            }
+            catch (OperationCanceledException e)
+            {
+                _logger.LogError(e, "[{WSId}] WS: Failed to get entity state for {EntityId} due to cancellation.",
+                    wsId, unfoldedCircleConfigurationItem.EntityId);
+                return;
+            }
+
             if (entityState is DeviceState.Connected && SupportedEntityTypes.Contains(EntityType.MediaPlayer))
                 _ = Task.Factory.StartNew(() => HandleEventUpdates(socket, unfoldedCircleConfigurationItem.EntityId, wsId, cancellationTokenWrapper),
                     TaskCreationOptions.LongRunning);
