@@ -116,6 +116,13 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         => SessionHolder.BroadcastingEvents[entityId] = true;
 
     /// <summary>
+    /// Removes the <paramref name="entityId"/> from receivers of events from the integration.
+    /// </summary>
+    /// <param name="entityId">The entity_id.</param>
+    protected static void RemoveEntityIdToBroadcastingEvents(string entityId)
+        => SessionHolder.BroadcastingEvents.TryRemove(entityId, out _);
+
+    /// <summary>
     /// Checks if the <paramref name="entityId"/> is currently used for broadcasting events.
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
