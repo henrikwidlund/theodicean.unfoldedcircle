@@ -136,16 +136,13 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         if (configuration is { Entities.Count: > 0 })
         {
             var entityStateCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-            await Task.WhenAll(configuration.Entities.Select(x => GetEntityStateLocal(x, entityStateCancellationTokenSource.Token)));
+            foreach (var entities in configuration.Entities.Chunk(Environment.ProcessorCount * 2))
+                await Task.WhenAll(entities.Select(x => StartEventUpdates(x, entityStateCancellationTokenSource.Token)));
         }
 
-        await SendMessage(socket,
-            ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
-            wsId,
-            cancellationTokenWrapper.RequestAborted);
         return;
 
-        async Task GetEntityStateLocal(TConfigurationItem unfoldedCircleConfigurationItem, CancellationToken cancellationToken)
+        async Task StartEventUpdates(TConfigurationItem unfoldedCircleConfigurationItem, CancellationToken cancellationToken)
         {
             EntityState entityState;
             try
@@ -159,7 +156,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 return;
             }
 
-            if (entityState is DeviceState.Connected && SupportedEntityTypes.Contains(EntityType.MediaPlayer))
+            if (entityState is DeviceState.Connected)
                 _ = Task.Factory.StartNew(() => HandleEventUpdates(socket, unfoldedCircleConfigurationItem.EntityId, wsId, cancellationTokenWrapper),
                     TaskCreationOptions.LongRunning);
         }
