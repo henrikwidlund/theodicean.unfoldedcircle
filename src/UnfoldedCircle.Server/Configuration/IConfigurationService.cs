@@ -12,18 +12,18 @@ public interface IConfigurationService<TConfigurationItem> where TConfigurationI
     /// Gets the current configuration of the Unfolded Circle server.
     /// </summary>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    Task<UnfoldedCircleConfiguration<TConfigurationItem>> GetConfiguration(CancellationToken cancellationToken);
+    Task<UnfoldedCircleConfiguration<TConfigurationItem>> GetConfigurationAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Adds or updates the configuration of the Unfolded Circle server with the provided configuration.
     /// </summary>
     /// <param name="configuration">The configuration to add or update</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    Task<UnfoldedCircleConfiguration<TConfigurationItem>> UpdateConfiguration(UnfoldedCircleConfiguration<TConfigurationItem> configuration, CancellationToken cancellationToken);
+    Task<UnfoldedCircleConfiguration<TConfigurationItem>> UpdateConfigurationAsync(UnfoldedCircleConfiguration<TConfigurationItem> configuration, CancellationToken cancellationToken);
 
     /// <summary>
     /// Gets metadata about the driver that is used in the setup flow and mDNS.
     /// </summary>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    ValueTask<DriverMetadata> GetDriverMetadata(CancellationToken cancellationToken);
+    ValueTask<DriverMetadata> GetDriverMetadataAsync(CancellationToken cancellationToken);
 }

@@ -9,7 +9,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="entityId">The entity_id.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
-    protected abstract Task HandleEventUpdates(
+    protected abstract Task HandleEventUpdatesAsync(
         System.Net.WebSockets.WebSocket socket,
         string entityId,
         string wsId,

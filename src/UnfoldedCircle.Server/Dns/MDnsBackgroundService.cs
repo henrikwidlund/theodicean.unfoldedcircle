@@ -22,7 +22,7 @@ internal sealed class MDnsBackgroundService<TConfigurationItem>(
 
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        var driverMetadata = await _configurationService.GetDriverMetadata(cancellationToken);
+        var driverMetadata = await _configurationService.GetDriverMetadataAsync(cancellationToken);
         // Get the local hostname
         _serviceProfile = new ServiceProfile(driverMetadata.DriverId,
             "_uc-integration._tcp",

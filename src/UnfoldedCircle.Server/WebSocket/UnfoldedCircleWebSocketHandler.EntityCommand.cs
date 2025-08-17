@@ -20,7 +20,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
     /// <returns><see langword="true"/> if successful, otherwise <see langword="false"/></returns>
     /// <remarks>You must emit power on/off events accordingly.</remarks>
-    protected abstract ValueTask<EntityCommandResult> OnRemoteCommand(
+    protected abstract ValueTask<EntityCommandResult> OnRemoteCommandAsync(
         System.Net.WebSockets.WebSocket socket,
         RemoteEntityCommandMsgData payload,
         string command,
@@ -33,7 +33,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="entityId">The entity_id.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    protected abstract ValueTask<bool> IsEntityReachable(
+    protected abstract ValueTask<bool> IsEntityReachableAsync(
         string wsId,
         string entityId,
         CancellationToken cancellationToken);
@@ -53,7 +53,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
     /// <returns><see langword="true"/> if successful, otherwise <see langword="false"/></returns>
-    protected abstract ValueTask<EntityCommandResult> OnMediaPlayerCommand(System.Net.WebSockets.WebSocket socket,
+    protected abstract ValueTask<EntityCommandResult> OnMediaPlayerCommandAsync(System.Net.WebSockets.WebSocket socket,
         MediaPlayerEntityCommandMsgData<TMediaPlayerCommandId> payload,
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper);
@@ -84,15 +84,15 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         Failure
     }
 
-    private async Task HandleEntityCommand<TCommandId, TEntityCommandParams>(
+    private async Task HandleEntityCommandAsync<TCommandId, TEntityCommandParams>(
         System.Net.WebSockets.WebSocket socket,
         CommonReq<EntityCommandMsgData<TCommandId, TEntityCommandParams>> payload,
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper)
     {
-        if (!await IsEntityReachable(wsId, payload.MsgData.EntityId, cancellationTokenWrapper.RequestAborted))
+        if (!await IsEntityReachableAsync(wsId, payload.MsgData.EntityId, cancellationTokenWrapper.RequestAborted))
         {
-            await SendMessage(socket,
+            await SendMessageAsync(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                     new ValidationError
                     {
@@ -105,23 +105,23 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
 
         if (payload is MediaPlayerEntityCommandMsgData<TMediaPlayerCommandId> mediaPlayerEntityCommandMsgData)
-            await HandleMediaPlayerCommand(socket, mediaPlayerEntityCommandMsgData, wsId, cancellationTokenWrapper);
+            await HandleMediaPlayerCommandAsync(socket, mediaPlayerEntityCommandMsgData, wsId, cancellationTokenWrapper);
         else if (payload is RemoteEntityCommandMsgData remoteEntityCommandMsgData)
-            await HandleRemoteCommand(socket, remoteEntityCommandMsgData, wsId, cancellationTokenWrapper);
+            await HandleRemoteCommandAsync(socket, remoteEntityCommandMsgData, wsId, cancellationTokenWrapper);
         else
             _logger.LogWarning("[{WSId}] WS: Unknown entity command type {PayloadType}",
                 wsId, payload.GetType().Name);
     }
 
-    private async Task HandleMediaPlayerCommand(System.Net.WebSockets.WebSocket socket,
+    private async Task HandleMediaPlayerCommandAsync(System.Net.WebSockets.WebSocket socket,
         MediaPlayerEntityCommandMsgData<TMediaPlayerCommandId> payload,
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper)
     {
-        var entityCommandResult = await OnMediaPlayerCommand(socket, payload, wsId, cancellationTokenWrapper);
+        var entityCommandResult = await OnMediaPlayerCommandAsync(socket, payload, wsId, cancellationTokenWrapper);
         if (entityCommandResult != EntityCommandResult.Failure)
         {
-            await SendMessage(socket,
+            await SendMessageAsync(socket,
                 ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                 wsId,
                 cancellationTokenWrapper.RequestAborted);
@@ -133,7 +133,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 {
                     if (entityType == EntityType.MediaPlayer)
                     {
-                        await SendMessage(socket,
+                        await SendMessageAsync(socket,
                             ResponsePayloadHelpers.CreateStateChangedResponsePayload(
                                 new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
                                 entityId,
@@ -142,14 +142,14 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                             cancellationTokenWrapper.RequestAborted);
 
                         if (entityCommandResult == EntityCommandResult.PowerOn)
-                            _ = Task.Factory.StartNew(() => HandleEventUpdates(socket, entityId, wsId, cancellationTokenWrapper),
+                            _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entityId, wsId, cancellationTokenWrapper),
                                 TaskCreationOptions.LongRunning);
                         else
                             await (cancellationTokenWrapper.GetCurrentBroadcastCancellationTokenSource()?.CancelAsync() ?? Task.CompletedTask);
                     }
                     else if (entityType == EntityType.Remote)
                     {
-                        await SendMessage(socket,
+                        await SendMessageAsync(socket,
                             ResponsePayloadHelpers.CreateStateChangedResponsePayload(
                                 new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
                                 payload.MsgData.EntityId,
@@ -167,7 +167,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
         else
         {
-            await SendMessage(socket,
+            await SendMessageAsync(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                     new ValidationError
                     {
@@ -179,7 +179,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
     }
 
-    private async Task HandleRemoteCommand(System.Net.WebSockets.WebSocket socket,
+    private async Task HandleRemoteCommandAsync(System.Net.WebSockets.WebSocket socket,
         RemoteEntityCommandMsgData payload,
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper)
@@ -188,17 +188,17 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             var entityCommandResult = payload.MsgData.CommandId switch
             {
-                "on" => await OnRemoteCommand(socket, payload, "on", wsId, cancellationTokenWrapper),
-                "off" => await OnRemoteCommand(socket, payload, "off", wsId, cancellationTokenWrapper),
-                "toggle" => await OnRemoteCommand(socket, payload, "toggle", wsId, cancellationTokenWrapper),
-                "send_cmd" => await HandleSendCommand(socket, payload, wsId, cancellationTokenWrapper),
-                "send_cmd_sequence" => await HandleSendCommandSequence(socket, payload, wsId, cancellationTokenWrapper),
+                "on" => await OnRemoteCommandAsync(socket, payload, "on", wsId, cancellationTokenWrapper),
+                "off" => await OnRemoteCommandAsync(socket, payload, "off", wsId, cancellationTokenWrapper),
+                "toggle" => await OnRemoteCommandAsync(socket, payload, "toggle", wsId, cancellationTokenWrapper),
+                "send_cmd" => await HandleSendCommandAsync(socket, payload, wsId, cancellationTokenWrapper),
+                "send_cmd_sequence" => await HandleSendCommandSequenceAsync(socket, payload, wsId, cancellationTokenWrapper),
                 _ => EntityCommandResult.Failure
             };
 
             if (entityCommandResult != EntityCommandResult.Failure)
             {
-                await SendMessage(socket,
+                await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
@@ -210,7 +210,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     {
                         if (entityType == EntityType.MediaPlayer)
                         {
-                            await SendMessage(socket,
+                            await SendMessageAsync(socket,
                                 ResponsePayloadHelpers.CreateStateChangedResponsePayload(
                                     new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
                                     entityId,
@@ -218,12 +218,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                 wsId,
                                 cancellationTokenWrapper.RequestAborted);
 
-                            _ = Task.Factory.StartNew(() => HandleEventUpdates(socket, entityId, wsId, cancellationTokenWrapper),
+                            _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entityId, wsId, cancellationTokenWrapper),
                                 TaskCreationOptions.LongRunning);
                         }
                         else if (entityType == EntityType.Remote)
                         {
-                            await SendMessage(socket,
+                            await SendMessageAsync(socket,
                                 ResponsePayloadHelpers.CreateStateChangedResponsePayload(
                                     new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
                                     payload.MsgData.EntityId,
@@ -241,7 +241,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
             else
             {
-                await SendMessage(socket,
+                await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                         new ValidationError
                         {
@@ -255,7 +255,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         catch (Exception e)
         {
             _logger.LogError(e, "[{WSId}] WS: Error while handling entity command {EntityCommand}", wsId, payload.MsgData);
-            await SendMessage(socket,
+            await SendMessageAsync(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                     new ValidationError
                     {
@@ -267,7 +267,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
     }
 
-    private async Task<EntityCommandResult> HandleSendCommand(
+    private async Task<EntityCommandResult> HandleSendCommandAsync(
         System.Net.WebSockets.WebSocket socket,
         RemoteEntityCommandMsgData payload,
         string wsId,
@@ -282,20 +282,20 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             for (var i = 0; i < payload.MsgData.Params.Repeat.Value; i++)
             {
-                await OnRemoteCommand(socket, payload, command, wsId, cancellationTokenWrapper);
+                await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper);
                 if (delay> 0)
                     await Task.Delay(TimeSpan.FromMilliseconds(delay), cancellationTokenWrapper.RequestAborted);
             }
         }
         else
         {
-            await OnRemoteCommand(socket, payload, command, wsId, cancellationTokenWrapper);
+            await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper);
         }
 
         return EntityCommandResult.Other;
     }
 
-    private async Task<EntityCommandResult> HandleSendCommandSequence(System.Net.WebSockets.WebSocket socket,
+    private async Task<EntityCommandResult> HandleSendCommandSequenceAsync(System.Net.WebSockets.WebSocket socket,
         RemoteEntityCommandMsgData payload,
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper)
@@ -311,14 +311,14 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 for (var i = 0; i < payload.MsgData.Params!.Repeat!.Value; i++)
                 {
-                    await OnRemoteCommand(socket, payload, command, wsId, cancellationTokenWrapper);
+                    await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper);
                     if (delay > 0)
                         await Task.Delay(TimeSpan.FromMilliseconds(delay), cancellationTokenWrapper.RequestAborted);
                 }
             }
             else
             {
-                await OnRemoteCommand(socket, payload, command, wsId, cancellationTokenWrapper);
+                await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper);
                 if (delay > 0)
                     await Task.Delay(TimeSpan.FromMilliseconds(delay), cancellationTokenWrapper.RequestAborted);
             }

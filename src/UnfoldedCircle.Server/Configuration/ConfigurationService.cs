@@ -27,7 +27,7 @@ public abstract class ConfigurationService<TConfigurationItem>(IConfiguration co
 
     /// <inheritdoc />
     /// <exception cref="InvalidOperationException">Thrown when the configuration file can't be deserialized.</exception>
-    public async Task<UnfoldedCircleConfiguration<TConfigurationItem>> GetConfiguration(CancellationToken cancellationToken)
+    public async Task<UnfoldedCircleConfiguration<TConfigurationItem>> GetConfigurationAsync(CancellationToken cancellationToken)
     {
         if (_unfoldedCircleConfiguration is not null)
             return _unfoldedCircleConfiguration;
@@ -71,7 +71,7 @@ public abstract class ConfigurationService<TConfigurationItem>(IConfiguration co
     }
 
     /// <inheritdoc />
-    public async Task<UnfoldedCircleConfiguration<TConfigurationItem>> UpdateConfiguration(UnfoldedCircleConfiguration<TConfigurationItem> configuration, CancellationToken cancellationToken)
+    public async Task<UnfoldedCircleConfiguration<TConfigurationItem>> UpdateConfigurationAsync(UnfoldedCircleConfiguration<TConfigurationItem> configuration, CancellationToken cancellationToken)
     {
         await _semaphore.WaitAsync(cancellationToken);
         
@@ -93,7 +93,7 @@ public abstract class ConfigurationService<TConfigurationItem>(IConfiguration co
 
     /// <inheritdoc />
     /// <exception cref="InvalidOperationException">Thrown when the driver.json file can't be deserialized.</exception>
-    public async ValueTask<DriverMetadata> GetDriverMetadata(CancellationToken cancellationToken)
+    public async ValueTask<DriverMetadata> GetDriverMetadataAsync(CancellationToken cancellationToken)
     {
         if (_driverMetadata is not null)
             return _driverMetadata;

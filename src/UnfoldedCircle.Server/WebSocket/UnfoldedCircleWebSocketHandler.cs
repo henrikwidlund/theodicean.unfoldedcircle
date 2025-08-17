@@ -59,7 +59,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="buffer">The content to send.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    protected Task SendMessage(
+    protected Task SendMessageAsync(
         System.Net.WebSockets.WebSocket socket,
         ArraySegment<byte> buffer,
         string wsId,
@@ -114,12 +114,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId"></param>
     protected static void RemoveSocketFromEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap.TryRemove(wsId, out _);
 
-    internal async Task<WebSocketReceiveResult> HandleWebSocket(
+    internal async Task<WebSocketReceiveResult> HandleWebSocketAsync(
         System.Net.WebSockets.WebSocket socket,
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper)
     {
-        await SendMessage(socket,
+        await SendMessageAsync(socket,
             ResponsePayloadHelpers.CreateAuthResponsePayload(),
             wsId,
             cancellationTokenWrapper.RequestAborted);
@@ -160,19 +160,19 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
             
             if (kind.ValueEquals("req"u8))
-                await HandleRequestMessage(socket, wsId, messageEvent, jsonDocument, cancellationTokenWrapper);
+                await HandleRequestMessageAsync(socket, wsId, messageEvent, jsonDocument, cancellationTokenWrapper);
             else if (kind.ValueEquals("event"u8))
-                await HandleEventMessage(socket, wsId, messageEvent, jsonDocument, cancellationTokenWrapper);
+                await HandleEventMessageAsync(socket, wsId, messageEvent, jsonDocument, cancellationTokenWrapper);
         } while (!result.CloseStatus.HasValue && !cancellationTokenWrapper.RequestAborted.IsCancellationRequested);
 
         return result;
     }
 
-    private async ValueTask RemoveConfiguration(
+    private async ValueTask RemoveConfigurationAsync(
         RemoveInstruction removeInstruction,
         CancellationToken cancellationToken)
     {
-        var configuration = await _configurationService.GetConfiguration(cancellationToken);
+        var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
 
         var entities = configuration.Entities.Where(x => (x.DeviceId != null && string.Equals(x.DeviceId, removeInstruction.DeviceId, StringComparison.Ordinal))
                                                          || removeInstruction.EntityIds?.Contains(x.EntityId, StringComparer.OrdinalIgnoreCase) is true
@@ -185,7 +185,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             configuration.Entities.Remove(entity);
         }
 
-        await _configurationService.UpdateConfiguration(configuration, cancellationToken);
+        await _configurationService.UpdateConfigurationAsync(configuration, cancellationToken);
     }
 
     private JsonTypeInfo<T>? GetCustomJsonTypeInfo<T>(in MessageEvent messageEvent)

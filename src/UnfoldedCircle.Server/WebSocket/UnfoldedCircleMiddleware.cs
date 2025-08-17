@@ -35,7 +35,7 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
                 _logger.LogDebug("[{WSId}] WS: New connection", wsId);
 
                 using var cancellationTokenWrapper = new CancellationTokenWrapper(_loggerFactory.CreateLogger<CancellationTokenWrapper>(), _applicationLifetime.ApplicationStopping, context.RequestAborted);
-                var result = await _unfoldedCircleWebSocketHandler.HandleWebSocket(socket, wsId, cancellationTokenWrapper);
+                var result = await _unfoldedCircleWebSocketHandler.HandleWebSocketAsync(socket, wsId, cancellationTokenWrapper);
                 await socket.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, CancellationToken.None);
                 
                 _logger.LogDebug("[{WSId}] WS: Connection closed", wsId);
