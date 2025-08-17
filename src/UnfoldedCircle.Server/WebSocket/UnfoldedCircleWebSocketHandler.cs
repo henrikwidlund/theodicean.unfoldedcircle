@@ -59,7 +59,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="buffer">The content to send.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    protected Task SendAsync(
+    protected Task SendMessage(
         System.Net.WebSockets.WebSocket socket,
         ArraySegment<byte> buffer,
         string wsId,
@@ -114,12 +114,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId"></param>
     protected static void RemoveSocketFromEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap.TryRemove(wsId, out _);
 
-    internal async Task<WebSocketReceiveResult> HandleWebSocketAsync(
+    internal async Task<WebSocketReceiveResult> HandleWebSocket(
         System.Net.WebSockets.WebSocket socket,
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper)
     {
-        await SendAsync(socket,
+        await SendMessage(socket,
             ResponsePayloadHelpers.CreateAuthResponsePayload(),
             wsId,
             cancellationTokenWrapper.RequestAborted);

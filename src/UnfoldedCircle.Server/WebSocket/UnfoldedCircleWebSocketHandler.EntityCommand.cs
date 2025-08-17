@@ -92,7 +92,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         if (!await IsEntityReachable(wsId, payload.MsgData.EntityId, cancellationTokenWrapper.RequestAborted))
         {
-            await SendAsync(socket,
+            await SendMessage(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                     new ValidationError
                     {
@@ -121,7 +121,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         var entityCommandResult = await OnMediaPlayerCommand(socket, payload, wsId, cancellationTokenWrapper);
         if (entityCommandResult != EntityCommandResult.Failure)
         {
-            await SendAsync(socket,
+            await SendMessage(socket,
                 ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                 wsId,
                 cancellationTokenWrapper.RequestAborted);
@@ -133,7 +133,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 {
                     if (entityType == EntityType.MediaPlayer)
                     {
-                        await SendAsync(socket,
+                        await SendMessage(socket,
                             ResponsePayloadHelpers.CreateStateChangedResponsePayload(
                                 new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
                                 entityId,
@@ -149,7 +149,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     }
                     else if (entityType == EntityType.Remote)
                     {
-                        await SendAsync(socket,
+                        await SendMessage(socket,
                             ResponsePayloadHelpers.CreateStateChangedResponsePayload(
                                 new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
                                 payload.MsgData.EntityId,
@@ -167,7 +167,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
         else
         {
-            await SendAsync(socket,
+            await SendMessage(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                     new ValidationError
                     {
@@ -198,7 +198,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
             if (entityCommandResult != EntityCommandResult.Failure)
             {
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
@@ -210,7 +210,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     {
                         if (entityType == EntityType.MediaPlayer)
                         {
-                            await SendAsync(socket,
+                            await SendMessage(socket,
                                 ResponsePayloadHelpers.CreateStateChangedResponsePayload(
                                     new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
                                     entityId,
@@ -223,7 +223,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         }
                         else if (entityType == EntityType.Remote)
                         {
-                            await SendAsync(socket,
+                            await SendMessage(socket,
                                 ResponsePayloadHelpers.CreateStateChangedResponsePayload(
                                     new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
                                     payload.MsgData.EntityId,
@@ -241,7 +241,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
             else
             {
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                         new ValidationError
                         {
@@ -255,7 +255,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         catch (Exception e)
         {
             _logger.LogError(e, "[{WSId}] WS: Error while handling entity command {EntityCommand}", wsId, payload.MsgData);
-            await SendAsync(socket,
+            await SendMessage(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                     new ValidationError
                     {

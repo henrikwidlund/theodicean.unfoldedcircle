@@ -77,7 +77,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var success = await OnDisconnect(payload, wsId, cancellationTokenWrapper.RequestAborted);
                 RemoveSocketFromMap(wsId, out _);
 
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateConnectEventResponsePayload(success ? DeviceState.Disconnected : DeviceState.Error),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
@@ -96,7 +96,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     _logger.LogInformation("[{WSId}] WS: Removed configuration for {EntityId}", wsId, entityId);
                 }
                 
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(0),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
@@ -109,7 +109,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                            ?? UnfoldedCircleJsonSerializerContext.Default.EnterStandbyEvent)!;
                     await (cancellationTokenWrapper.GetCurrentBroadcastCancellationTokenSource()?.CancelAsync() ?? Task.CompletedTask);
                     await OnEnterStandby(payload, wsId, cancellationTokenWrapper.RequestAborted);
-                    await SendAsync(socket,
+                    await SendMessage(socket,
                         ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Disconnected),
                         wsId,
                         cancellationTokenWrapper.RequestAborted);
@@ -139,7 +139,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             await Task.WhenAll(configuration.Entities.Select(x => GetEntityStateLocal(x, entityStateCancellationTokenSource.Token)));
         }
 
-        await SendAsync(socket,
+        await SendMessage(socket,
             ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
             wsId,
             cancellationTokenWrapper.RequestAborted);

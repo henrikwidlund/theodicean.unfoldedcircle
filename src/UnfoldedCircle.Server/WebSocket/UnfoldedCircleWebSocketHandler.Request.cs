@@ -92,7 +92,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="payload">Payload of the request.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    /// <remarks>Any additional steps needed must be handled manually here by sending the instructions through <see cref="SendAsync"/>.</remarks>
+    /// <remarks>Any additional steps needed must be handled manually here by sending the instructions through <see cref="SendMessage"/>.</remarks>
     protected abstract ValueTask OnSetupDriverUserData(System.Net.WebSockets.WebSocket socket, SetDriverUserDataMsg payload, string wsId, CancellationToken cancellationToken);
 
     /// <summary>
@@ -160,7 +160,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.GetDriverVersion)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
                 var driverMetadata = await _configurationService.GetDriverMetadata(cancellationTokenWrapper.RequestAborted);
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateDriverVersionResponsePayload(
                         payload,
                         new DriverVersion
@@ -181,7 +181,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.GetDriverMetaData)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
                 
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateDriverMetaDataResponsePayload(payload, await _configurationService.GetDriverMetadata(cancellationTokenWrapper.RequestAborted)),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
@@ -192,7 +192,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<GetDeviceStateMsg>(MessageEvent.GetDeviceState)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.GetDeviceStateMsg)!;
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateDeviceStateResponsePayload(
                         await OnGetDeviceState(payload, wsId, cancellationTokenWrapper.RequestAborted),
                         payload.MsgData.DeviceId
@@ -206,7 +206,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<GetAvailableEntitiesMsg>(MessageEvent.GetAvailableEntities)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.GetAvailableEntitiesMsg)!;
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateGetAvailableEntitiesMsg(payload,
                         new AvailableEntitiesMsgData
                         {
@@ -223,7 +223,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.SubscribeEvents)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
                 await OnSubscribeEvents(socket, payload, wsId, cancellationTokenWrapper);
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
@@ -238,7 +238,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.UnsubscribeEventsMsg)!;
                 await OnUnsubscribeEvents(payload, wsId, cancellationTokenWrapper.RequestAborted);
                 await RemoveConfiguration(new RemoveInstruction(payload.MsgData?.DeviceId.GetNullableBaseIdentifier(), payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), null), cancellationTokenWrapper.ApplicationStopping);
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
@@ -249,7 +249,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 GetEntityStatesMsg payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<GetEntityStatesMsg>(MessageEvent.GetEntityStates)
                                                                       ?? UnfoldedCircleJsonSerializerContext.Default.GetEntityStatesMsg)!;
-                await SendAsync(socket,
+                await SendMessage(socket,
                     ResponsePayloadHelpers.CreateGetEntityStatesResponsePayload(payload,
                         await OnGetEntityStates(payload, wsId, cancellationTokenWrapper.RequestAborted)),
                     wsId,
@@ -265,7 +265,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 if (setupResult is null)
                 {
                     _logger.LogError("[{WSId}] WS: Setup driver failed. Payload: {@Payload}.", wsId, payload.MsgData);
-                    await SendAsync(socket,
+                    await SendMessage(socket,
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                             new ValidationError
                             {
@@ -286,7 +286,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     }
                     else
                     {
-                        await SendAsync(socket,
+                        await SendMessage(socket,
                             ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.NextSetupStep),
                             wsId,
                             cancellationTokenWrapper.RequestAborted);
@@ -295,17 +295,17 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 }
 
                 await Task.WhenAll(
-                    SendAsync(socket,
+                    SendMessage(socket,
                         ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                         wsId,
                         cancellationTokenWrapper.RequestAborted),
-                    SendAsync(socket,
+                    SendMessage(socket,
                         ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized),
                         wsId,
                         cancellationTokenWrapper.RequestAborted),
                     setupResult.SetupDriverResult == SetupDriverResult.Error
                         ? Task.CompletedTask
-                        : SendAsync(socket,
+                        : SendMessage(socket,
                             ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
                             wsId,
                             cancellationTokenWrapper.RequestAborted)
