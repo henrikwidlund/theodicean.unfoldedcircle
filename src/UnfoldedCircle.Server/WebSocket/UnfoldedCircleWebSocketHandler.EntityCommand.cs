@@ -232,9 +232,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     wsId, entity.EntitType.ToString(), entity.EntityId);
             }
 
-            if (!IsBroadcastingEvents(entity.EntityId))
-                _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entity.EntityId, wsId, cancellationTokenWrapper),
-                    TaskCreationOptions.LongRunning);
+            _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entity.EntityId, wsId, cancellationTokenWrapper),
+                TaskCreationOptions.LongRunning);
         }
     }
 
