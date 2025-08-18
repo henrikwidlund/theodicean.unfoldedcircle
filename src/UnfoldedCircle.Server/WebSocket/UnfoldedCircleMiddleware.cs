@@ -29,7 +29,7 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
         {
             if (context.WebSockets.IsWebSocketRequest)
             {
-                var socket = await context.WebSockets.AcceptWebSocketAsync();
+                using var socket = await context.WebSockets.AcceptWebSocketAsync();
                 var wsId = $"{context.Connection.RemoteIpAddress?.ToString()}:{context.Connection.RemotePort.ToString(NumberFormatInfo.InvariantInfo)}";
 
                 _logger.LogDebug("[{WSId}] WS: New connection", wsId);
