@@ -33,7 +33,6 @@ public static class ValueExtensions
     /// <exception cref="ArgumentOutOfRangeException">An unknown value for <see cref="EntityType"/> was specified.</exception>
     public static string GetIdentifier(this string baseIdentifier, in EntityType entityType)
     {
-        baseIdentifier = $"{RemotePrefix}{baseIdentifier}";
         var identifierSpan = baseIdentifier.AsSpan();
         foreach (string se in PrefixesSet)
         {
