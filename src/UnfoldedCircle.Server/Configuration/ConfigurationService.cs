@@ -15,6 +15,7 @@ namespace UnfoldedCircle.Server.Configuration;
 /// Entity settings are stored in <c>configured_entities.json</c>, located in the <c>UC_CONFIG_HOME</c>,
 /// or the same folder as the driver.json file if empty.
 /// </remarks>
+// ReSharper disable once UnusedType.Global
 public abstract class ConfigurationService<TConfigurationItem>(IConfiguration configuration) : IConfigurationService<TConfigurationItem>
     where TConfigurationItem : UnfoldedCircleConfigurationItem
 {

@@ -16,6 +16,7 @@ namespace Microsoft.AspNetCore.Builder;
 /// <summary>
 /// Extension methods for registering the Unfolded Circle server in an ASP.NET Core application.
 /// </summary>
+// ReSharper disable once UnusedType.Global
 public static class UnfoldedCircleRegistrationExtensions
 {
     /// <summary>
@@ -27,6 +28,7 @@ public static class UnfoldedCircleRegistrationExtensions
     /// <typeparam name="TConfigurationService">The type of configuration service to use.</typeparam>
     /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
     /// <returns>A <see cref="WebApplicationBuilder"/> with the Unfolded Circle server added to it.</returns>
+    // ReSharper disable once UnusedMember.Global
     public static WebApplicationBuilder AddUnfoldedCircleServer<
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TUnfoldedCircleWebSocketHandler,
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TConfigurationService,
@@ -52,6 +54,7 @@ public static class UnfoldedCircleRegistrationExtensions
     /// <typeparam name="TConfigurationService">The type of configuration service to use.</typeparam>
     /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
     /// <returns>A <see cref="WebApplicationBuilder"/> with the Unfolded Circle server added to it.</returns>
+    // ReSharper disable once MemberCanBePrivate.Global
     public static WebApplicationBuilder AddUnfoldedCircleServer<
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TUnfoldedCircleWebSocketHandler,
         [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TMediaPlayerCommandId,
@@ -95,6 +98,7 @@ public static class UnfoldedCircleRegistrationExtensions
     /// <param name="webSocketOptions">Optional options to customize the websocket behaviour.</param>
     /// <typeparam name="TUnfoldedCircleWebSocketHandler">The type of socket handler to use.</typeparam>
     /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
+    // ReSharper disable once UnusedMember.Global
     public static IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TConfigurationItem>(this IApplicationBuilder builder,
         WebSocketOptions? webSocketOptions = null)
         where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<MediaPlayerCommandId, TConfigurationItem>
@@ -109,6 +113,7 @@ public static class UnfoldedCircleRegistrationExtensions
     /// <typeparam name="TUnfoldedCircleWebSocketHandler">The type of socket handler to use.</typeparam>
     /// <typeparam name="TMediaPlayerCommandId">The type of media player command id to use.</typeparam>
     /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
+    // ReSharper disable once MemberCanBePrivate.Global
     public static IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>(this IApplicationBuilder builder,
         WebSocketOptions? webSocketOptions = null)
         where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>

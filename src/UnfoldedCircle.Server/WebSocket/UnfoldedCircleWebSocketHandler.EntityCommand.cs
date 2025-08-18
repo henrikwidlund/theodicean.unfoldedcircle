@@ -42,6 +42,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// Returns all the different variants of entities that are valid for the given <paramref name="entityId"/>.
     /// </summary>
     /// <param name="entityId">The entity_id to return values for.</param>
+    // ReSharper disable once MemberCanBePrivate.Global
     protected IEnumerable<(string EntityId, EntityType EntitType)> GetEntities(string entityId)
         => SupportedEntityTypes.Select(supportedEntityType => (entityId.GetIdentifier(supportedEntityType), supportedEntityType));
 

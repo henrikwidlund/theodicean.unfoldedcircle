@@ -123,6 +123,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="Entity">The configuration item.</param>
     /// <param name="SetupDriverResult">Result of the current setup step.</param>
     /// <param name="NextSetupStep">Information about the next setup step. Must be sent if <paramref name="SetupDriverResult"/> is set to <see cref="SetupDriverResult.UserInputRequired"/>.</param>
+    // ReSharper disable once ClassNeverInstantiated.Global
     protected sealed record OnSetupResult(TConfigurationItem Entity, in SetupDriverResult SetupDriverResult, RequireUserAction? NextSetupStep = null);
 
     /// <summary>
