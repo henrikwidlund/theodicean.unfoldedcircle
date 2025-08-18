@@ -222,13 +222,13 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.SubscribeEvents)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
+                AddSocketToEventReceivers(wsId);
+                cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSource();
                 await OnSubscribeEventsAsync(socket, payload, wsId, cancellationTokenWrapper);
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
-
-                AddSocketToEventReceivers(wsId);
 
                 return;
             }
