@@ -113,21 +113,21 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
     /// <returns><see langword="true"/> if the key was added, otherwise <see langword="fakse"/>.</returns>
-    protected static bool TryAddEntityIdToBroadcastingEvents(string entityId) => SessionHolder.BroadcastingEvents.TryAdd(entityId, true);
+    protected static bool TryAddEntityIdToBroadcastingEvents(string entityId) => SessionHolder.BroadcastingEvents.TryAdd(entityId.GetBaseIdentifier(), true);
 
     /// <summary>
     /// Removes the <paramref name="entityId"/> from receivers of events from the integration.
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
     protected static void RemoveEntityIdToBroadcastingEvents(string entityId)
-        => SessionHolder.BroadcastingEvents.TryRemove(entityId, out _);
+        => SessionHolder.BroadcastingEvents.TryRemove(entityId.GetBaseIdentifier(), out _);
 
     /// <summary>
     /// Checks if the <paramref name="entityId"/> is currently used for broadcasting events.
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
     protected static bool IsBroadcastingEvents(string entityId)
-        => SessionHolder.BroadcastingEvents.TryGetValue(entityId, out var broadcasting) && broadcasting;
+        => SessionHolder.BroadcastingEvents.TryGetValue(entityId.GetBaseIdentifier(), out var broadcasting) && broadcasting;
 
     /// <summary>
     /// Removes the <paramref name="wsId"/> from the list of event receivers.

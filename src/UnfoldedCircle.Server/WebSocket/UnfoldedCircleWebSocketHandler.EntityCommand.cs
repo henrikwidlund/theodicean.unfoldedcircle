@@ -90,7 +90,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper)
     {
-        if (!await IsEntityReachableAsync(wsId, payload.MsgData.EntityId, cancellationTokenWrapper.RequestAborted))
+        if (!await IsEntityReachableAsync(wsId, payload.MsgData.EntityId.GetBaseIdentifier(), cancellationTokenWrapper.RequestAborted))
         {
             await SendMessageAsync(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -204,6 +204,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
 
         return;
+
         async Task SendPowerStatusAndBroadcastAsync((string EntityId, EntityType EntitType) entity)
         {
             if (entity.EntitType == EntityType.MediaPlayer)
@@ -232,7 +233,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     wsId, entity.EntitType.ToString(), entity.EntityId);
             }
 
-            _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entity.EntityId, wsId, cancellationTokenWrapper),
+            _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entity.EntityId.GetBaseIdentifier(), wsId, cancellationTokenWrapper),
                 TaskCreationOptions.LongRunning);
         }
     }
