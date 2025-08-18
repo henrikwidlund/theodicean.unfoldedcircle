@@ -73793,7 +73793,7 @@
       "versionControlProvenance": [
         {
           "repositoryUri": "https://github.com/henrikwidlund/theodicean.unfoldedcircle.git",
-          "revisionId": "6c0a4da0db5df7c45e4b9018dce27174714ad957",
+          "revisionId": "3063955099d89fd6fee2fef783b224bcc41923ce",
           "branch": "main",
           "properties": {
             "repoUrl": "https://github.com/henrikwidlund/theodicean.unfoldedcircle.git",
@@ -74271,22 +74271,22 @@
                   "index": 6
                 },
                 "region": {
-                  "startLine": 86,
+                  "startLine": 85,
                   "startColumn": 5,
-                  "endLine": 86,
+                  "endLine": 85,
                   "endColumn": 11,
-                  "charOffset": 4609,
+                  "charOffset": 4549,
                   "charLength": 6,
                   "snippet": {
                     "text": "public"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 85,
+                  "startLine": 84,
                   "startColumn": 1,
-                  "endLine": 87,
+                  "endLine": 86,
                   "endColumn": 104,
-                  "charOffset": 4586,
+                  "charOffset": 4526,
                   "charLength": 225,
                   "snippet": {
                     "text": "    /// </returns>\n    public static string? GetNullableIdentifier(this string? baseIdentifier, in EntityType entityType)\n        => string.IsNullOrWhiteSpace(baseIdentifier) ? null : baseIdentifier.GetIdentifier(entityType);"
@@ -75651,7 +75651,7 @@
                   "startColumn": 27,
                   "endLine": 136,
                   "endColumn": 57,
-                  "charOffset": 6459,
+                  "charOffset": 6519,
                   "charLength": 30,
                   "snippet": {
                     "text": "RemoveSocketFromEventReceivers"
@@ -75662,7 +75662,7 @@
                   "startColumn": 1,
                   "endLine": 137,
                   "endColumn": 1,
-                  "charOffset": 6397,
+                  "charOffset": 6457,
                   "charLength": 166,
                   "snippet": {
                     "text": "    /// <param name=\"wsId\"></param>\n    protected static void RemoveSocketFromEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap.TryRemove(wsId, out _);\n"
@@ -75742,59 +75742,6 @@
           "kind": "fail",
           "level": "note",
           "message": {
-            "text": "Method 'IsBroadcastingEvents' can be made private"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 3
-                },
-                "region": {
-                  "startLine": 129,
-                  "startColumn": 5,
-                  "endLine": 129,
-                  "endColumn": 14,
-                  "charOffset": 6116,
-                  "charLength": 9,
-                  "snippet": {
-                    "text": "protected"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 128,
-                  "startColumn": 1,
-                  "endLine": 130,
-                  "endColumn": 105,
-                  "charOffset": 6058,
-                  "charLength": 222,
-                  "snippet": {
-                    "text": "    /// <param name=\"entityId\">The entity_id.</param>\n    protected static bool IsBroadcastingEvents(string entityId)\n        => SessionHolder.BroadcastingEvents.TryGetValue(entityId, out var broadcasting) && broadcasting;"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "44EB279487AAC3672CDABBCB8922BEFE0DCFC2EFBDC4A6780D5A1F8CB1F82393"
-          },
-          "baselineState": "new",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 9.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "MemberCanBePrivate.Global",
-          "ruleIndex": 2278,
-          "kind": "fail",
-          "level": "note",
-          "message": {
             "text": "Method 'SendMessageAsync' can be made private"
           },
           "locations": [
@@ -75833,6 +75780,59 @@
           "partialFingerprints": {
             "equalIndicator/v1": "E0F9B7052C23CF6CBF68DA02792682A6D7440AB0DC3BBEC51550D76433B1D244"
           },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 9.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "UnusedMember.Global",
+          "ruleIndex": 2738,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Method 'IsBroadcastingEvents' is never used"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 129,
+                  "startColumn": 27,
+                  "endLine": 129,
+                  "endColumn": 47,
+                  "charOffset": 6178,
+                  "charLength": 20,
+                  "snippet": {
+                    "text": "IsBroadcastingEvents"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 128,
+                  "startColumn": 1,
+                  "endLine": 130,
+                  "endColumn": 125,
+                  "charOffset": 6098,
+                  "charLength": 242,
+                  "snippet": {
+                    "text": "    /// <param name=\"entityId\">The entity_id.</param>\n    protected static bool IsBroadcastingEvents(string entityId)\n        => SessionHolder.BroadcastingEvents.TryGetValue(entityId.GetBaseIdentifier(), out var broadcasting) && broadcasting;"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "08A2A496831945495076818E7BE2EDAEF940C71D4371F0071E1A9F10FF18BF72"
+          },
           "baselineState": "new",
           "properties": {
             "qodanaSeverity": "Moderate",
@@ -75863,7 +75863,7 @@
                   "startColumn": 27,
                   "endLine": 122,
                   "endColumn": 61,
-                  "charOffset": 5803,
+                  "charOffset": 5823,
                   "charLength": 34,
                   "snippet": {
                     "text": "RemoveEntityIdToBroadcastingEvents"
@@ -75873,20 +75873,20 @@
                   "startLine": 121,
                   "startColumn": 1,
                   "endLine": 123,
-                  "endColumn": 72,
-                  "charOffset": 5723,
-                  "charLength": 203,
+                  "endColumn": 92,
+                  "charOffset": 5743,
+                  "charLength": 223,
                   "snippet": {
-                    "text": "    /// <param name=\"entityId\">The entity_id.</param>\n    protected static void RemoveEntityIdToBroadcastingEvents(string entityId)\n        => SessionHolder.BroadcastingEvents.TryRemove(entityId, out _);"
+                    "text": "    /// <param name=\"entityId\">The entity_id.</param>\n    protected static void RemoveEntityIdToBroadcastingEvents(string entityId)\n        => SessionHolder.BroadcastingEvents.TryRemove(entityId.GetBaseIdentifier(), out _);"
                   }
                 }
               }
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v1": "9D5B76E1187D897437043A0E06AFDA91EFE4E465B780CDA8565F7F9175A7DDF1"
+            "equalIndicator/v1": "A7848ACA0B8EF8EB30BC7975389D0A0A4391FEC0B99707056449B3666D6F5B02"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "Moderate",
             "tags": [
@@ -75928,18 +75928,18 @@
                   "endLine": 117,
                   "endColumn": 1,
                   "charOffset": 5345,
-                  "charLength": 245,
+                  "charLength": 265,
                   "snippet": {
-                    "text": "    /// <returns><see langword=\"true\"/> if the key was added, otherwise <see langword=\"fakse\"/>.</returns>\n    protected static bool TryAddEntityIdToBroadcastingEvents(string entityId) => SessionHolder.BroadcastingEvents.TryAdd(entityId, true);\n"
+                    "text": "    /// <returns><see langword=\"true\"/> if the key was added, otherwise <see langword=\"fakse\"/>.</returns>\n    protected static bool TryAddEntityIdToBroadcastingEvents(string entityId) => SessionHolder.BroadcastingEvents.TryAdd(entityId.GetBaseIdentifier(), true);\n"
                   }
                 }
               }
             }
           ],
           "partialFingerprints": {
-            "equalIndicator/v1": "D7F38B0CB037135F6F87447403F407377983CA4034B9FEC7CA2B89A30D532AD5"
+            "equalIndicator/v1": "A6B501F64F3D7F69DE07021998DD6C43D324A65C41D64940481E904B1278ED4E"
           },
-          "baselineState": "new",
+          "baselineState": "unchanged",
           "properties": {
             "qodanaSeverity": "Moderate",
             "tags": [
@@ -75950,10 +75950,10 @@
         }
       ],
       "automationDetails": {
-        "id": "QDNETC/qodana/2025-08-17",
-        "guid": "5a3dbe88-8d65-442d-9d34-052a8da0dd8e",
+        "id": "QDNETC/qodana/2025-08-18",
+        "guid": "d37b573b-defe-4b37-8135-427c2d0bf042",
         "properties": {
-          "jobUrl": "https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/runs/17023580992"
+          "jobUrl": "https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/runs/17038333006"
         }
       },
       "newlineSequences": [
