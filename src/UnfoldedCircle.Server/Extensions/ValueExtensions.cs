@@ -18,6 +18,7 @@ public static class ValueExtensions
     /// <param name="key">The key to get the value for.</param>
     /// <param name="defaultValue">The value returned if the key is not found, is null, empty or only contains whitespaces.</param>
     /// <typeparam name="TKey"></typeparam>
+    // ReSharper disable once UnusedMember.Global
     public static string GetValueOrNull<TKey>(this IReadOnlyDictionary<TKey, string> dictionary, TKey key, string defaultValue)
     {
         string value = dictionary.GetValueOrDefault(key, defaultValue);
@@ -82,6 +83,7 @@ public static class ValueExtensions
     /// A prefixed identifier based on the <paramref name="entityType"/> value,
     /// or null if the <paramref name="baseIdentifier"/> is null or whitespace.
     /// </returns>
+    // ReSharper disable once MemberCanBePrivate.Global
     public static string? GetNullableIdentifier(this string? baseIdentifier, in EntityType entityType)
         => string.IsNullOrWhiteSpace(baseIdentifier) ? null : baseIdentifier.GetIdentifier(entityType);
 

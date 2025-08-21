@@ -19,6 +19,7 @@ public class UnfoldedCircleOptions
     /// This will disable the prefixes for all entity types and will cause duplicates if your integration supports multiple entity types.
     /// Only read at startup.
     /// </remarks>
+    // ReSharper disable once UnusedAutoPropertyAccessor.Global
     public bool DisableEntityIdPrefixing { get; set; }
 
     /// <summary>
@@ -27,6 +28,7 @@ public class UnfoldedCircleOptions
     /// This setting will only be used if the <c>UC_INTEGRATION_HTTP_PORT</c> environment variable is not set
     /// and is only read at startup.</remarks>
     /// </summary>
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public int ListeningPort { get; set; } = 9001;
 
     /// <summary>
@@ -35,6 +37,7 @@ public class UnfoldedCircleOptions
     public Dictionary<MessageEvent, JsonTypeInfo> MessageEventDeserializeOverrides
     {
         get => _messageEventDeserializeOverrides ??= [];
+        // ReSharper disable once UnusedMember.Global
         set => _messageEventDeserializeOverrides = value;
     }
 }
