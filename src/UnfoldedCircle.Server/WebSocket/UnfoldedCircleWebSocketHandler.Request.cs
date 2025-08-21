@@ -75,7 +75,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/>.</param>
     /// <remarks>
-    /// Event applies to the <see cref="UnsubscribeEventsMsgData.DeviceId"/> and <see cref="UnsubscribeEventsMsgData.EntityIds"/> in <see cref="UnsubscribeEventsMsg.MsgData"/>,
+    /// Event applies to the <see cref="UnsubscribeEventsMsgData.DeviceId"/> and <see cref="UnsubscribeEventsMsgData.EntityIds"/> on the MessageData property,
     /// or all entities if both are null.
     /// </remarks>
     protected abstract ValueTask OnUnsubscribeEventsAsync(UnsubscribeEventsMsg payload, string wsId, CancellationTokenWrapper cancellationTokenWrapper);
