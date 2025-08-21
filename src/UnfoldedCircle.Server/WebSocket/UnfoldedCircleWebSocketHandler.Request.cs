@@ -74,6 +74,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="payload">Payload of the request.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/>.</param>
+    /// <remarks>
+    /// Event applies to the <see cref="UnsubscribeEventsMsgData.DeviceId"/> and <see cref="UnsubscribeEventsMsgData.EntityIds"/> in <see cref="UnsubscribeEventsMsg.MsgData"/>,
+    /// or all entities if both are null.
+    /// </remarks>
     protected abstract ValueTask OnUnsubscribeEventsAsync(UnsubscribeEventsMsg payload, string wsId, CancellationTokenWrapper cancellationTokenWrapper);
 
     /// <summary>
@@ -238,7 +242,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<UnsubscribeEventsMsg>(MessageEvent.UnsubscribeEvents)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.UnsubscribeEventsMsg)!;
                 await OnUnsubscribeEventsAsync(payload, wsId, cancellationTokenWrapper);
-                await RemoveConfigurationAsync(new RemoveInstruction(payload.MsgData?.DeviceId.GetNullableBaseIdentifier(), payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), null), cancellationTokenWrapper.ApplicationStopping);
+                await RemoveConfigurationAsync(new RemoveInstruction(
+                        payload.MsgData?.DeviceId.GetNullableBaseIdentifier(),
+                        payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), null),
+                    cancellationTokenWrapper.ApplicationStopping);
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,
