@@ -75,7 +75,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                            ?? UnfoldedCircleJsonSerializerContext.Default.DisconnectEvent)!;
                 await (cancellationTokenWrapper.GetCurrentBroadcastCancellationTokenSource()?.CancelAsync() ?? Task.CompletedTask);
                 var success = await OnDisconnectAsync(payload, wsId, cancellationTokenWrapper.RequestAborted);
-                RemoveSocketFromMap(wsId, out _);
+                SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
 
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateConnectEventResponsePayload(success ? DeviceState.Disconnected : DeviceState.Error),
@@ -90,9 +90,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.AbortDriverSetupEvent)!;
                 await (cancellationTokenWrapper.GetCurrentBroadcastCancellationTokenSource()?.CancelAsync() ?? Task.CompletedTask);
                 await OnAbortDriverSetupAsync(payload, wsId, cancellationTokenWrapper.RequestAborted);
-                if (RemoveSocketFromMap(wsId, out var entityId))
+                if (SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out var entityId))
                 {
-                    await RemoveConfigurationAsync(new RemoveInstruction(null, null, entityId), cancellationTokenWrapper.ApplicationStopping);
+                    await RemoveConfigurationAsync(wsId, new RemoveInstruction(null, null, entityId), cancellationTokenWrapper.ApplicationStopping);
                     _logger.LogInformation("[{WSId}] WS: Removed configuration for {EntityId}", wsId, entityId);
                 }
                 

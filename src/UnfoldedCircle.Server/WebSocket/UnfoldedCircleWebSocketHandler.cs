@@ -76,33 +76,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     }
 
     /// <summary>
-    /// Maps the <paramref name="entityId"/> to the <paramref name="wsId"/>.
-    /// </summary>
-    /// <param name="wsId">ID of the websocket.</param>
-    /// <param name="entityId">The entity_id.</param>
-    // ReSharper disable once MemberCanBePrivate.Global
-    protected static void MapEntityIdToSocket(string wsId, string entityId) => SessionHolder.SocketIdEntityIpMap[wsId] = entityId.GetBaseIdentifier();
-
-    /// <summary>
-    /// Tries to get the entity_id from the <paramref name="wsId"/>.
-    /// </summary>
-    /// <param name="wsId">ID of the websocket.</param>
-    /// <param name="entityId">The entity_id.</param>
-    /// <returns><see langword="true"/> if found, otherwise <see langword="false"/>.</returns>
-    // ReSharper disable once UnusedMember.Global
-    protected static bool TryGetEntityIdFromSocket(string wsId, [NotNullWhen(true)] out string? entityId)
-        => SessionHolder.SocketIdEntityIpMap.TryGetValue(wsId, out entityId) && !string.IsNullOrEmpty(entityId);
-
-    /// <summary>
-    /// Removes the mapping of the <paramref name="wsId"/>.
-    /// </summary>
-    /// <param name="wsId">ID of the websocket.</param>
-    /// <param name="entityId"></param>
-    // ReSharper disable once MemberCanBePrivate.Global
-    protected static bool RemoveSocketFromMap(string wsId, [NotNullWhen(true)] out string? entityId)
-        => SessionHolder.SocketIdEntityIpMap.TryRemove(wsId, out entityId);
-
-    /// <summary>
     /// Marks the <paramref name="wsId"/> to receive events from the integration.
     /// </summary>
     /// <param name="wsId">ID of the websocket.</param>
@@ -218,6 +191,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     }
 
     private async ValueTask RemoveConfigurationAsync(
+        string wsId,
         RemoveInstruction removeInstruction,
         CancellationToken cancellationToken)
     {
@@ -230,7 +204,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
         foreach (var entity in entities)
         {
-            _logger.LogInformation("Removing entity {@Entity}", entity);
+            _logger.LogInformation("[{WSId}] Removing entity {@Entity}", wsId, entity);
             configuration.Entities.Remove(entity);
         }
 
