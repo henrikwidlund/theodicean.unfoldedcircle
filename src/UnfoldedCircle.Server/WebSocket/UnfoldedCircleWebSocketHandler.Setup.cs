@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 
 using UnfoldedCircle.Models.Events;
+using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Models.Sync;
 using UnfoldedCircle.Server.Configuration;
 using UnfoldedCircle.Server.Response;
@@ -109,14 +110,33 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 configuration.Entities.Remove(entity);
                 await _configurationService.UpdateConfigurationAsync(configuration, cancellationToken);
                 await FinishSetupAsync(socket, wsId, true, payload, cancellationToken);
+                await Task.WhenAll(CreateEntityUnavailableSignals(socket, wsId, entity.EntityId, cancellationToken));
                 return;
             case ActionReset:
                 configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
+                await Task.WhenAll(configuration.Entities.SelectMany(x => CreateEntityUnavailableSignals(socket, wsId, x.EntityId, cancellationToken)));
                 configuration.Entities.Clear();
                 await _configurationService.UpdateConfigurationAsync(configuration, cancellationToken);
                 await FinishSetupAsync(socket, wsId, true, payload, cancellationToken);
                 return;
         }
+    }
+
+    private IEnumerable<Task> CreateEntityUnavailableSignals(System.Net.WebSockets.WebSocket socket, string wsId, string entityId, CancellationToken cancellationToken)
+    {
+        return GetEntities(entityId).Select(x =>
+        {
+            return x.EntitType switch
+            {
+                EntityType.MediaPlayer => SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateStateChangedResponsePayload(new MediaPlayerStateChangedEventMessageDataAttributes { State = State.Unknown }, x.EntityId,
+                        EntityType.MediaPlayer), wsId, cancellationToken),
+                EntityType.Remote => SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateStateChangedResponsePayload(new RemoteStateChangedEventMessageDataAttributes { State = RemoteState.Unknown }, x.EntityId,
+                        EntityType.Remote), wsId, cancellationToken),
+                _ => Task.CompletedTask
+            };
+        });
     }
 
     /// <summary>
