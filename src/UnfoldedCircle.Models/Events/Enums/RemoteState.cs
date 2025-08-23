@@ -12,6 +12,9 @@ public enum RemoteState
     [Display(Name = "OFF")]
     Off,
 
+    [Display(Name = "UNAVAILABLE")]
+    Unavailable,
+
     [Display(Name = "UNKNOWN")]
     Unknown
 }

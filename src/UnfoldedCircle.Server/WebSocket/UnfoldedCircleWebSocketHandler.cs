@@ -1,6 +1,5 @@
 using System.Buffers;
 using System.Collections.Frozen;
-using System.Diagnostics.CodeAnalysis;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.Json.Serialization.Metadata;

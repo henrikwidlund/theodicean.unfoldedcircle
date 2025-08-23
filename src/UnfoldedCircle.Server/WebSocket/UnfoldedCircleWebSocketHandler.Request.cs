@@ -1,6 +1,5 @@
 using Microsoft.Extensions.Logging;
 
-using UnfoldedCircle.Models.Events;
 using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Models.Sync;
 using UnfoldedCircle.Server.Event;
