@@ -90,16 +90,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected abstract ValueTask<EntityStateChanged[]> OnGetEntityStatesAsync(GetEntityStatesMsg payload, string wsId, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Called when a <c>set_driver_user_data</c> request is received.
-    /// </summary>
-    /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> to send events on.</param>
-    /// <param name="payload">Payload of the request.</param>
-    /// <param name="wsId">ID of the websocket.</param>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    /// <remarks>Any additional steps needed must be handled manually here by sending the instructions through <see cref="SendMessageAsync"/>.</remarks>
-    protected abstract ValueTask OnSetupDriverUserDataAsync(System.Net.WebSockets.WebSocket socket, SetDriverUserDataMsg payload, string wsId, CancellationToken cancellationToken);
-
-    /// <summary>
     /// Deserializes the payload of a media player command message.
     /// </summary>
     /// <param name="jsonDocument">The <see cref="JsonDocument"/> that should be deserialized.</param>
@@ -111,45 +101,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="jsonDocument">The <see cref="JsonDocument"/> that should be deserialized.</param>
     protected virtual RemoteEntityCommandMsgData GetRemoteCommandPayload(JsonDocument jsonDocument)
         => jsonDocument.Deserialize<RemoteEntityCommandMsgData>(UnfoldedCircleJsonSerializerContext.Default.RemoteEntityCommandMsgData)!;
-
-    /// <summary>
-    /// Called when a <c>setup_driver</c> request is received.
-    /// </summary>
-    /// <param name="payload">Payload of the request.</param>
-    /// <param name="wsId">ID of the websocket.</param>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    /// <returns>Returns the found entity with its connection state, or null if not found.</returns>
-    protected abstract ValueTask<OnSetupResult?> OnSetupDriverAsync(SetupDriverMsg payload, string wsId, CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Record representing the result of a lookup of configuration item during setup.
-    /// </summary>
-    /// <param name="Entity">The configuration item.</param>
-    /// <param name="SetupDriverResult">Result of the current setup step.</param>
-    /// <param name="NextSetupStep">Information about the next setup step. Must be sent if <paramref name="SetupDriverResult"/> is set to <see cref="SetupDriverResult.UserInputRequired"/>.</param>
-    // ReSharper disable once ClassNeverInstantiated.Global
-    protected sealed record OnSetupResult(TConfigurationItem Entity, in SetupDriverResult SetupDriverResult, RequireUserAction? NextSetupStep = null);
-
-    /// <summary>
-    /// Setup driver result.
-    /// </summary>
-    protected enum SetupDriverResult
-    {
-        /// <summary>
-        /// Setup finished successfully.
-        /// </summary>
-        Finalized,
-
-        /// <summary>
-        /// User input is required to continue the setup process.
-        /// </summary>
-        UserInputRequired,
-
-        /// <summary>
-        /// Error occurred during setup.
-        /// </summary>
-        Error
-    }
 
     private async Task HandleRequestMessageAsync(
         System.Net.WebSockets.WebSocket socket,
@@ -242,7 +193,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<UnsubscribeEventsMsg>(MessageEvent.UnsubscribeEvents)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.UnsubscribeEventsMsg)!;
                 await OnUnsubscribeEventsAsync(payload, wsId, cancellationTokenWrapper);
-                await RemoveConfigurationAsync(new RemoveInstruction(
+                await RemoveConfigurationAsync(wsId,
+                    new RemoveInstruction(
                         payload.MsgData?.DeviceId.GetNullableBaseIdentifier(),
                         payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), null),
                     cancellationTokenWrapper.ApplicationStopping);
@@ -284,7 +236,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         cancellationTokenWrapper.RequestAborted);
                     return;
                 }
-                MapEntityIdToSocket(wsId, setupResult.Entity.EntityId);
+
                 if (setupResult.SetupDriverResult == SetupDriverResult.UserInputRequired)
                 {
                     if (setupResult.NextSetupStep is null)
@@ -294,10 +246,14 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     }
                     else
                     {
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.NextSetupStep),
-                            wsId,
-                            cancellationTokenWrapper.RequestAborted);
+                        await Task.WhenAll(SendMessageAsync(socket,
+                                ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                                wsId,
+                                cancellationTokenWrapper.RequestAborted),
+                            SendMessageAsync(socket,
+                                ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.NextSetupStep),
+                                wsId,
+                                cancellationTokenWrapper.RequestAborted));
                         return;
                     }
                 }
@@ -325,8 +281,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SetDriverUserDataMsg>(MessageEvent.SetupDriverUserData)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.SetDriverUserDataMsg)!;
-                await OnSetupDriverUserDataAsync(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
 
+                await HandleSetupDriverUserData(socket, wsId, payload, cancellationTokenWrapper);
                 return;
             }
             case MessageEvent.EntityCommand:

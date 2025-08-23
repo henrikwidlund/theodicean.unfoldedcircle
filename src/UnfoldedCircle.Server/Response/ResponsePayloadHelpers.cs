@@ -168,6 +168,23 @@ public static class ResponsePayloadHelpers
     /// <summary>
     /// Creates an event payload used when setting up the driver.
     /// </summary>
+    public static byte[] CreateDeviceSetupChangeResponseSetupPayload() =>
+        JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
+        {
+            Kind = EventKind,
+            Msg = "driver_setup_change",
+            Cat = "DEVICE",
+            TimeStamp = DateTime.UtcNow,
+            MsgData = new DriverSetupChange
+            {
+                State = DriverSetupChangeState.Setup,
+                EventType = DriverSetupChangeEventType.Setup
+            }
+        }, UnfoldedCircleJsonSerializerContext.Default.DriverSetupChangeEvent);
+
+    /// <summary>
+    /// Creates an event payload used when setting up the driver.
+    /// </summary>
     /// <param name="isSuccess">Whether the setup process succeeded or not.</param>
     public static byte[] CreateDeviceSetupChangeResponsePayload(
         in bool isSuccess) =>
@@ -182,6 +199,28 @@ public static class ResponsePayloadHelpers
                 State = isSuccess ? DriverSetupChangeState.Ok : DriverSetupChangeState.Error,
                 EventType = DriverSetupChangeEventType.Stop,
                 Error = isSuccess ? null : DriverSetupChangeError.NotFound
+            }
+        }, UnfoldedCircleJsonSerializerContext.Default.DriverSetupChangeEvent);
+
+    /// <summary>
+    /// Creates an event payload used when setting up the driver, requesting user input via a settings page.
+    /// </summary>
+    /// <param name="settingsPage">The <see cref="SettingsPage"/> that will be rendered on the remote.</param>
+    public static byte[] CreateDeviceSetupChangeUserInputResponsePayload(SettingsPage settingsPage) =>
+        JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
+        {
+            Kind = "event",
+            Msg = "driver_setup_change",
+            Cat = "DEVICE",
+            TimeStamp = DateTime.UtcNow,
+            MsgData = new DriverSetupChange
+            {
+                State = DriverSetupChangeState.WaitUserAction,
+                EventType = DriverSetupChangeEventType.Setup,
+                RequireUserAction = new RequireUserAction
+                {
+                    Input = settingsPage
+                }
             }
         }, UnfoldedCircleJsonSerializerContext.Default.DriverSetupChangeEvent);
 
