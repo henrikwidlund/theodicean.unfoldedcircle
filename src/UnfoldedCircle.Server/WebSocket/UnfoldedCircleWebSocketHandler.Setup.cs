@@ -299,6 +299,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             case SetupStep.NewEntity:
                 await SendMessageAsync(socket, ResponsePayloadHelpers.CreateCommonResponsePayload(payload), wsId, cancellationTokenWrapper.RequestAborted);
                 await HandleCreateNewEntity(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
+                await SendMessageAsync(socket, ResponsePayloadHelpers.CreateDeviceSetupChangeResponseSetupPayload(), wsId, cancellationTokenWrapper.RequestAborted);
                 return;
             case SetupStep.ReconfigureEntity:
                 await HandleReconfigureSetup(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
