@@ -294,117 +294,133 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
     private async Task HandleSetupDriverUserData(System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
     {
-        if (!SessionHolder.NextSetupSteps.TryGetValue(wsId, out var step))
+        try
         {
-            _logger.LogError("[{WSId}] No setup step found.", wsId);
-            await SendMessageAsync(socket,
-                ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                    new ValidationError
-                    {
-                        Code = "404",
-                        Message = "Could not find setup step. Please start the setup process again."
-                    }),
-                wsId,
-                cancellationTokenWrapper.RequestAborted);
-            return;
-        }
-
-        if (payload.MsgData is { Confirm: null, InputValues: null })
-        {
-            _logger.LogError("[{WSId}] No confirm or input_values found in payload.", wsId);
-            await SendMessageAsync(socket,
-                ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                    new ValidationError
-                    {
-                        Code = "400",
-                        Message = "confirm or input_values is required for this step."
-                    }),
-                wsId,
-                cancellationTokenWrapper.RequestAborted);
-            return;
-        }
-
-        await SendMessageAsync(socket,
-            ResponsePayloadHelpers.CreateDeviceSetupChangeResponseSetupPayload(),
-            wsId,
-            cancellationTokenWrapper.RequestAborted);
-
-        if (payload.MsgData is { Confirm: not null })
-        {
-            await OnSetupDriverUserDataConfirmAsync(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
-            return;
-        }
-
-        switch (step)
-        {
-            case SetupStep.NewEntity:
-                switch (await HandleCreateNewEntity(socket, payload, wsId, cancellationTokenWrapper.RequestAborted))
-                {
-                    case SetupDriverUserDataResult.Finalized:
-                        await FinishSetupAsync(socket, wsId, true, payload, cancellationTokenWrapper.RequestAborted);
-                        break;
-                    case SetupDriverUserDataResult.Error:
-                        await FinishSetupAsync(socket, wsId, false, payload, cancellationTokenWrapper.RequestAborted);
-                        break;
-                }
-
+            if (!SessionHolder.NextSetupSteps.TryGetValue(wsId, out var step))
+            {
+                _logger.LogError("[{WSId}] No setup step found.", wsId);
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                        new ValidationError
+                        {
+                            Code = "404",
+                            Message = "Could not find setup step. Please start the setup process again."
+                        }),
+                    wsId,
+                    cancellationTokenWrapper.RequestAborted);
                 return;
-            case SetupStep.ReconfigureEntity:
-                var setupDriverUserDataResult= await HandleReconfigureSetup(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
-                if (setupDriverUserDataResult != SetupDriverUserDataResult.Handled)
-                    await FinishSetupAsync(socket, wsId, setupDriverUserDataResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
-                return;
-            case SetupStep.SaveReconfiguredEntity:
-                if (!SessionHolder.ReconfigureEntityMap.TryGetValue(wsId, out var entityId) || string.IsNullOrEmpty(entityId))
-                {
-                    _logger.LogError("[{WSId}] No entity ID found during save reconfigured entity step.", wsId);
-                    await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                            new ValidationError
-                            {
-                                Code = "404",
-                                Message = "Could not find entity to reconfigure. Please start the setup process again."
-                            }),
-                        wsId,
-                        cancellationTokenWrapper.RequestAborted);
-                    return;
-                }
-                var configuration = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
-                var configurationItem = configuration.Entities.SingleOrDefault(x => x.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase));
-                if (configurationItem is null)
-                {
-                    _logger.LogError("[{WSId}] WS: Could not find entity with ID: {EntityId}.", wsId, entityId);
-                    await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                            new ValidationError
-                            {
-                                Code = "404",
-                                Message = "Could not find setup step. Please start the setup process again."
-                            }),
-                        wsId,
-                        cancellationTokenWrapper.RequestAborted);
-                    return;
-                }
-                var driverUserDataResult = await HandleEntityReconfigured(socket, payload, wsId, configurationItem, cancellationTokenWrapper.RequestAborted);
-                if (driverUserDataResult != SetupDriverUserDataResult.Handled)
-                {
-                    SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
-                    SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
-                    await FinishSetupAsync(socket, wsId, driverUserDataResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
-                }
-                return;
-            default:
-                _logger.LogError("[{WSId}] No valid setup step found. Current step: {Step}.", wsId, step.ToString());
+            }
+
+            if (payload.MsgData is { Confirm: null, InputValues: null })
+            {
+                _logger.LogError("[{WSId}] No confirm or input_values found in payload.", wsId);
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                         new ValidationError
                         {
                             Code = "400",
-                            Message = "Invalid setup step. Please start the setup process again."
+                            Message = "confirm or input_values is required for this step."
                         }),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
                 return;
+            }
+
+            await SendMessageAsync(socket,
+                ResponsePayloadHelpers.CreateDeviceSetupChangeResponseSetupPayload(),
+                wsId,
+                cancellationTokenWrapper.RequestAborted);
+
+            if (payload.MsgData is { Confirm: not null })
+            {
+                await OnSetupDriverUserDataConfirmAsync(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
+                return;
+            }
+
+            switch (step)
+            {
+                case SetupStep.NewEntity:
+                    switch (await HandleCreateNewEntity(socket, payload, wsId, cancellationTokenWrapper.RequestAborted))
+                    {
+                        case SetupDriverUserDataResult.Finalized:
+                            await FinishSetupAsync(socket, wsId, true, payload, cancellationTokenWrapper.RequestAborted);
+                            break;
+                        case SetupDriverUserDataResult.Error:
+                            await FinishSetupAsync(socket, wsId, false, payload, cancellationTokenWrapper.RequestAborted);
+                            break;
+                    }
+
+                    return;
+                case SetupStep.ReconfigureEntity:
+                    var setupDriverUserDataResult= await HandleReconfigureSetup(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
+                    if (setupDriverUserDataResult != SetupDriverUserDataResult.Handled)
+                        await FinishSetupAsync(socket, wsId, setupDriverUserDataResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
+                    return;
+                case SetupStep.SaveReconfiguredEntity:
+                    if (!SessionHolder.ReconfigureEntityMap.TryGetValue(wsId, out var entityId) || string.IsNullOrEmpty(entityId))
+                    {
+                        _logger.LogError("[{WSId}] No entity ID found during save reconfigured entity step.", wsId);
+                        await SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                                new ValidationError
+                                {
+                                    Code = "404",
+                                    Message = "Could not find entity to reconfigure. Please start the setup process again."
+                                }),
+                            wsId,
+                            cancellationTokenWrapper.RequestAborted);
+                        return;
+                    }
+                    var configuration = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
+                    var configurationItem = configuration.Entities.SingleOrDefault(x => x.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase));
+                    if (configurationItem is null)
+                    {
+                        _logger.LogError("[{WSId}] WS: Could not find entity with ID: {EntityId}.", wsId, entityId);
+                        await SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                                new ValidationError
+                                {
+                                    Code = "404",
+                                    Message = "Could not find setup step. Please start the setup process again."
+                                }),
+                            wsId,
+                            cancellationTokenWrapper.RequestAborted);
+                        return;
+                    }
+                    var driverUserDataResult = await HandleEntityReconfigured(socket, payload, wsId, configurationItem, cancellationTokenWrapper.RequestAborted);
+                    if (driverUserDataResult != SetupDriverUserDataResult.Handled)
+                    {
+                        SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
+                        SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
+                        await FinishSetupAsync(socket, wsId, driverUserDataResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
+                    }
+                    return;
+                default:
+                    _logger.LogError("[{WSId}] No valid setup step found. Current step: {Step}.", wsId, step.ToString());
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                            new ValidationError
+                            {
+                                Code = "400",
+                                Message = "Invalid setup step. Please start the setup process again."
+                            }),
+                        wsId,
+                        cancellationTokenWrapper.RequestAborted);
+                    return;
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, "[{WSId}] Error during setup process: {Message}", wsId, e.Message);
+            await SendMessageAsync(socket,
+                ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                    new ValidationError
+                    {
+                        Code = "400",
+                        Message = "Invalid setup step. Please start the setup process again."
+                    }),
+                wsId,
+                cancellationTokenWrapper.RequestAborted);
         }
     }
 }
