@@ -357,7 +357,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
                     return;
                 case SetupStep.ReconfigureEntity:
-                    var setupDriverUserDataResult= await HandleReconfigureSetup(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
+                    var setupDriverUserDataResult = await HandleReconfigureSetup(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
                     if (setupDriverUserDataResult != SetupDriverUserDataResult.Handled)
                         await FinishSetupAsync(socket, wsId, setupDriverUserDataResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
                     return;

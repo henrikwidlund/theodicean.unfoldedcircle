@@ -40,7 +40,7 @@ public static class ResponsePayloadHelpers
             {
                 Kind = "resp",
                 ReqId = req.Id,
-                Msg = "get_driver_version",
+                Msg = "driver_version",
                 Code = 200,
                 MsgData = driverVersion
             },
