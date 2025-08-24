@@ -333,7 +333,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
             if (payload.MsgData is { Confirm: not null })
             {
-                await OnSetupDriverUserDataConfirmAsync(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
+                var confirmationResult = await OnSetupDriverUserDataConfirmAsync(socket, payload, wsId, cancellationTokenWrapper.RequestAborted);
+                if (confirmationResult != SetupDriverUserDataResult.Handled)
+                {
+                    SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
+                    await FinishSetupAsync(socket, wsId, confirmationResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
+                }
                 return;
             }
 
