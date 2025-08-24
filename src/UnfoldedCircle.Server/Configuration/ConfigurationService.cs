@@ -60,7 +60,7 @@ public abstract class ConfigurationService<TConfigurationItem>(IConfiguration co
                 await JsonSerializer.SerializeAsync(configurationFile,
                     _unfoldedCircleConfiguration,
                     GetSerializer(),
-                    cancellationToken);
+                    CancellationToken.None);
                 
                 return _unfoldedCircleConfiguration;
             }
