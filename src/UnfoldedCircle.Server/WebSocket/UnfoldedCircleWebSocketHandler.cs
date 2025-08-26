@@ -160,30 +160,38 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 continue;
             }
 
-            using var jsonDocument = JsonDocument.Parse(buffer.AsMemory(0, result.Count));
-            if (!jsonDocument.RootElement.TryGetProperty("msg", out var msg))
+            try
             {
-                _logger.LogDebug("[{WSId}] WS: Received message does not contain 'msg' property.", wsId);
-                continue;
+                using var jsonDocument = JsonDocument.Parse(buffer.AsMemory(0, result.Count));
+                if (!jsonDocument.RootElement.TryGetProperty("msg", out var msg))
+                {
+                    _logger.LogDebug("[{WSId}] WS: Received message does not contain 'msg' property.", wsId);
+                    continue;
+                }
+
+                var messageEvent = MessageEventHelpers.GetMessageEvent(msg, out var rawValue);
+                if (messageEvent == MessageEvent.Other)
+                {
+                    _logger.LogInformation("[{WSId}] WS: Unknown message '{Message}'", wsId, rawValue);
+                    continue;
+                }
+
+                if (!jsonDocument.RootElement.TryGetProperty("kind", out var kind))
+                {
+                    _logger.LogInformation("[{WSId}] WS: Received message does not contain 'kind' property.", wsId);
+                    continue;
+                }
+
+                if (kind.ValueEquals("req"u8))
+                    await HandleRequestMessageAsync(socket, wsId, messageEvent, jsonDocument, cancellationTokenWrapper);
+                else if (kind.ValueEquals("event"u8))
+                    await HandleEventMessageAsync(socket, wsId, messageEvent, jsonDocument, cancellationTokenWrapper);
             }
-            
-            var messageEvent = MessageEventHelpers.GetMessageEvent(msg, out var rawValue);
-            if (messageEvent == MessageEvent.Other)
+            catch (Exception e)
             {
-                _logger.LogInformation("[{WSId}] WS: Unknown message '{Message}'", wsId, rawValue);
-                continue;
+                _logger.LogError(e, "[{WSId}] WS: Error while handling message.", wsId);
             }
-            
-            if (!jsonDocument.RootElement.TryGetProperty("kind", out var kind))
-            {
-                _logger.LogInformation("[{WSId}] WS: Received message does not contain 'kind' property.", wsId);
-                continue;
-            }
-            
-            if (kind.ValueEquals("req"u8))
-                await HandleRequestMessageAsync(socket, wsId, messageEvent, jsonDocument, cancellationTokenWrapper);
-            else if (kind.ValueEquals("event"u8))
-                await HandleEventMessageAsync(socket, wsId, messageEvent, jsonDocument, cancellationTokenWrapper);
+
         } while (!result.CloseStatus.HasValue && !cancellationTokenWrapper.RequestAborted.IsCancellationRequested);
 
         return result;
