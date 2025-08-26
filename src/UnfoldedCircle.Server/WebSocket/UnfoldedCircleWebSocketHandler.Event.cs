@@ -96,11 +96,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     _logger.LogInformation("[{WSId}] WS: Removed configuration for {EntityId}", wsId, entityId);
                 }
                 
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateCommonResponsePayload(0),
-                    wsId,
-                    cancellationTokenWrapper.RequestAborted);
-                
                 return;
             }
             case MessageEvent.EnterStandby:

@@ -109,19 +109,11 @@ public static class ResponsePayloadHelpers
     /// <param name="req">The <see cref="CommonReq"/>.</param>
     public static byte[] CreateCommonResponsePayload(
         CommonReq req) =>
-        CreateCommonResponsePayload(req.Id);
-
-    /// <summary>
-    /// Creates a common response payload with a specific request ID.
-    /// </summary>
-    /// <param name="requestId">The request_id the response is for.</param>
-    public static byte[] CreateCommonResponsePayload(
-        in uint requestId) =>
         JsonSerializer.SerializeToUtf8Bytes(new CommonResp
             {
                 Code = 200,
                 Kind = "resp",
-                ReqId = requestId,
+                ReqId = req.Id,
                 Msg = "result"
             },
             UnfoldedCircleJsonSerializerContext.Default.CommonResp);
