@@ -65,7 +65,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="payload">Payload of the request.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/>.</param>
-    protected abstract ValueTask OnSubscribeEventsAsync(System.Net.WebSockets.WebSocket socket, CommonReq payload, string wsId, CancellationTokenWrapper cancellationTokenWrapper);
+    /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
+    protected abstract ValueTask OnSubscribeEventsAsync(System.Net.WebSockets.WebSocket socket, CommonReq payload, string wsId, CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken commandCancellationToken);
 
     /// <summary>
     /// Called when a <c>unsubscribe_events</c> request is received.
@@ -180,11 +182,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
                 AddSocketToEventReceivers(wsId);
                 cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSource();
-                await OnSubscribeEventsAsync(socket, payload, wsId, cancellationTokenWrapper);
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,
                     cancellationToken);
+                await OnSubscribeEventsAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
 
                 return;
             }
