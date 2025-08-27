@@ -67,7 +67,10 @@ public static class UnfoldedCircleRegistrationExtensions
         where TMediaPlayerCommandId : struct, Enum
         where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>
     {
-        var unfoldedCircleOptions = new UnfoldedCircleOptions();
+        var unfoldedCircleOptions = new UnfoldedCircleOptions
+        {
+            MaxMessageHandlingWaitTimeInSeconds = builder.Configuration.GetOrDefault("UC_MAX_MESSAGE_HANDLING_WAIT_TIME_IN_SECONDS", 9.5)
+        };
         configureOptions?.Invoke(unfoldedCircleOptions);
         if (unfoldedCircleOptions.DisableEntityIdPrefixing)
             ValueExtensions.DisableEntityIdPrefixing = true;

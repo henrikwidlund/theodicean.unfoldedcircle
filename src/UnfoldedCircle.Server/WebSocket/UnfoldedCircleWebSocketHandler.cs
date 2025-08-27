@@ -182,7 +182,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     continue;
                 }
 
-                using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(9.5));
+                var configuration = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
+                var maxMessageHandlingWaitTimeInSeconds = configuration.MaxMessageHandlingWaitTimeInSeconds ?? _options.Value.MaxMessageHandlingWaitTimeInSeconds;
+                using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(maxMessageHandlingWaitTimeInSeconds));
                 using var linkedCancellationToken = CancellationTokenSource.CreateLinkedTokenSource(
                     cancellationTokenWrapper.ApplicationStopping,
                     cancellationTokenWrapper.RequestAborted,

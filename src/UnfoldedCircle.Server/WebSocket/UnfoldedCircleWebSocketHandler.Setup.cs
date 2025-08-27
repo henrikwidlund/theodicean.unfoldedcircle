@@ -23,10 +23,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
             var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
-            return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = CreateReconfigurePage(wsId, configuration) });
+            return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateReconfigurePageAsync(wsId, configuration, cancellationToken) });
         }
 
-        return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = CreateNewEntitySettingsPageCore(wsId) });
+        return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken) });
     }
 
     /// <summary>
@@ -113,14 +113,16 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         switch (action)
         {
             case ActionAdd:
-                await SendMessageAsync(socket, ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateNewEntitySettingsPageCore(wsId)), wsId,
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken)),
+                    wsId,
                     cancellationToken);
                 return SetupDriverUserDataResult.Handled;
             case ActionConfigure:
                 configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
                 entity = configuration.Entities.Single(x => x.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase));
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateReconfigureEntitySettingsPage(entity)),
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(await CreateReconfigureEntitySettingsPageAsync(entity, cancellationToken)),
                     wsId,
                     cancellationToken);
                 SessionHolder.NextSetupSteps[wsId] = SetupStep.SaveReconfiguredEntity;
@@ -165,12 +167,13 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="configuration">The configuration that should be reconfigured.</param>
-    protected virtual SettingsPage CreateReconfigurePage(string wsId, UnfoldedCircleConfiguration<TConfigurationItem> configuration)
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    protected virtual ValueTask<SettingsPage> CreateReconfigurePageAsync(string wsId, UnfoldedCircleConfiguration<TConfigurationItem> configuration, CancellationToken cancellationToken)
     {
         // No prior entities configured, go to new entity page.
         if (configuration.Entities.Count == 0)
         {
-            return CreateNewEntitySettingsPageCore(wsId);
+            return CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken);
         }
 
         var settingsPage = new SettingsPage
@@ -228,25 +231,27 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 }
             ]
         };
-        return settingsPage;
+        return ValueTask.FromResult(settingsPage);
     }
 
-    private SettingsPage CreateNewEntitySettingsPageCore(string wsId)
+    private ValueTask<SettingsPage> CreateNewEntitySettingsPageCoreAsync(string wsId, CancellationToken cancellationToken)
     {
         SessionHolder.NextSetupSteps[wsId] = SetupStep.NewEntity;
-        return CreateNewEntitySettingsPage();
+        return CreateNewEntitySettingsPageAsync(cancellationToken);
     }
 
     /// <summary>
     /// Creates a new entity settings page for adding a new entity.
     /// </summary>
-    protected abstract SettingsPage CreateNewEntitySettingsPage();
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    protected abstract ValueTask<SettingsPage> CreateNewEntitySettingsPageAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Creates a settings page for reconfiguring an existing entity.
     /// </summary>
     /// <param name="configurationItem">The configuration tied to the entity.</param>
-    protected abstract SettingsPage CreateReconfigureEntitySettingsPage(TConfigurationItem configurationItem);
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    protected abstract ValueTask<SettingsPage> CreateReconfigureEntitySettingsPageAsync(TConfigurationItem configurationItem, CancellationToken cancellationToken);
 
     private async Task FinishSetupAsync(System.Net.WebSockets.WebSocket socket,
         string wsId,

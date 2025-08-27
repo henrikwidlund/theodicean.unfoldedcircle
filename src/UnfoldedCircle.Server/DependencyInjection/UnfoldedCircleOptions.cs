@@ -40,4 +40,11 @@ public class UnfoldedCircleOptions
         // ReSharper disable once UnusedMember.Global
         set => _messageEventDeserializeOverrides = value;
     }
+
+    /// <summary>
+    /// The maximum wait time for a received message to be handled before being cancelled.
+    /// </summary>
+    /// <remarks>Default is 9.5 seconds.</remarks>
+    // ReSharper disable once PropertyCanBeMadeInitOnly.Global
+    public double MaxMessageHandlingWaitTimeInSeconds { get; set; }
 }

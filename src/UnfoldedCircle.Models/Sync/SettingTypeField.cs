@@ -93,19 +93,19 @@ public record SettingTypeNumber : SettingTypeField
 public record SettingTypeNumberInner
 {
     [JsonPropertyName("value")]
-    public required int Value { get; init; }
+    public required double Value { get; init; }
 
     [JsonPropertyName("min")]
-    public int? Min { get; init; }
+    public double? Min { get; init; }
 
     [JsonPropertyName("max")]
-    public int? Max { get; init; }
+    public double? Max { get; init; }
 
     [JsonPropertyName("steps")]
-    public int? Steps { get; init; }
+    public double? Steps { get; init; }
 
     [JsonPropertyName("decimals")]
-    public int? Decimals { get; init; }
+    public ushort? Decimals { get; init; }
 
     [JsonPropertyName("unit")]
     public Dictionary<string, string>? Unit { get; init; }
