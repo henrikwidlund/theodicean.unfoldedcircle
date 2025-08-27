@@ -106,7 +106,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         string wsId,
         MessageEvent messageEvent,
         JsonDocument jsonDocument,
-        CancellationTokenWrapper cancellationTokenWrapper)
+        CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken cancellationToken)
     {
         switch (messageEvent)
         {
@@ -114,7 +115,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.GetDriverVersion)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
-                var driverMetadata = await _configurationService.GetDriverMetadataAsync(cancellationTokenWrapper.RequestAborted);
+                var driverMetadata = await _configurationService.GetDriverMetadataAsync(cancellationToken);
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateDriverVersionResponsePayload(
                         payload,
@@ -127,7 +128,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                             }
                         }),
                     wsId,
-                    cancellationTokenWrapper.RequestAborted);
+                    cancellationToken);
                 
                 return;
             }
@@ -137,9 +138,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
                 
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDriverMetaDataResponsePayload(payload, await _configurationService.GetDriverMetadataAsync(cancellationTokenWrapper.RequestAborted)),
+                    ResponsePayloadHelpers.CreateDriverMetaDataResponsePayload(payload, await _configurationService.GetDriverMetadataAsync(cancellationToken)),
                     wsId,
-                    cancellationTokenWrapper.RequestAborted);
+                    cancellationToken);
                 
                 return;
             }
@@ -149,11 +150,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.GetDeviceStateMsg)!;
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateDeviceStateResponsePayload(
-                        await OnGetDeviceStateAsync(payload, wsId, cancellationTokenWrapper.RequestAborted),
+                        await OnGetDeviceStateAsync(payload, wsId, cancellationToken),
                         payload.MsgData.DeviceId
                     ),
                     wsId,
-                    cancellationTokenWrapper.RequestAborted);
+                    cancellationToken);
 
                 return;
             }
@@ -166,10 +167,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         new AvailableEntitiesMsgData
                         {
                             Filter = payload.MsgData.Filter,
-                            AvailableEntities = await OnGetAvailableEntitiesAsync(payload, wsId, cancellationTokenWrapper.RequestAborted)
+                            AvailableEntities = await OnGetAvailableEntitiesAsync(payload, wsId, cancellationToken)
                         }),
                     wsId,
-                    cancellationTokenWrapper.RequestAborted);
+                    cancellationToken);
 
                 return;
             }
@@ -183,7 +184,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,
-                    cancellationTokenWrapper.RequestAborted);
+                    cancellationToken);
 
                 return;
             }
@@ -192,15 +193,15 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<UnsubscribeEventsMsg>(MessageEvent.UnsubscribeEvents)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.UnsubscribeEventsMsg)!;
                 await OnUnsubscribeEventsAsync(payload, wsId, cancellationTokenWrapper);
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                    wsId,
+                    cancellationToken);
                 await RemoveConfigurationAsync(wsId,
                     new RemoveInstruction(
                         payload.MsgData?.DeviceId.GetNullableBaseIdentifier(),
                         payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), null),
                     cancellationTokenWrapper.ApplicationStopping);
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                    wsId,
-                    cancellationTokenWrapper.RequestAborted);
                 
                 return;
             }
@@ -210,9 +211,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                                       ?? UnfoldedCircleJsonSerializerContext.Default.GetEntityStatesMsg)!;
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateGetEntityStatesResponsePayload(payload,
-                        await OnGetEntityStatesAsync(payload, wsId, cancellationTokenWrapper.RequestAborted)),
+                        await OnGetEntityStatesAsync(payload, wsId, cancellationToken)),
                     wsId,
-                    cancellationTokenWrapper.RequestAborted);
+                    cancellationToken);
                 
                 return;
             }
@@ -232,7 +233,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                 Message = "Entity not found."
                             }),
                         wsId,
-                        cancellationTokenWrapper.RequestAborted);
+                        cancellationToken);
                     return;
                 }
 
@@ -248,11 +249,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         await Task.WhenAll(SendMessageAsync(socket,
                                 ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                                 wsId,
-                                cancellationTokenWrapper.RequestAborted),
+                                cancellationToken),
                             SendMessageAsync(socket,
                                 ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.NextSetupStep),
                                 wsId,
-                                cancellationTokenWrapper.RequestAborted));
+                                cancellationToken));
                         return;
                     }
                 }
@@ -261,17 +262,17 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                         wsId,
-                        cancellationTokenWrapper.RequestAborted),
+                        cancellationToken),
                     SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized),
                         wsId,
-                        cancellationTokenWrapper.RequestAborted),
+                        cancellationToken),
                     setupResult.SetupDriverResult == SetupDriverResult.Error
                         ? Task.CompletedTask
                         : SendMessageAsync(socket,
                             ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
                             wsId,
-                            cancellationTokenWrapper.RequestAborted)
+                            cancellationToken)
                 );
                 
                 return;
@@ -291,12 +292,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 {
                     var payload = DeserializeMediaPlayerCommandPayload(jsonDocument);
                     if (payload is not null)
-                        await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper);
+                        await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
                 }
                 else if (entityType == EntityType.Remote)
                 {
                     var payload = GetRemoteCommandPayload(jsonDocument);
-                    await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper);
+                    await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
                 }
                 else
                 {

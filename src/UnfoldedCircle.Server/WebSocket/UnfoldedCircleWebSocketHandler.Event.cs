@@ -56,7 +56,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         string wsId,
         MessageEvent messageEvent,
         JsonDocument jsonDocument,
-        CancellationTokenWrapper cancellationTokenWrapper)
+        CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken cancellationToken)
     {
         switch (messageEvent)
         {
@@ -65,8 +66,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSource();
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<ConnectEvent>(MessageEvent.Connect)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.ConnectEvent)!;
-                await HandleConnectOrExitStandbyAsync(socket, wsId, cancellationTokenWrapper);
-                await OnConnectAsync(payload, wsId, cancellationTokenWrapper.RequestAborted);
+                await HandleConnectOrExitStandbyAsync(socket, wsId, cancellationTokenWrapper, cancellationToken);
+                await OnConnectAsync(payload, wsId, cancellationToken);
                 return;
             }
             case MessageEvent.Disconnect:
@@ -74,13 +75,13 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<DisconnectEvent>(MessageEvent.Disconnect)
                                                            ?? UnfoldedCircleJsonSerializerContext.Default.DisconnectEvent)!;
                 await (cancellationTokenWrapper.GetCurrentBroadcastCancellationTokenSource()?.CancelAsync() ?? Task.CompletedTask);
-                var success = await OnDisconnectAsync(payload, wsId, cancellationTokenWrapper.RequestAborted);
+                var success = await OnDisconnectAsync(payload, wsId, cancellationToken);
                 SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
 
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateConnectEventResponsePayload(success ? DeviceState.Disconnected : DeviceState.Error),
                     wsId,
-                    cancellationTokenWrapper.RequestAborted);
+                    cancellationToken);
 
                 return;
             }
@@ -89,7 +90,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<AbortDriverSetupEvent>(MessageEvent.AbortDriverSetup)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.AbortDriverSetupEvent)!;
                 await (cancellationTokenWrapper.GetCurrentBroadcastCancellationTokenSource()?.CancelAsync() ?? Task.CompletedTask);
-                await OnAbortDriverSetupAsync(payload, wsId, cancellationTokenWrapper.RequestAborted);
+                await OnAbortDriverSetupAsync(payload, wsId, cancellationToken);
                 if (SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out var entityId))
                 {
                     await RemoveConfigurationAsync(wsId, new RemoveInstruction(null, null, entityId), cancellationTokenWrapper.ApplicationStopping);
@@ -103,19 +104,19 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<EnterStandbyEvent>(MessageEvent.EnterStandby)
                                                            ?? UnfoldedCircleJsonSerializerContext.Default.EnterStandbyEvent)!;
                     await (cancellationTokenWrapper.GetCurrentBroadcastCancellationTokenSource()?.CancelAsync() ?? Task.CompletedTask);
-                    await OnEnterStandbyAsync(payload, wsId, cancellationTokenWrapper.RequestAborted);
+                    await OnEnterStandbyAsync(payload, wsId, cancellationToken);
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Disconnected),
                         wsId,
-                        cancellationTokenWrapper.RequestAborted);
+                        cancellationToken);
                     return;
                 }
             case MessageEvent.ExitStandby:
                 {
                     var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<ExitStandbyEvent>(MessageEvent.ExitStandby)
                                                            ?? UnfoldedCircleJsonSerializerContext.Default.ExitStandbyEvent)!;
-                    await OnExitStandbyAsync(payload, wsId, cancellationTokenWrapper.RequestAborted);
-                    await HandleConnectOrExitStandbyAsync(socket, wsId, cancellationTokenWrapper);
+                    await OnExitStandbyAsync(payload, wsId, cancellationToken);
+                    await HandleConnectOrExitStandbyAsync(socket, wsId, cancellationTokenWrapper, cancellationToken);
 
                     return;
                 }
@@ -124,20 +125,22 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
     }
 
-    private async ValueTask HandleConnectOrExitStandbyAsync(System.Net.WebSockets.WebSocket socket, string wsId, CancellationTokenWrapper cancellationTokenWrapper)
+    private async ValueTask HandleConnectOrExitStandbyAsync(System.Net.WebSockets.WebSocket socket,
+        string wsId,
+        CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken cancellationToken)
     {
         await SendMessageAsync(socket,
             ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
             wsId,
-            cancellationTokenWrapper.RequestAborted);
+            cancellationToken);
 
         cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSource();
-        var configuration = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
+        var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
         if (configuration is { Entities.Count: > 0 })
         {
-            var entityStateCancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(5));
             await Parallel.ForEachAsync(configuration.Entities,
-                new ParallelOptions { CancellationToken = entityStateCancellationTokenSource.Token, MaxDegreeOfParallelism = EnvironmentConstants.MaxConcurrency },
+                new ParallelOptions { CancellationToken = cancellationToken, MaxDegreeOfParallelism = EnvironmentConstants.MaxConcurrency },
                 async (item, token) =>
                 {
                     await StartEventUpdatesAsync(item, token);
@@ -146,12 +149,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
         return;
 
-        async Task StartEventUpdatesAsync(TConfigurationItem unfoldedCircleConfigurationItem, CancellationToken cancellationToken)
+        async Task StartEventUpdatesAsync(TConfigurationItem unfoldedCircleConfigurationItem, CancellationToken eventCancellationToken)
         {
             EntityState entityState;
             try
             {
-                entityState = await GetEntityStateAsync(unfoldedCircleConfigurationItem, wsId, cancellationToken);
+                entityState = await GetEntityStateAsync(unfoldedCircleConfigurationItem, wsId, eventCancellationToken);
             }
             catch (OperationCanceledException e)
             {
