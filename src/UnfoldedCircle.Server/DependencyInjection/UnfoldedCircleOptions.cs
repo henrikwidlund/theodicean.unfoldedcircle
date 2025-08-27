@@ -46,5 +46,5 @@ public class UnfoldedCircleOptions
     /// </summary>
     /// <remarks>Default is 9.5 seconds.</remarks>
     // ReSharper disable once PropertyCanBeMadeInitOnly.Global
-    public double MaxMessageHandlingWaitTimeInSeconds { get; set; }
+    public double MaxMessageHandlingWaitTimeInSeconds { get; set; } = 9.5;
 }
