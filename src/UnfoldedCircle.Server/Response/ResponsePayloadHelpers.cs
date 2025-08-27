@@ -245,7 +245,7 @@ public static class ResponsePayloadHelpers
         {
             Kind = "resp",
             ReqId = req.Id,
-            Msg = "validation_error",
+            Msg = "result",
             Code = 400,
             MsgData = validationError
         }, UnfoldedCircleJsonSerializerContext.Default.CommonRespRequiredValidationError);
