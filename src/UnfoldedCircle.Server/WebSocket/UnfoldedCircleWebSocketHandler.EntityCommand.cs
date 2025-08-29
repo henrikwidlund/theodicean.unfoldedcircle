@@ -79,6 +79,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         PowerOff,
 
         /// <summary>
+        /// Command was handled and response was sent to the remote.
+        /// </summary>
+        Handled,
+
+        /// <summary>
         /// The command was successful.
         /// </summary>
         Other,
@@ -162,11 +167,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 _ => EntityCommandResult.Failure
             };
 
-            if (entityCommandResult != EntityCommandResult.Failure)
+            if (entityCommandResult is not EntityCommandResult.Failure and not EntityCommandResult.Handled)
             {
                 await HandleCommandResultCoreAsync(socket, wsId, payload, entityCommandResult, cancellationTokenWrapper, commandCancellationToken);
             }
-            else
+            else if (entityCommandResult is EntityCommandResult.Failure)
             {
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -259,11 +264,28 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             return EntityCommandResult.Failure;
 
         var delay = payload.MsgData.Params?.Delay ?? 0;
+        EntityCommandResult? commandResult = null;
         if (payload.MsgData.Params?.Repeat.HasValue is true)
         {
+            // Acknowledge the command early if more than two repeats to avoid errors caused by timeouts on the remote side.
+            if (payload.MsgData.Params.Repeat > 2)
+            {
+                await HandleCommandResultCoreAsync(socket, wsId, payload, EntityCommandResult.Other, cancellationTokenWrapper, commandCancellationToken);
+                commandResult = EntityCommandResult.Handled;
+            }
+
+            var entityId = payload.MsgData.EntityId.GetBaseIdentifier();
+            await SafeCancelRepeat(entityId);
+
+            using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(1));
+            SessionHolder.CurrentRepeatCommandMap[entityId] = cancellationTokenSource;
             for (var i = 0; i < payload.MsgData.Params.Repeat.Value; i++)
             {
-                await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, commandCancellationToken);
+                if (cancellationTokenSource.IsCancellationRequested)
+                    break;
+
+                // ReSharper disable once PossiblyMistakenUseOfCancellationToken
+                await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, cancellationTokenWrapper.RequestAborted);
                 if (delay> 0)
                     await Task.Delay(TimeSpan.FromMilliseconds(delay), cancellationTokenWrapper.RequestAborted);
             }
@@ -273,7 +295,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, commandCancellationToken);
         }
 
-        return EntityCommandResult.Other;
+        return commandResult ?? EntityCommandResult.Other;
     }
 
     private async Task<EntityCommandResult> HandleSendCommandSequenceAsync(System.Net.WebSockets.WebSocket socket,
@@ -287,25 +309,63 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
         var delay = payload.MsgData.Params?.Delay ?? 0;
         var shouldRepeat = payload.MsgData.Params?.Repeat.HasValue is true;
+        var entityId = payload.MsgData.EntityId.GetBaseIdentifier();
+        await SafeCancelRepeat(entityId);
+
+        using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(1));
+        SessionHolder.CurrentRepeatCommandMap[entityId] = cancellationTokenSource;
+        EntityCommandResult? commandResult = null;
+        if (sequence.Length > 2)
+        {
+            // Acknowledge the command early if more than two commands to avoid errors caused by timeouts on the remote side.
+            // ReSharper disable once PossiblyMistakenUseOfCancellationToken
+            await HandleCommandResultCoreAsync(socket, wsId, payload, EntityCommandResult.Other, cancellationTokenWrapper, commandCancellationToken);
+            commandResult = EntityCommandResult.Handled;
+        }
+
         foreach (var command in sequence.Where(static x => !string.IsNullOrEmpty(x)))
         {
             if (shouldRepeat)
             {
                 for (var i = 0; i < payload.MsgData.Params!.Repeat!.Value; i++)
                 {
-                    await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, commandCancellationToken);
+                    if (cancellationTokenSource.IsCancellationRequested)
+                        break;
+
+                    await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, cancellationTokenWrapper.RequestAborted);
                     if (delay > 0)
-                        await Task.Delay(TimeSpan.FromMilliseconds(delay), commandCancellationToken);
+                        await Task.Delay(TimeSpan.FromMilliseconds(delay), cancellationTokenWrapper.RequestAborted);
                 }
+
+                if (cancellationTokenSource.IsCancellationRequested)
+                    break;
             }
             else
             {
-                await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, commandCancellationToken);
+                await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, cancellationTokenWrapper.RequestAborted);
                 if (delay > 0)
-                    await Task.Delay(TimeSpan.FromMilliseconds(delay), commandCancellationToken);
+                    await Task.Delay(TimeSpan.FromMilliseconds(delay), cancellationTokenWrapper.RequestAborted);
             }
+
+            if (cancellationTokenSource.IsCancellationRequested)
+                break;
         }
 
-        return EntityCommandResult.Other;
+        return commandResult ?? EntityCommandResult.Other;
+    }
+
+    private static async Task SafeCancelRepeat(string entityId)
+    {
+        if (SessionHolder.CurrentRepeatCommandMap.TryGetValue(entityId, out var value))
+        {
+            try
+            {
+                await value.CancelAsync();
+            }
+            catch (ObjectDisposedException)
+            {
+                // ignore
+            }
+        }
     }
 }
