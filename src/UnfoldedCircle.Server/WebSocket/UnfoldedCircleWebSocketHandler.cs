@@ -96,10 +96,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> tied to the <paramref name="entityId"/>.</param>
     /// <returns><see langword="true"/> if the key was added, otherwise <see langword="fakse"/>.</returns>
     // ReSharper disable once UnusedMember.Global
-    protected static bool TryAddEntityIdToBroadcastingEvents(string entityId, CancellationTokenWrapper cancellationTokenWrapper)
+    protected static bool TryAddEntityIdToBroadcastingEvents(in ReadOnlySpan<char> entityId, CancellationTokenWrapper cancellationTokenWrapper)
     {
         var baseIdentifier = entityId.GetBaseIdentifier();
-        if (SessionHolder.BroadcastingEvents.Add(baseIdentifier))
+        var lookup = SessionHolder.BroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>();
+        if (lookup.TryAdd(baseIdentifier, 0))
         {
             cancellationTokenWrapper.AddSubscribedEntity(baseIdentifier);
             return true;
@@ -113,10 +114,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="entityId">The entity_id.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> tied to the <paramref name="entityId"/>.</param>
     // ReSharper disable once UnusedMember.Global
-    protected static void RemoveEntityIdToBroadcastingEvents(string entityId, CancellationTokenWrapper cancellationTokenWrapper)
+    protected static void RemoveEntityIdToBroadcastingEvents(in ReadOnlySpan<char> entityId, CancellationTokenWrapper cancellationTokenWrapper)
     {
         var baseIdentifier = entityId.GetBaseIdentifier();
-        SessionHolder.BroadcastingEvents.Remove(baseIdentifier);
+        var lookup = SessionHolder.BroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>();
+        lookup.TryRemove(baseIdentifier, out _);
         cancellationTokenWrapper.RemoveSubscribedEntity(baseIdentifier);
     }
 
@@ -125,8 +127,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
     // ReSharper disable once UnusedMember.Global
-    protected static bool IsBroadcastingEvents(string entityId)
-        => SessionHolder.BroadcastingEvents.Contains(entityId.GetBaseIdentifier());
+    protected static bool IsBroadcastingEvents(in ReadOnlySpan<char> entityId)
+    {
+        var lookup = SessionHolder.BroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>();
+        return lookup.ContainsKey(entityId.GetBaseIdentifier());
+    }
 
     /// <summary>
     /// Removes the <paramref name="wsId"/> from the list of event receivers.

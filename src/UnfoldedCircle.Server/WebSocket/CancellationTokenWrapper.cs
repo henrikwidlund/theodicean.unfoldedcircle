@@ -1,4 +1,4 @@
-using Makaretu.Dns.Resolving;
+using System.Collections.Concurrent;
 
 using Microsoft.Extensions.Logging;
 
@@ -15,7 +15,7 @@ public sealed class CancellationTokenWrapper(
     in CancellationToken applicationStopping,
     in CancellationToken requestAborted) : IDisposable
 {
-    private readonly ConcurrentSet<string> _subscribedEntities = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<string, byte> _subscribedEntities = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Adds an entity to the list of subscribed entities connected to this <see cref="CancellationTokenWrapper"/>.
@@ -23,7 +23,11 @@ public sealed class CancellationTokenWrapper(
     /// <param name="entityId">The entity_id.</param>
     /// <returns><see langowrd="true"/> if added, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
-    public bool AddSubscribedEntity(string entityId) => _subscribedEntities.Add(entityId);
+    public bool AddSubscribedEntity(in ReadOnlySpan<char> entityId)
+    {
+        var lookup = _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>();
+        return lookup.TryAdd(entityId, 0);
+    }
 
     /// <summary>
     /// Removes an entity from the list of subscribed entities connected to this <see cref="CancellationTokenWrapper"/>.
@@ -31,7 +35,11 @@ public sealed class CancellationTokenWrapper(
     /// <param name="entityId">The entity_id.</param>
     /// <returns><see langowrd="true"/> if removed, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
-    public bool RemoveSubscribedEntity(string entityId) => _subscribedEntities.Remove(entityId);
+    public bool RemoveSubscribedEntity(in ReadOnlySpan<char> entityId)
+    {
+        var lookup = _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>();
+        return lookup.TryRemove(entityId, out _);
+    }
 
     /// <summary>
     /// Gets the <see cref="CancellationToken"/> that is used by the application to signal that the application is stopping.
@@ -63,10 +71,10 @@ public sealed class CancellationTokenWrapper(
         _broadcastCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(RequestAborted, ApplicationStopping);
         _broadcastCancellationTokenSource.Token.Register(static callback =>
         {
-            (ILogger logger, ConcurrentSet<string> subscribedEntities) = ((ILogger, ConcurrentSet<string>))callback!;
-            foreach (string subscribedEntity in subscribedEntities)
+            (ILogger logger, ConcurrentDictionary<string, byte> subscribedEntities) = ((ILogger, ConcurrentDictionary<string, byte>))callback!;
+            foreach (var subscribedEntity in subscribedEntities)
             {
-                SessionHolder.BroadcastingEvents.Remove(subscribedEntity);
+                SessionHolder.BroadcastingEvents.TryRemove(subscribedEntity.Key, out _);
             }
             logger.LogInformation("Broadcast cancelled for {@Entities}", subscribedEntities);
             subscribedEntities.Clear();

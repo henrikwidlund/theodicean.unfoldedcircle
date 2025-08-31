@@ -274,11 +274,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 commandResult = EntityCommandResult.Handled;
             }
 
-            var entityId = payload.MsgData.EntityId.GetBaseIdentifier();
+            var entityId = payload.MsgData.EntityId.AsMemory().GetBaseIdentifier();
             await SafeCancelRepeat(entityId);
 
             using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(1));
-            SessionHolder.CurrentRepeatCommandMap[entityId] = cancellationTokenSource;
+            var lookup = SessionHolder.CurrentRepeatCommandMap.GetAlternateLookup<ReadOnlySpan<char>>();
+            lookup[entityId.Span] = cancellationTokenSource;
             for (var i = 0; i < payload.MsgData.Params.Repeat.Value; i++)
             {
                 if (cancellationTokenSource.IsCancellationRequested)
@@ -309,11 +310,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
         var delay = payload.MsgData.Params?.Delay ?? 0;
         var shouldRepeat = payload.MsgData.Params?.Repeat.HasValue is true;
-        var entityId = payload.MsgData.EntityId.GetBaseIdentifier();
+        var entityId = payload.MsgData.EntityId.AsMemory().GetBaseIdentifier();
         await SafeCancelRepeat(entityId);
 
         using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(1));
-        SessionHolder.CurrentRepeatCommandMap[entityId] = cancellationTokenSource;
+        var lookup = SessionHolder.CurrentRepeatCommandMap.GetAlternateLookup<ReadOnlySpan<char>>();
+        lookup[entityId.Span] = cancellationTokenSource;
         EntityCommandResult? commandResult = null;
         if (sequence.Length > 2)
         {
@@ -354,9 +356,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         return commandResult ?? EntityCommandResult.Other;
     }
 
-    private static async Task SafeCancelRepeat(string entityId)
+    private static async Task SafeCancelRepeat(ReadOnlyMemory<char> entityId)
     {
-        if (SessionHolder.CurrentRepeatCommandMap.TryGetValue(entityId, out var value))
+        var lookup = SessionHolder.CurrentRepeatCommandMap.GetAlternateLookup<ReadOnlySpan<char>>();
+        if (lookup.TryGetValue(entityId.Span, out var value))
         {
             try
             {

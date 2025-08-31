@@ -34,15 +34,7 @@ public static class ValueExtensions
     /// <exception cref="ArgumentOutOfRangeException">An unknown value for <see cref="EntityType"/> was specified.</exception>
     public static string GetIdentifier(this string baseIdentifier, in EntityType entityType)
     {
-        var identifierSpan = baseIdentifier.AsSpan();
-        foreach (string se in PrefixesSet)
-        {
-            if (identifierSpan.StartsWith(se, StringComparison.OrdinalIgnoreCase))
-            {
-                identifierSpan = identifierSpan[se.Length..];
-                break;
-            }
-        }
+        var identifierSpan = GetBaseIdentifier(baseIdentifier.AsSpan());
 
         if (DisableEntityIdPrefixing)
             return baseIdentifier.Length != identifierSpan.Length ? identifierSpan.ToString() : baseIdentifier;
@@ -98,6 +90,54 @@ public static class ValueExtensions
     /// Gets the base identifier for the <paramref name="identifier"/> by stripping away any prefix.
     /// </summary>
     /// <param name="identifier">The identifier to get the base identifier for.</param>
+    /// <returns>The base identifier.</returns>
+    public static ReadOnlyMemory<char> GetBaseIdentifier(this in ReadOnlyMemory<char> identifier)
+    {
+        var identifierMemory = identifier;
+        foreach (string se in PrefixesSet)
+        {
+            if (identifierMemory.Span.StartsWith(se, StringComparison.OrdinalIgnoreCase))
+            {
+                identifierMemory = identifierMemory[se.Length..];
+                break;
+            }
+        }
+
+        return identifierMemory;
+    }
+
+    /// <summary>
+    /// Gets the base identifier for the <paramref name="identifier"/> by stripping away any prefix.
+    /// </summary>
+    /// <param name="identifier">The identifier to get the base identifier for.</param>
+    /// <returns>The base identifier.</returns>
+    public static ReadOnlySpan<char> GetBaseIdentifier(this in ReadOnlySpan<char> identifier)
+    {
+        var identifierSpan = identifier;
+        foreach (string se in PrefixesSet)
+        {
+            if (identifier.StartsWith(se, StringComparison.OrdinalIgnoreCase))
+            {
+                identifierSpan = identifierSpan[se.Length..];
+                break;
+            }
+        }
+
+        return identifierSpan;
+    }
+
+    /// <summary>
+    /// Gets the base identifier for the <paramref name="identifier"/> by stripping away any prefix.
+    /// </summary>
+    /// <param name="identifier">The identifier to get the base identifier for.</param>
     /// <returns>The base identifier, or null if <paramref name="identifier"/> is null or whitespace.</returns>
     public static string? GetNullableBaseIdentifier(this string? identifier) => identifier.GetNullableIdentifier(EntityType.MediaPlayer);
+
+    /// <summary>
+    /// Gets the base identifier for the <paramref name="identifier"/> by stripping away any prefix.
+    /// </summary>
+    /// <param name="identifier">The identifier to get the base identifier for.</param>
+    /// <returns>The base identifier, or null if <paramref name="identifier"/> is null or whitespace.</returns>
+    public static ReadOnlyMemory<char>? GetNullableBaseIdentifier(this in ReadOnlyMemory<char>? identifier)
+        => identifier == null || identifier.Value.IsEmpty ? null : identifier.Value.GetBaseIdentifier();
 }
