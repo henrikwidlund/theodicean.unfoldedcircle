@@ -138,6 +138,7 @@ public static class ValueExtensions
     /// </summary>
     /// <param name="identifier">The identifier to get the base identifier for.</param>
     /// <returns>The base identifier, or null if <paramref name="identifier"/> is null or whitespace.</returns>
+    // ReSharper disable once UnusedMember.Global
     public static ReadOnlyMemory<char>? GetNullableBaseIdentifier(this in ReadOnlyMemory<char>? identifier)
         => identifier == null || identifier.Value.IsEmpty ? null : identifier.Value.GetBaseIdentifier();
 }
