@@ -231,7 +231,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                             new ValidationError
                             {
-                                Code = "404",
+                                Code = "ENTITY_NOT_FOUND",
                                 Message = "Entity not found."
                             }),
                         wsId,

@@ -308,7 +308,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                         new ValidationError
                         {
-                            Code = "404",
+                            Code = "SETUP_STEP_NOT_FOUND",
                             Message = "Could not find setup step. Please start the setup process again."
                         }),
                     wsId,
@@ -323,7 +323,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                         new ValidationError
                         {
-                            Code = "400",
+                            Code = "INVALID_ARGUMENT",
                             Message = "confirm or input_values is required for this step."
                         }),
                     wsId,
@@ -374,7 +374,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                             ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                                 new ValidationError
                                 {
-                                    Code = "404",
+                                    Code = "ENTITY_NOT_FOUND",
                                     Message = "Could not find entity to reconfigure. Please start the setup process again."
                                 }),
                             wsId,
@@ -390,7 +390,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                             ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                                 new ValidationError
                                 {
-                                    Code = "404",
+                                    Code = "SETUP_STEP_NOT_FOUND",
                                     Message = "Could not find setup step. Please start the setup process again."
                                 }),
                             wsId,
@@ -411,7 +411,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                             new ValidationError
                             {
-                                Code = "400",
+                                Code = "INVALID_SETUP_STEP",
                                 Message = "Invalid setup step. Please start the setup process again."
                             }),
                         wsId,
@@ -426,7 +426,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                     new ValidationError
                     {
-                        Code = "400",
+                        Code = "INVALID_SETUP_STEP",
                         Message = "Invalid setup step. Please start the setup process again."
                     }),
                 wsId,
