@@ -77,7 +77,16 @@ public enum RemoteButton
     Play,
 
     [Display(Name = RemoteButtonConstants.Next)]
-    Next
+    Next,
+
+    [Display(Name = RemoteButtonConstants.Stop)]
+    Stop,
+
+    [Display(Name = RemoteButtonConstants.Record)]
+    Record,
+
+    [Display(Name = RemoteButtonConstants.Menu)]
+    Menu
 }
 
 [EnumJsonConverter(typeof(RemoteButton), CaseSensitive = false, PropertyName = "button")]

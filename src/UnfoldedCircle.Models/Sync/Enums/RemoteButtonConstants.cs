@@ -26,4 +26,7 @@ public static class RemoteButtonConstants
     public const string Previous = "PREV";
     public const string Play = "PLAY";
     public const string Next = "NEXT";
+    public const string Stop = "STOP";
+    public const string Record = "RECORD";
+    public const string Menu = "MENU";
 }
