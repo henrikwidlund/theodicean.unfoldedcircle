@@ -107,7 +107,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                     new ValidationError
                     {
-                        Code = "500",
+                        Code = "ENTITY_UNAVAILABLE",
                         Message = "Could not reach entity"
                     }),
                 wsId,
