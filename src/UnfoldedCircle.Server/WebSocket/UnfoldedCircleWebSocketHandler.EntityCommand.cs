@@ -265,10 +265,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
         var delay = payload.MsgData.Params?.Delay ?? 0;
         EntityCommandResult? commandResult = null;
+        payload = GetEntityCommandWithFixedRepeat(payload);
         if (payload.MsgData.Params?.Repeat.HasValue is true)
         {
             // Acknowledge the command early if more than two repeats to avoid errors caused by timeouts on the remote side.
-            if (payload.MsgData.Params.Repeat > 2)
+            if (payload.MsgData.Params!.Repeat > 2)
             {
                 await HandleCommandResultCoreAsync(socket, wsId, payload, EntityCommandResult.Other, cancellationTokenWrapper, commandCancellationToken);
                 commandResult = EntityCommandResult.Handled;
@@ -280,7 +281,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             using var cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromMinutes(1));
             var lookup = SessionHolder.CurrentRepeatCommandMap.GetAlternateLookup<ReadOnlySpan<char>>();
             lookup[entityId.Span] = cancellationTokenSource;
-            for (var i = 0; i < payload.MsgData.Params.Repeat.Value; i++)
+            for (var i = 0; i < payload.MsgData.Params.Repeat; i++)
             {
                 if (cancellationTokenSource.IsCancellationRequested)
                     break;
@@ -325,6 +326,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             commandResult = EntityCommandResult.Handled;
         }
 
+        payload = GetEntityCommandWithFixedRepeat(payload);
+
         foreach (var command in sequence.Where(static x => !string.IsNullOrEmpty(x)))
         {
             if (shouldRepeat)
@@ -354,6 +357,16 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
 
         return commandResult ?? EntityCommandResult.Other;
+    }
+
+    /// <summary>
+    /// Temporary workaround for always repeating 4 times due to bug in core
+    /// </summary>
+    private static RemoteEntityCommandMsgData GetEntityCommandWithFixedRepeat(RemoteEntityCommandMsgData payload)
+    {
+        if (payload.MsgData.Params?.Repeat == 4)
+            return payload with { MsgData = payload.MsgData with { Params = payload.MsgData.Params with { Repeat = 1 } } };
+        return payload;
     }
 
     private static async Task SafeCancelRepeat(ReadOnlyMemory<char> entityId)
