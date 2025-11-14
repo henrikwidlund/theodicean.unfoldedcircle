@@ -226,7 +226,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var setupResult = await OnSetupDriverAsync(payload, wsId, cancellationTokenWrapper.ApplicationStopping);
                 if (setupResult is null)
                 {
-                    _logger.LogError("[{WSId}] WS: Setup driver failed. Payload: {@Payload}.", wsId, payload.MsgData);
+                    if (_logger.IsEnabled(LogLevel.Error))
+                        _logger.LogError("[{WSId}] WS: Setup driver failed. Payload: {@Payload}.", wsId, payload.MsgData);
+
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                             new ValidationError
@@ -243,8 +245,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 {
                     if (setupResult.NextSetupStep is null)
                     {
-                        _logger.LogError("[{WSId}] WS: Setup driver user input required but no next setup step provided. Setup will be aborted. Payload: {@Payload}.",
-                            wsId, payload.MsgData);
+                        if (_logger.IsEnabled(LogLevel.Error))
+                            _logger.LogError("[{WSId}] WS: Setup driver user input required but no next setup step provided. Setup will be aborted. Payload: {@Payload}.",
+                                wsId, payload.MsgData);
                     }
                     else
                     {
@@ -303,8 +306,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 }
                 else
                 {
-                    _logger.LogError("[{WSId}] WS: Unsupported entity type {EntityType}.",
-                        wsId, entityType.ToString());
+                    if (_logger.IsEnabled(LogLevel.Error))
+                        _logger.LogError("[{WSId}] WS: Unsupported entity type {EntityType}.",
+                            wsId, entityType.ToString());
                 }
 
                 return;

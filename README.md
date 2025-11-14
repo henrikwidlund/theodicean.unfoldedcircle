@@ -22,7 +22,7 @@ ASP.NET SDK for hosting integration drivers for the [Unfolded Circle Remotes](ht
 - Only supports Media Player and Remote entities (I do not have any other devices to test with)
 
 ## Requirements
-- dotnet 9 SDK
+- dotnet 10 SDK
 
 ## Install
 

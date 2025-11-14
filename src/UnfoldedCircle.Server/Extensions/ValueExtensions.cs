@@ -21,7 +21,7 @@ public static class ValueExtensions
     // ReSharper disable once UnusedMember.Global
     public static string GetValueOrNull<TKey>(this IReadOnlyDictionary<TKey, string> dictionary, TKey key, string defaultValue)
     {
-        string value = dictionary.GetValueOrDefault(key, defaultValue);
+        var value = dictionary.GetValueOrDefault(key, defaultValue);
         return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
     }
 
@@ -94,13 +94,10 @@ public static class ValueExtensions
     public static ReadOnlyMemory<char> GetBaseIdentifier(this in ReadOnlyMemory<char> identifier)
     {
         var identifierMemory = identifier;
-        foreach (string se in PrefixesSet)
+        foreach (var se in PrefixesSet.Where(se => identifierMemory.Span.StartsWith(se, StringComparison.OrdinalIgnoreCase)))
         {
-            if (identifierMemory.Span.StartsWith(se, StringComparison.OrdinalIgnoreCase))
-            {
-                identifierMemory = identifierMemory[se.Length..];
-                break;
-            }
+            identifierMemory = identifierMemory[se.Length..];
+            break;
         }
 
         return identifierMemory;
