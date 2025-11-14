@@ -20,7 +20,7 @@ namespace UnfoldedCircle.Server.WebSocket;
 /// Handler for events and requests sent by the remote to the integration.
 /// </summary>
 /// <param name="configurationService">The service providing configurations.</param>
-/// <param name="options">Options for customizing the behaviour of this class.</param>
+/// <param name="options">Options for customizing the behavior of this class.</param>
 /// <param name="logger">The logger used by this class.</param>
 /// <typeparam name="TMediaPlayerCommandId">The type of commands used by the media player entity.</typeparam>
 /// <typeparam name="TConfigurationItem">The type of configuration item the <paramref name="configurationService"/> will use.</typeparam>
@@ -38,7 +38,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected readonly IConfigurationService<TConfigurationItem> _configurationService = configurationService;
 
     /// <summary>
-    /// Options for customizing the behaviour of this class.
+    /// Options for customizing the behavior of this class.
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
     protected readonly IOptions<UnfoldedCircleOptions> _options = options;
@@ -161,7 +161,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
             if (result.Count == 0)
             {
-                _logger.LogTrace("[{WSId}] WS: Received message is not JSON.", wsId);
+                if (_logger.IsEnabled(LogLevel.Trace))
+                    _logger.LogTrace("[{WSId}] WS: Received message is not JSON.", wsId);
                 continue;
             }
 
@@ -170,20 +171,23 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 using var jsonDocument = JsonDocument.Parse(buffer.AsMemory(0, result.Count));
                 if (!jsonDocument.RootElement.TryGetProperty("msg", out var msg))
                 {
-                    _logger.LogDebug("[{WSId}] WS: Received message does not contain 'msg' property.", wsId);
+                    if (_logger.IsEnabled(LogLevel.Debug))
+                        _logger.LogDebug("[{WSId}] WS: Received message does not contain 'msg' property.", wsId);
                     continue;
                 }
 
                 var messageEvent = MessageEventHelpers.GetMessageEvent(msg, out var rawValue);
                 if (messageEvent == MessageEvent.Other)
                 {
-                    _logger.LogInformation("[{WSId}] WS: Unknown message '{Message}'", wsId, rawValue);
+                    if (_logger.IsEnabled(LogLevel.Information))
+                        _logger.LogInformation("[{WSId}] WS: Unknown message '{Message}'", wsId, rawValue);
                     continue;
                 }
 
                 if (!jsonDocument.RootElement.TryGetProperty("kind", out var kind))
                 {
-                    _logger.LogInformation("[{WSId}] WS: Received message does not contain 'kind' property.", wsId);
+                    if (_logger.IsEnabled(LogLevel.Information))
+                        _logger.LogInformation("[{WSId}] WS: Received message does not contain 'kind' property.", wsId);
                     continue;
                 }
 
@@ -202,7 +206,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "[{WSId}] WS: Error while handling message.", wsId);
+                if (_logger.IsEnabled(LogLevel.Error))
+                    _logger.LogError(e, "[{WSId}] WS: Error while handling message.", wsId);
             }
 
         } while (!result.CloseStatus.HasValue && !cancellationTokenWrapper.RequestAborted.IsCancellationRequested);
@@ -222,9 +227,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                          || x.Host.Equals(removeInstruction.Host, StringComparison.OrdinalIgnoreCase))
             .ToArray();
 
+        var isEnabled = _logger.IsEnabled(LogLevel.Information);
         foreach (var entity in entities)
         {
-            _logger.LogInformation("[{WSId}] Removing entity {@Entity}", wsId, entity);
+            if (isEnabled)
+                _logger.LogInformation("[{WSId}] Removing entity {@Entity}", wsId, entity);
             configuration.Entities.Remove(entity);
         }
 

@@ -20,8 +20,7 @@ public abstract class ConfigurationService<TConfigurationItem>(IConfiguration co
     where TConfigurationItem : UnfoldedCircleConfigurationItem
 {
     private readonly IConfiguration _configuration = configuration;
-    private string? _ucConfigHome;
-    private string UcConfigHome => _ucConfigHome ??= _configuration["UC_CONFIG_HOME"] ?? string.Empty;
+    private string UcConfigHome => field ??= _configuration["UC_CONFIG_HOME"] ?? string.Empty;
     private string ConfigurationFilePath => Path.Combine(UcConfigHome, "configured_entities.json");
     private UnfoldedCircleConfiguration<TConfigurationItem>? _unfoldedCircleConfiguration;
     private readonly SemaphoreSlim _semaphore = new(1, 1);

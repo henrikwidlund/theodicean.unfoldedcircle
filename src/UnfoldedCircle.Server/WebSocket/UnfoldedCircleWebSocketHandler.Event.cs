@@ -94,7 +94,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 if (SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out var entityId))
                 {
                     await RemoveConfigurationAsync(wsId, new RemoveInstruction(null, null, entityId), cancellationTokenWrapper.ApplicationStopping);
-                    _logger.LogInformation("[{WSId}] WS: Removed configuration for {EntityId}", wsId, entityId);
+                    if (_logger.IsEnabled(LogLevel.Information))
+                        _logger.LogInformation("[{WSId}] WS: Removed configuration for {EntityId}", wsId, entityId);
                 }
                 
                 return;
@@ -158,8 +159,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
             catch (OperationCanceledException e)
             {
-                _logger.LogError(e, "[{WSId}] WS: Failed to get entity state for {EntityId} due to cancellation.",
-                    wsId, unfoldedCircleConfigurationItem.EntityId);
+                if (_logger.IsEnabled(LogLevel.Error))
+                    _logger.LogError(e, "[{WSId}] WS: Failed to get entity state for {EntityId} due to cancellation.",
+                        wsId, unfoldedCircleConfigurationItem.EntityId);
                 return;
             }
 

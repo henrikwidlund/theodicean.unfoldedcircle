@@ -303,7 +303,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             if (!SessionHolder.NextSetupSteps.TryGetValue(wsId, out var step))
             {
-                _logger.LogError("[{WSId}] No setup step found.", wsId);
+                if (_logger.IsEnabled(LogLevel.Error))
+                    _logger.LogError("[{WSId}] No setup step found.", wsId);
+
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                         new ValidationError
@@ -318,7 +320,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
             if (payload.MsgData is { Confirm: null, InputValues: null })
             {
-                _logger.LogError("[{WSId}] No confirm or input_values found in payload.", wsId);
+                if (_logger.IsEnabled(LogLevel.Error))
+                    _logger.LogError("[{WSId}] No confirm or input_values found in payload.", wsId);
+
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                         new ValidationError
@@ -369,7 +373,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 case SetupStep.SaveReconfiguredEntity:
                     if (!SessionHolder.ReconfigureEntityMap.TryGetValue(wsId, out var entityId) || string.IsNullOrEmpty(entityId))
                     {
-                        _logger.LogError("[{WSId}] No entity ID found during save reconfigured entity step.", wsId);
+                        if (_logger.IsEnabled(LogLevel.Error))
+                            _logger.LogError("[{WSId}] No entity ID found during save reconfigured entity step.", wsId);
+
                         await SendMessageAsync(socket,
                             ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                                 new ValidationError
@@ -385,7 +391,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     var configurationItem = configuration.Entities.SingleOrDefault(x => x.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase));
                     if (configurationItem is null)
                     {
-                        _logger.LogError("[{WSId}] WS: Could not find entity with ID: {EntityId}.", wsId, entityId);
+                        if (_logger.IsEnabled(LogLevel.Error))
+                            _logger.LogError("[{WSId}] WS: Could not find entity with ID: {EntityId}.", wsId, entityId);
+
                         await SendMessageAsync(socket,
                             ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                                 new ValidationError
@@ -406,7 +414,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     }
                     return;
                 default:
-                    _logger.LogError("[{WSId}] No valid setup step found. Current step: {Step}.", wsId, step.ToString());
+                    if (_logger.IsEnabled(LogLevel.Error))
+                        _logger.LogError("[{WSId}] No valid setup step found. Current step: {Step}.", wsId, step.ToString());
+
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                             new ValidationError
@@ -421,7 +431,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
         catch (Exception e)
         {
-            _logger.LogError(e, "[{WSId}] Error during setup process: {Message}", wsId, e.Message);
+            if (_logger.IsEnabled(LogLevel.Error))
+                _logger.LogError(e, "[{WSId}] Error during setup process: {Message}", wsId, e.Message);
+
             await SendMessageAsync(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                     new ValidationError

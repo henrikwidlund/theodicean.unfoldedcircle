@@ -9,8 +9,6 @@ namespace UnfoldedCircle.Server.DependencyInjection;
 /// </summary>
 public class UnfoldedCircleOptions
 {
-    private Dictionary<MessageEvent, JsonTypeInfo>? _messageEventDeserializeOverrides;
-
     /// <summary>
     /// Set to true if you want entity_ids and device_ids to be returned without a prefix.
     /// This should only be used if your integration has devices setup before prefixing was introduced.
@@ -36,9 +34,9 @@ public class UnfoldedCircleOptions
     /// </summary>
     public Dictionary<MessageEvent, JsonTypeInfo> MessageEventDeserializeOverrides
     {
-        get => _messageEventDeserializeOverrides ??= [];
+        get => field ??= [];
         // ReSharper disable once UnusedMember.Global
-        set => _messageEventDeserializeOverrides = value;
+        set;
     }
 
     /// <summary>
