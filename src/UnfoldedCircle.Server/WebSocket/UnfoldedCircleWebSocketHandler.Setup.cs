@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-
 using UnfoldedCircle.Models.Events;
 using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Models.Sync;
@@ -303,8 +301,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             if (!SessionHolder.NextSetupSteps.TryGetValue(wsId, out var step))
             {
-                if (_logger.IsEnabled(LogLevel.Error))
-                    _logger.LogError("[{WSId}] No setup step found.", wsId);
+                _logger.NoSetupStepFound(wsId);
 
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -320,8 +317,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
             if (payload.MsgData is { Confirm: null, InputValues: null })
             {
-                if (_logger.IsEnabled(LogLevel.Error))
-                    _logger.LogError("[{WSId}] No confirm or input_values found in payload.", wsId);
+                _logger.NoConfirmOrInputValuesFound(wsId);
 
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -373,8 +369,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 case SetupStep.SaveReconfiguredEntity:
                     if (!SessionHolder.ReconfigureEntityMap.TryGetValue(wsId, out var entityId) || string.IsNullOrEmpty(entityId))
                     {
-                        if (_logger.IsEnabled(LogLevel.Error))
-                            _logger.LogError("[{WSId}] No entity ID found during save reconfigured entity step.", wsId);
+                        _logger.NoEntityIdFoundSaveReconfigure(wsId);
 
                         await SendMessageAsync(socket,
                             ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -391,8 +386,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     var configurationItem = configuration.Entities.SingleOrDefault(x => x.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase));
                     if (configurationItem is null)
                     {
-                        if (_logger.IsEnabled(LogLevel.Error))
-                            _logger.LogError("[{WSId}] WS: Could not find entity with ID: {EntityId}.", wsId, entityId);
+                        _logger.EntityWithIdNotFound(wsId, entityId);
 
                         await SendMessageAsync(socket,
                             ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -414,8 +408,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     }
                     return;
                 default:
-                    if (_logger.IsEnabled(LogLevel.Error))
-                        _logger.LogError("[{WSId}] No valid setup step found. Current step: {Step}.", wsId, step.ToString());
+                    _logger.NoValidSetupStepFound(wsId, step);
 
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -431,8 +424,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
         catch (Exception e)
         {
-            if (_logger.IsEnabled(LogLevel.Error))
-                _logger.LogError(e, "[{WSId}] Error during setup process: {Message}", wsId, e.Message);
+            _logger.ErrorDuringSetupProcess(wsId, e);
 
             await SendMessageAsync(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
