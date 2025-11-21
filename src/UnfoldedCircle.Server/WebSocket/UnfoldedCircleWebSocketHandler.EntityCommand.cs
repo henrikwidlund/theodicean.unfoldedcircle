@@ -125,8 +125,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 break;
             default:
                 if (_logger.IsEnabled(LogLevel.Warning))
-                    _logger.LogWarning("[{WSId}] WS: Unknown entity command type {PayloadType}",
-                        wsId, payload.GetType().Name);
+                    _logger.UnknownEntityCommand(wsId, payload.GetType().Name);
                 break;
         }
     }
@@ -193,8 +192,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
         catch (Exception e)
         {
-            if (_logger.IsEnabled(LogLevel.Error))
-                _logger.LogError(e, "[{WSId}] WS: Error while handling entity command {EntityCommand}", wsId, payload.MsgData);
+            _logger.EntityCommandHandlingException(wsId, payload.MsgData, e);
 
             await SendMessageAsync(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -251,11 +249,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     commandCancellationToken);
             }
             else
-            {
-                if (_logger.IsEnabled(LogLevel.Error))
-                    _logger.LogError("[{WSId}] WS: Unsupported entity type {EntityType} for entity {EntityId}.",
-                        wsId, entity.EntitType.ToString(), entity.EntityId);
-            }
+                _logger.UnsupportedEntityTypeWithEntityId(wsId, entity.EntitType, entity.EntityId);
 
             _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, entity.EntityId.GetBaseIdentifier(), wsId, cancellationTokenWrapper),
                 TaskCreationOptions.LongRunning);

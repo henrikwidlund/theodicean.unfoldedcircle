@@ -32,23 +32,20 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
                 using var socket = await context.WebSockets.AcceptWebSocketAsync();
                 var wsId = $"{context.Connection.RemoteIpAddress?.ToString()}:{context.Connection.RemotePort.ToString(NumberFormatInfo.InvariantInfo)}";
 
-                if (_logger.IsEnabled(LogLevel.Debug))
-                    _logger.LogDebug("[{WSId}] WS: New connection", wsId);
+                _logger.WebSocketNewConnection(wsId);
 
                 using var cancellationTokenWrapper = new CancellationTokenWrapper(_loggerFactory.CreateLogger<CancellationTokenWrapper>(), _applicationLifetime.ApplicationStopping, context.RequestAborted);
                 var result = await _unfoldedCircleWebSocketHandler.HandleWebSocketAsync(socket, wsId, cancellationTokenWrapper);
                 await socket.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, context.RequestAborted);
 
-                if (_logger.IsEnabled(LogLevel.Debug))
-                    _logger.LogDebug("[{WSId}] WS: Connection closed", wsId);
+                _logger.WebSocketConnectionClosed(wsId);
             }
             
             await next(context);
         }
         catch (Exception e)
         {
-            if (_logger.IsEnabled(LogLevel.Error))
-                _logger.LogError(e, "An error occurred while handling WebSocket connection");
+            _logger.UnfoldedCircleMiddlewareException(e);
         }
     }
 }

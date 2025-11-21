@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-
 using UnfoldedCircle.Models.Events;
 using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Server.Event;
@@ -94,8 +92,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 if (SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out var entityId))
                 {
                     await RemoveConfigurationAsync(wsId, new RemoveInstruction(null, null, entityId), cancellationTokenWrapper.ApplicationStopping);
-                    if (_logger.IsEnabled(LogLevel.Information))
-                        _logger.LogInformation("[{WSId}] WS: Removed configuration for {EntityId}", wsId, entityId);
+                    _logger.RemovedConfiguration(wsId, entityId);
                 }
                 
                 return;
@@ -159,9 +156,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
             catch (OperationCanceledException e)
             {
-                if (_logger.IsEnabled(LogLevel.Error))
-                    _logger.LogError(e, "[{WSId}] WS: Failed to get entity state for {EntityId} due to cancellation.",
-                        wsId, unfoldedCircleConfigurationItem.EntityId);
+                _logger.EntityStateFailedCancelled(wsId, unfoldedCircleConfigurationItem.EntityId, e);
                 return;
             }
 

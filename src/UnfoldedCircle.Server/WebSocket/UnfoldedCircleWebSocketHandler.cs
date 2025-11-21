@@ -69,7 +69,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         CancellationToken cancellationToken)
     {
         if (_logger.IsEnabled(LogLevel.Trace))
-            _logger.LogTrace("[{WSId}] WS: Sending message '{Message}'", wsId, Encoding.UTF8.GetString(buffer.Array!, buffer.Offset, buffer.Count));
+            _logger.SendingMessage(wsId, Encoding.UTF8.GetString(buffer.Array!, buffer.Offset, buffer.Count));
 
         return socket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken);
     }
@@ -157,12 +157,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             result = await socket.ReceiveAsync(buffer, CancellationToken.None);
             if (_logger.IsEnabled(LogLevel.Trace))
-                _logger.LogTrace("[{WSId}] WS: Received message '{Message}'", wsId, Encoding.UTF8.GetString(buffer, 0, result.Count));
+                _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(buffer, 0, result.Count));
 
             if (result.Count == 0)
             {
-                if (_logger.IsEnabled(LogLevel.Trace))
-                    _logger.LogTrace("[{WSId}] WS: Received message is not JSON.", wsId);
+                _logger.NotJson(wsId);
                 continue;
             }
 
@@ -171,23 +170,20 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 using var jsonDocument = JsonDocument.Parse(buffer.AsMemory(0, result.Count));
                 if (!jsonDocument.RootElement.TryGetProperty("msg", out var msg))
                 {
-                    if (_logger.IsEnabled(LogLevel.Debug))
-                        _logger.LogDebug("[{WSId}] WS: Received message does not contain 'msg' property.", wsId);
+                    _logger.MissingMessageProperty(wsId);
                     continue;
                 }
 
                 var messageEvent = MessageEventHelpers.GetMessageEvent(msg, out var rawValue);
                 if (messageEvent == MessageEvent.Other)
                 {
-                    if (_logger.IsEnabled(LogLevel.Information))
-                        _logger.LogInformation("[{WSId}] WS: Unknown message '{Message}'", wsId, rawValue);
+                    _logger.UnknownMessageType(wsId, rawValue);
                     continue;
                 }
 
                 if (!jsonDocument.RootElement.TryGetProperty("kind", out var kind))
                 {
-                    if (_logger.IsEnabled(LogLevel.Information))
-                        _logger.LogInformation("[{WSId}] WS: Received message does not contain 'kind' property.", wsId);
+                    _logger.MissingKindProperty(wsId);
                     continue;
                 }
 
@@ -206,8 +202,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
             catch (Exception e)
             {
-                if (_logger.IsEnabled(LogLevel.Error))
-                    _logger.LogError(e, "[{WSId}] WS: Error while handling message.", wsId);
+                _logger.HandleWebSocketAsyncException(wsId, e);
             }
 
         } while (!result.CloseStatus.HasValue && !cancellationTokenWrapper.RequestAborted.IsCancellationRequested);
@@ -227,11 +222,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                                          || x.Host.Equals(removeInstruction.Host, StringComparison.OrdinalIgnoreCase))
             .ToArray();
 
-        var isEnabled = _logger.IsEnabled(LogLevel.Information);
         foreach (var entity in entities)
         {
-            if (isEnabled)
-                _logger.LogInformation("[{WSId}] Removing entity {@Entity}", wsId, entity);
+            _logger.RemovingEntity(wsId, entity);
             configuration.Entities.Remove(entity);
         }
 

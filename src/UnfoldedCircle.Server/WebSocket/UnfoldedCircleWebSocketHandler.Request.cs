@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Logging;
-
 using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Models.Sync;
 using UnfoldedCircle.Server.Event;
@@ -226,8 +224,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var setupResult = await OnSetupDriverAsync(payload, wsId, cancellationTokenWrapper.ApplicationStopping);
                 if (setupResult is null)
                 {
-                    if (_logger.IsEnabled(LogLevel.Error))
-                        _logger.LogError("[{WSId}] WS: Setup driver failed. Payload: {@Payload}.", wsId, payload.MsgData);
+                    _logger.DriverSetupFailed(wsId, payload.MsgData);
 
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -244,11 +241,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 if (setupResult.SetupDriverResult == SetupDriverResult.UserInputRequired)
                 {
                     if (setupResult.NextSetupStep is null)
-                    {
-                        if (_logger.IsEnabled(LogLevel.Error))
-                            _logger.LogError("[{WSId}] WS: Setup driver user input required but no next setup step provided. Setup will be aborted. Payload: {@Payload}.",
-                                wsId, payload.MsgData);
-                    }
+                        _logger.UserInputNoNextStep(wsId, payload.MsgData);
                     else
                     {
                         await Task.WhenAll(SendMessageAsync(socket,
@@ -305,11 +298,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
                 }
                 else
-                {
-                    if (_logger.IsEnabled(LogLevel.Error))
-                        _logger.LogError("[{WSId}] WS: Unsupported entity type {EntityType}.",
-                            wsId, entityType.ToString());
-                }
+                    _logger.UnsupportedEntityType(wsId, entityType);
 
                 return;
             }

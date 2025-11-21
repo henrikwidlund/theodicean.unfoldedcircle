@@ -77,8 +77,7 @@ public sealed class CancellationTokenWrapper(
                 SessionHolder.BroadcastingEvents.TryRemove(subscribedEntity.Key, out _);
             }
 
-            if (logger.IsEnabled(LogLevel.Information))
-                logger.LogInformation("Broadcast cancelled for {@Entities}", subscribedEntities);
+            logger.BroadcastCancelled(subscribedEntities);
 
             subscribedEntities.Clear();
         }, (_logger, _subscribedEntities));

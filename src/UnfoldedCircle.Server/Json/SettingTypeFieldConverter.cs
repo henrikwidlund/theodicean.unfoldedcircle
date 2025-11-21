@@ -13,28 +13,16 @@ public class SettingTypeFieldConverter : JsonConverter<SettingTypeField>
         using JsonDocument doc = JsonDocument.ParseValue(ref reader);
         var root = doc.RootElement;
 
-        if (root.TryGetProperty("label", out _))
-            return root.Deserialize<SettingTypeLabel>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeLabel)!;
-
-        if (root.TryGetProperty("dropdown", out _))
-            return root.Deserialize<SettingTypeDropdown>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeDropdown)!;
-
-        if (root.TryGetProperty("checkbox", out _))
-            return root.Deserialize<SettingTypeCheckbox>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeCheckbox)!;
-
-        if (root.TryGetProperty("password", out _))
-            return root.Deserialize<SettingTypePassword>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypePassword)!;
-
-        if (root.TryGetProperty("textarea", out _))
-            return root.Deserialize<SettingTypeTextArea>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeTextArea)!;
-
-        if (root.TryGetProperty("number", out _))
-            return root.Deserialize<SettingTypeNumber>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeNumber)!;
-
-        if (root.TryGetProperty("text", out _))
-            return root.Deserialize<SettingTypeText>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeText)!;
-
-        throw new JsonException("Unknown setting type field.");
+        return root switch {
+            _ when root.TryGetProperty("label", out _) => root.Deserialize<SettingTypeLabel>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeLabel)!,
+            _ when root.TryGetProperty("dropdown", out _) => root.Deserialize<SettingTypeDropdown>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeDropdown)!,
+            _ when root.TryGetProperty("checkbox", out _) => root.Deserialize<SettingTypeCheckbox>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeCheckbox)!,
+            _ when root.TryGetProperty("password", out _) => root.Deserialize<SettingTypePassword>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypePassword)!,
+            _ when root.TryGetProperty("textarea", out _) => root.Deserialize<SettingTypeTextArea>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeTextArea)!,
+            _ when root.TryGetProperty("number", out _) => root.Deserialize<SettingTypeNumber>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeNumber)!,
+            _ when root.TryGetProperty("text", out _) => root.Deserialize<SettingTypeText>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeText)!,
+            _ => throw new JsonException("Unknown setting type field.")
+        };
     }
 
     /// <inheritdoc />
