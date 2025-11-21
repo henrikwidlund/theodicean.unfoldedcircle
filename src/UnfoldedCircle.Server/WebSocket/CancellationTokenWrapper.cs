@@ -71,15 +71,15 @@ public sealed class CancellationTokenWrapper(
         _broadcastCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(RequestAborted, ApplicationStopping);
         _broadcastCancellationTokenSource.Token.Register(static callback =>
         {
-            (ILogger logger, ConcurrentDictionary<string, byte> subscribedEntities) = ((ILogger, ConcurrentDictionary<string, byte>))callback!;
-            foreach (var subscribedEntity in subscribedEntities)
+            (ILogger innerLogger, ConcurrentDictionary<string, byte> innerSubscribedEntities) = ((ILogger, ConcurrentDictionary<string, byte>))callback!;
+            foreach (var subscribedEntity in innerSubscribedEntities)
             {
                 SessionHolder.BroadcastingEvents.TryRemove(subscribedEntity.Key, out _);
             }
 
-            logger.BroadcastCancelled(subscribedEntities);
+            innerLogger.BroadcastCancelled(innerSubscribedEntities);
 
-            subscribedEntities.Clear();
+            innerSubscribedEntities.Clear();
         }, (_logger, _subscribedEntities));
     }
 

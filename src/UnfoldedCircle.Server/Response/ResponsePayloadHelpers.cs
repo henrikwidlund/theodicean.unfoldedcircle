@@ -12,7 +12,9 @@ namespace UnfoldedCircle.Server.Response;
 public static class ResponsePayloadHelpers
 {
     private const string EventKind = "event";
-    
+    private const string Device = "DEVICE";
+    private const string DriverSetupChange = "driver_setup_change";
+
     private static byte[]? _createAuthResponsePayload;
 
     /// <summary>
@@ -76,7 +78,7 @@ public static class ResponsePayloadHelpers
         {
             Kind = EventKind,
             Msg = "device_state",
-            Cat = "DEVICE",
+            Cat = Device,
             TimeStamp = DateTime.UtcNow,
             MsgData = new DeviceStateItem
             {
@@ -146,8 +148,8 @@ public static class ResponsePayloadHelpers
         JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
         {
             Kind = EventKind,
-            Msg = "driver_setup_change",
-            Cat = "DEVICE",
+            Msg = DriverSetupChange,
+            Cat = Device,
             TimeStamp = DateTime.UtcNow,
             MsgData = new DriverSetupChange
             {
@@ -160,37 +162,37 @@ public static class ResponsePayloadHelpers
     /// <summary>
     /// Creates an event payload used when setting up the driver.
     /// </summary>
-    public static byte[] CreateDeviceSetupChangeResponseSetupPayload() =>
-        JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
-        {
-            Kind = EventKind,
-            Msg = "driver_setup_change",
-            Cat = "DEVICE",
-            TimeStamp = DateTime.UtcNow,
-            MsgData = new DriverSetupChange
-            {
-                State = DriverSetupChangeState.Setup,
-                EventType = DriverSetupChangeEventType.Setup
-            }
-        }, UnfoldedCircleJsonSerializerContext.Default.DriverSetupChangeEvent);
-
-    /// <summary>
-    /// Creates an event payload used when setting up the driver.
-    /// </summary>
     /// <param name="isSuccess">Whether the setup process succeeded or not.</param>
     public static byte[] CreateDeviceSetupChangeResponsePayload(
         in bool isSuccess) =>
         JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
         {
             Kind = EventKind,
-            Msg = "driver_setup_change",
-            Cat = "DEVICE",
+            Msg = DriverSetupChange,
+            Cat = Device,
             TimeStamp = DateTime.UtcNow,
             MsgData = new DriverSetupChange
             {
                 State = isSuccess ? DriverSetupChangeState.Ok : DriverSetupChangeState.Error,
                 EventType = DriverSetupChangeEventType.Stop,
                 Error = isSuccess ? null : DriverSetupChangeError.NotFound
+            }
+        }, UnfoldedCircleJsonSerializerContext.Default.DriverSetupChangeEvent);
+
+    /// <summary>
+    /// Creates an event payload used when setting up the driver.
+    /// </summary>
+    public static byte[] CreateDeviceSetupChangeResponseSetupPayload() =>
+        JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
+        {
+            Kind = EventKind,
+            Msg = DriverSetupChange,
+            Cat = Device,
+            TimeStamp = DateTime.UtcNow,
+            MsgData = new DriverSetupChange
+            {
+                State = DriverSetupChangeState.Setup,
+                EventType = DriverSetupChangeEventType.Setup
             }
         }, UnfoldedCircleJsonSerializerContext.Default.DriverSetupChangeEvent);
 
@@ -202,8 +204,8 @@ public static class ResponsePayloadHelpers
         JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
         {
             Kind = "event",
-            Msg = "driver_setup_change",
-            Cat = "DEVICE",
+            Msg = DriverSetupChange,
+            Cat = Device,
             TimeStamp = DateTime.UtcNow,
             MsgData = new DriverSetupChange
             {
@@ -227,7 +229,7 @@ public static class ResponsePayloadHelpers
         {
             Kind = EventKind,
             Msg = "device_state",
-            Cat = "DEVICE",
+            Cat = Device,
             TimeStamp = DateTime.UtcNow,
             MsgData = new ConnectDeviceStateItem { State = deviceState }
         }, UnfoldedCircleJsonSerializerContext.Default.ConnectEventMsg);

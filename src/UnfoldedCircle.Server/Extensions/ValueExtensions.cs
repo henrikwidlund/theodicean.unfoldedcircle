@@ -94,11 +94,9 @@ public static class ValueExtensions
     public static ReadOnlyMemory<char> GetBaseIdentifier(this in ReadOnlyMemory<char> identifier)
     {
         var identifierMemory = identifier;
-        foreach (var se in PrefixesSet.Where(se => identifierMemory.Span.StartsWith(se, StringComparison.OrdinalIgnoreCase)))
-        {
-            identifierMemory = identifierMemory[se.Length..];
-            break;
-        }
+        var prefix = PrefixesSet.FirstOrDefault(p => identifierMemory.Span.StartsWith(p, StringComparison.OrdinalIgnoreCase));
+        if (prefix is not null)
+            identifierMemory = identifierMemory[prefix.Length..];
 
         return identifierMemory;
     }
