@@ -29,10 +29,10 @@ jobs:
             ${{ runner.os }}-nuget-
 
       - name: Restore
-        run: dotnet restore ./unfoldedcircle.sln
+        run: dotnet restore ./unfoldedcircle.slnx
 
       - name: Build
-        run: dotnet build ./unfoldedcircle.sln --configuration Release --no-restore
+        run: dotnet build ./unfoldedcircle.slnx --configuration Release --no-restore
 
       - name: Compute package version from release tag
         shell: bash
