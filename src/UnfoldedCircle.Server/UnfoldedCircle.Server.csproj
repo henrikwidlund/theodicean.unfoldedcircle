@@ -38,7 +38,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.4" />
+      <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.5" />
     </ItemGroup>
 
 </Project>
