@@ -53,6 +53,35 @@ public static class ValueExtensions
         };
     }
 
+    /// <summary>
+    /// Gets the identifier for a given entity type, ensuring it has the correct prefix.
+    /// </summary>
+    /// <param name="baseIdentifier">The base value for the identifier.</param>
+    /// <param name="entityType">The <see cref="EntityType"/>.</param>
+    /// <returns>A prefixed identifier based on the <paramref name="entityType"/> value.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">An unknown value for <see cref="EntityType"/> was specified.</exception>
+    // ReSharper disable once UnusedMember.Global
+    public static ReadOnlyMemory<char> GetIdentifier(this ReadOnlyMemory<char> baseIdentifier, in EntityType entityType)
+    {
+        var identifierMemory = GetBaseIdentifier(baseIdentifier);
+
+        if (DisableEntityIdPrefixing)
+            return baseIdentifier.Length != identifierMemory.Length ? identifierMemory : baseIdentifier;
+
+        return entityType switch
+        {
+            EntityType.Cover => baseIdentifier.Span.StartsWith(CoverPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"COVER:{identifierMemory}".AsMemory(),
+            EntityType.Button => baseIdentifier.Span.StartsWith(ButtonPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"BUTTON:{identifierMemory}".AsMemory(),
+            EntityType.Climate => baseIdentifier.Span.StartsWith(ClimatePrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"CLIMATE:{identifierMemory}".AsMemory(),
+            EntityType.Light => baseIdentifier.Span.StartsWith(LightPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"LIGHT:{identifierMemory}".AsMemory(),
+            EntityType.MediaPlayer => baseIdentifier.Length != identifierMemory.Length ? identifierMemory : baseIdentifier,
+            EntityType.Remote => baseIdentifier.Span.StartsWith(RemotePrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"REMOTE:{identifierMemory}".AsMemory(),
+            EntityType.Sensor => baseIdentifier.Span.StartsWith(SensorPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"SENSOR:{identifierMemory}".AsMemory(),
+            EntityType.Switch => baseIdentifier.Span.StartsWith(SwitchPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"SWITCH:{identifierMemory}".AsMemory(),
+            _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null)
+        };
+    }
+
     private const string CoverPrefix = "COVER:";
     private const string ButtonPrefix = "BUTTON:";
     private const string ClimatePrefix = "CLIMATE:";

@@ -66,7 +66,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <summary>
     /// Enum representing the result of an entity command.
     /// </summary>
-    protected enum EntityCommandResult
+    protected enum EntityCommandResult : sbyte
     {
         /// <summary>
         /// The command was successful and the entity was powered on.
@@ -138,9 +138,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         var entityCommandResult = await OnMediaPlayerCommandAsync(socket, payload, wsId, cancellationTokenWrapper, commandCancellationToken);
         if (entityCommandResult != EntityCommandResult.Failure)
-        {
             await HandleCommandResultCoreAsync(socket, wsId, payload, entityCommandResult, cancellationTokenWrapper, commandCancellationToken);
-        }
         else
         {
             await SendMessageAsync(socket,
@@ -174,9 +172,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             };
 
             if (entityCommandResult is not EntityCommandResult.Failure and not EntityCommandResult.Handled)
-            {
                 await HandleCommandResultCoreAsync(socket, wsId, payload, entityCommandResult, cancellationTokenWrapper, commandCancellationToken);
-            }
             else if (entityCommandResult is EntityCommandResult.Failure)
             {
                 await SendMessageAsync(socket,
@@ -297,9 +293,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
         }
         else
-        {
             await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, commandCancellationToken);
-        }
 
         return commandResult ?? EntityCommandResult.Other;
     }
@@ -366,12 +360,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <summary>
     /// Temporary workaround for always repeating 4 times due to bug in core
     /// </summary>
-    private static RemoteEntityCommandMsgData GetEntityCommandWithFixedRepeat(RemoteEntityCommandMsgData payload)
-    {
-        if (payload.MsgData.Params?.Repeat == 4)
-            return payload with { MsgData = payload.MsgData with { Params = payload.MsgData.Params with { Repeat = 1 } } };
-        return payload;
-    }
+    private static RemoteEntityCommandMsgData GetEntityCommandWithFixedRepeat(RemoteEntityCommandMsgData payload) =>
+        payload.MsgData.Params?.Repeat == 4
+            ? payload with { MsgData = payload.MsgData with { Params = payload.MsgData.Params with { Repeat = 1 } } }
+            : payload;
 
     private static async Task SafeCancelRepeat(ReadOnlyMemory<char> entityId)
     {

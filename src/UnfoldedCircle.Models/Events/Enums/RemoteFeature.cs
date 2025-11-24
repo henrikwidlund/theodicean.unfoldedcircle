@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Events;
 
 [JsonConverter(typeof(RemoteFeaturesJsonConverter))]
-public enum RemoteFeature
+public enum RemoteFeature : sbyte
 {
     [Display(Name = "send_cmd")]
     SendCmd,

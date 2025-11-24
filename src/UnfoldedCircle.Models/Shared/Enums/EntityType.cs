@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Shared;
 
 [JsonConverter(typeof(EntityTypeJsonConverter))]
-public enum EntityType
+public enum EntityType : sbyte
 {
     [Display(Name = "cover")]
     Cover = 1,

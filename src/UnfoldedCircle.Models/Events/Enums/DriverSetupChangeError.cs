@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Events;
 
 [JsonConverter(typeof(DriverSetupChangeErrorJsonConverter))]
-public enum DriverSetupChangeError
+public enum DriverSetupChangeError : sbyte
 {
     [Display(Name = "NONE")]
     None = 1,

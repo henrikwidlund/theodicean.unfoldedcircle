@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Sync;
 
 [JsonConverter(typeof(MediaPlayerEntityAttributeJsonConverter))]
-public enum MediaPlayerEntityAttribute
+public enum MediaPlayerEntityAttribute : sbyte
 {
     /// <summary>
     /// State of the media player, influenced by the play and power commands.

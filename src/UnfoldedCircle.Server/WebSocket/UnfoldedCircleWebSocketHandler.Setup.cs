@@ -17,14 +17,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <returns>Returns the found entity with its connection state, or null if not found.</returns>
     protected virtual async ValueTask<OnSetupResult?> OnSetupDriverAsync(SetupDriverMsg payload, string wsId, CancellationToken cancellationToken)
     {
-        if (payload.MsgData.Reconfigure is true)
-        {
-            SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
-            var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
-            return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateReconfigurePageAsync(wsId, configuration, cancellationToken) });
-        }
+        if (payload.MsgData.Reconfigure is not true)
+            return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken) });
 
-        return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken) });
+        SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
+        var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
+        return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateReconfigurePageAsync(wsId, configuration, cancellationToken) });
     }
 
     /// <summary>
@@ -38,7 +36,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <summary>
     /// Setup driver result.
     /// </summary>
-    protected enum SetupDriverResult
+    protected enum SetupDriverResult : sbyte
     {
         /// <summary>
         /// Setup finished successfully.
@@ -59,7 +57,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <summary>
     /// Setup driver user data result.
     /// </summary>
-    protected enum SetupDriverUserDataResult
+    protected enum SetupDriverUserDataResult : sbyte
     {
         /// <summary>
         /// Setup finished successfully. Integration will send any necessary signals to the remote.
@@ -170,9 +168,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         // No prior entities configured, go to new entity page.
         if (configuration.Entities.Count == 0)
-        {
             return CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken);
-        }
 
         var settingsPage = new SettingsPage
         {
@@ -439,7 +435,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     }
 }
 
-internal enum SetupStep
+internal enum SetupStep : sbyte
 {
     /// <summary>
     /// Next step is to configure a new entity.

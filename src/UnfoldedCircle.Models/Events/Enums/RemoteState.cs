@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Events;
 
 [JsonConverter(typeof(RemoteStateJsonConverter))]
-public enum RemoteState
+public enum RemoteState : sbyte
 {
     [Display(Name = "ON")]
     On,

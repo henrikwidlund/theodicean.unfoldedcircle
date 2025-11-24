@@ -15,7 +15,7 @@ public sealed class CancellationTokenWrapper(
     in CancellationToken applicationStopping,
     in CancellationToken requestAborted) : IDisposable
 {
-    private readonly ConcurrentDictionary<string, byte> _subscribedEntities = new(StringComparer.OrdinalIgnoreCase);
+    private readonly ConcurrentDictionary<string, sbyte> _subscribedEntities = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Adds an entity to the list of subscribed entities connected to this <see cref="CancellationTokenWrapper"/>.
@@ -24,10 +24,7 @@ public sealed class CancellationTokenWrapper(
     /// <returns><see langowrd="true"/> if added, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     public bool AddSubscribedEntity(in ReadOnlySpan<char> entityId)
-    {
-        var lookup = _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>();
-        return lookup.TryAdd(entityId, 0);
-    }
+        => _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>().TryAdd(entityId, 0);
 
     /// <summary>
     /// Removes an entity from the list of subscribed entities connected to this <see cref="CancellationTokenWrapper"/>.
@@ -36,10 +33,7 @@ public sealed class CancellationTokenWrapper(
     /// <returns><see langowrd="true"/> if removed, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     public bool RemoveSubscribedEntity(in ReadOnlySpan<char> entityId)
-    {
-        var lookup = _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>();
-        return lookup.TryRemove(entityId, out _);
-    }
+        => _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>().TryRemove(entityId, out _);
 
     /// <summary>
     /// Gets the <see cref="CancellationToken"/> that is used by the application to signal that the application is stopping.
@@ -71,11 +65,9 @@ public sealed class CancellationTokenWrapper(
         _broadcastCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(RequestAborted, ApplicationStopping);
         _broadcastCancellationTokenSource.Token.Register(static callback =>
         {
-            (ILogger innerLogger, ConcurrentDictionary<string, byte> innerSubscribedEntities) = ((ILogger, ConcurrentDictionary<string, byte>))callback!;
+            (ILogger innerLogger, ConcurrentDictionary<string, sbyte> innerSubscribedEntities) = ((ILogger, ConcurrentDictionary<string, sbyte>))callback!;
             foreach (var subscribedEntity in innerSubscribedEntities)
-            {
                 SessionHolder.BroadcastingEvents.TryRemove(subscribedEntity.Key, out _);
-            }
 
             innerLogger.BroadcastCancelled(innerSubscribedEntities);
 

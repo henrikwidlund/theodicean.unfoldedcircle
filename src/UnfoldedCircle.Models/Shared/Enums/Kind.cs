@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Shared;
 
 [JsonConverter(typeof(KindJsonConverter))]
-public enum Kind
+public enum Kind : sbyte
 {
     [Display(Name = "req")]
     Request = 1,

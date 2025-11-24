@@ -9,7 +9,7 @@ namespace UnfoldedCircle.Models.Sync;
 /// The JSON `auth` message is used if a token is configured but no authentication method is set.
 /// </summary>
 [JsonConverter(typeof(IntgAuthMethodJsonConverter))]
-public enum IntgAuthMethod
+public enum IntgAuthMethod : sbyte
 {
     [Display(Name = "HEADER")]
     Header = 1,

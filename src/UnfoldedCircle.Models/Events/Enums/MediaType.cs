@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Events;
 
 [JsonConverter(typeof(MediaTypeJsonConverter))]
-public enum MediaType
+public enum MediaType : sbyte
 {
     [Display(Name = "MUSIC")]
     Music,
