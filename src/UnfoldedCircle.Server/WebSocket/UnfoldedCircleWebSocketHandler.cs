@@ -71,7 +71,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         if (_logger.IsEnabled(LogLevel.Trace))
             _logger.SendingMessage(wsId, Encoding.UTF8.GetString(buffer.Array!, buffer.Offset, buffer.Count));
 
-        return socket.SendAsync(buffer, WebSocketMessageType.Text, true, cancellationToken);
+        return socket.SendAsync(buffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken);
     }
 
     /// <summary>

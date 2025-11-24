@@ -91,7 +91,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 await OnAbortDriverSetupAsync(payload, wsId, cancellationToken);
                 if (SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out var entityId))
                 {
-                    await RemoveConfigurationAsync(wsId, new RemoveInstruction(null, null, entityId), cancellationTokenWrapper.ApplicationStopping);
+                    await RemoveConfigurationAsync(wsId, new RemoveInstruction(DeviceId: null, EntityIds: null, entityId), cancellationTokenWrapper.ApplicationStopping);
                     _logger.RemovedConfiguration(wsId, entityId);
                 }
                 

@@ -49,7 +49,7 @@ public static class ValueExtensions
             EntityType.Remote => baseIdentifier.StartsWith(RemotePrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"REMOTE:{identifierSpan}",
             EntityType.Sensor => baseIdentifier.StartsWith(SensorPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"SENSOR:{identifierSpan}",
             EntityType.Switch => baseIdentifier.StartsWith(SwitchPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"SWITCH:{identifierSpan}",
-            _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, message: null)
         };
     }
 
@@ -78,7 +78,7 @@ public static class ValueExtensions
             EntityType.Remote => baseIdentifier.Span.StartsWith(RemotePrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"REMOTE:{identifierMemory}".AsMemory(),
             EntityType.Sensor => baseIdentifier.Span.StartsWith(SensorPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"SENSOR:{identifierMemory}".AsMemory(),
             EntityType.Switch => baseIdentifier.Span.StartsWith(SwitchPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"SWITCH:{identifierMemory}".AsMemory(),
-            _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, null)
+            _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, message: null)
         };
     }
 

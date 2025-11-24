@@ -349,10 +349,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     switch (await HandleCreateNewEntity(socket, payload, wsId, cancellationTokenWrapper.RequestAborted))
                     {
                         case SetupDriverUserDataResult.Finalized:
-                            await FinishSetupAsync(socket, wsId, true, payload, cancellationTokenWrapper.RequestAborted);
+                            await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
                             break;
                         case SetupDriverUserDataResult.Error:
-                            await FinishSetupAsync(socket, wsId, false, payload, cancellationTokenWrapper.RequestAborted);
+                            await FinishSetupAsync(socket, wsId, isSuccess: false, payload, cancellationTokenWrapper.RequestAborted);
                             break;
                     }
 

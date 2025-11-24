@@ -200,7 +200,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 await RemoveConfigurationAsync(wsId,
                     new RemoveInstruction(
                         payload.MsgData?.DeviceId.GetNullableBaseIdentifier(),
-                        payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), null),
+                        payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), Host: null),
                     cancellationTokenWrapper.ApplicationStopping);
                 
                 return;
