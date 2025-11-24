@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Events;
 
 [JsonConverter(typeof(StateJsonConverter))]
-public enum State
+public enum State : sbyte
 {
     [Display(Name = "UNAVAILABLE")]
     Unavailable,

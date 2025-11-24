@@ -29,7 +29,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <summary>
     /// Represents the current state of an entity.
     /// </summary>
-    protected enum EntityState
+    protected enum EntityState : sbyte
     {
         /// <summary>
         /// Entity is connected and operational.
@@ -307,10 +307,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
     }
 
-    private static EntityType? GetEntityType(JsonDocument jsonDocument)
-    {
-        return jsonDocument.RootElement.TryGetProperty("msg_data", out var msgDataElement) && msgDataElement.TryGetProperty("entity_type", out var value)
+    private static EntityType? GetEntityType(JsonDocument jsonDocument) =>
+        jsonDocument.RootElement.TryGetProperty("msg_data", out var msgDataElement) && msgDataElement.TryGetProperty("entity_type", out var value)
             ? value.Deserialize(UnfoldedCircleJsonSerializerContext.Default.EntityType)
             : null;
-    }
 }

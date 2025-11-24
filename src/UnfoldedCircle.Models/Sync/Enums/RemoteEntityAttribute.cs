@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Sync;
 
 [JsonConverter(typeof(RemoteEntityAttributeJsonConverter))]
-public enum RemoteEntityAttribute
+public enum RemoteEntityAttribute : sbyte
 {
     /// <summary>
     /// State of the controlled device, it's either on or off.

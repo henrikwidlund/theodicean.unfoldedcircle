@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Shared;
 
 [JsonConverter(typeof(DeviceStateJsonConverter))]
-public enum DeviceState
+public enum DeviceState : sbyte
 {
     [Display(Name = "CONNECTED")]
     Connected = 1,

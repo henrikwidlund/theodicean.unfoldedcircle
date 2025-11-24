@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Events;
 
 [JsonConverter(typeof(UserInterfaceItemTypeJsonConverter))]
-public enum UserInterfaceItemType
+public enum UserInterfaceItemType : sbyte
 {
     [Display(Name = "icon")]
     Icon,

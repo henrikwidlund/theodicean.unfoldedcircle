@@ -13,7 +13,7 @@ internal static partial class UnfoldedCircleLogger
 {
     [LoggerMessage(EventId = 1, EventName = nameof(BroadcastCancelled), Level = LogLevel.Information,
         Message = "Broadcast cancelled for {@Entities}")]
-    public static partial void BroadcastCancelled(this ILogger logger, ConcurrentDictionary<string, byte> entities);
+    public static partial void BroadcastCancelled(this ILogger logger, ConcurrentDictionary<string, sbyte> entities);
 
     [LoggerMessage(EventId = 2, EventName = nameof(WebSocketNewConnection), Level = LogLevel.Debug,
         Message = "[{WSId}] WS: New connection")]

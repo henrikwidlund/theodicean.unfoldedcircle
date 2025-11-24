@@ -86,7 +86,7 @@ public static class MessageEventHelpers
 /// <summary>
 /// Specifies the type of message events that can be received by the integration.
 /// </summary>
-public enum MessageEvent
+public enum MessageEvent : sbyte
 {
     /// <summary>
     /// Other/Unknown message event type.

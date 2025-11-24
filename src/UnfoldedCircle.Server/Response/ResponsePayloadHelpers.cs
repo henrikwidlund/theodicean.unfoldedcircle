@@ -127,9 +127,8 @@ public static class ResponsePayloadHelpers
     /// <param name="entityStates"></param>
     public static byte[] CreateGetEntityStatesResponsePayload(
         CommonReq req,
-        EntityStateChanged[] entityStates)
-    {
-        return JsonSerializer.SerializeToUtf8Bytes(new EntityStates
+        EntityStateChanged[] entityStates) =>
+        JsonSerializer.SerializeToUtf8Bytes(new EntityStates
         {
             Code = 200,
             Kind = "resp",
@@ -137,7 +136,6 @@ public static class ResponsePayloadHelpers
             Msg = "entity_states",
             MsgData = entityStates
         }, UnfoldedCircleJsonSerializerContext.Default.EntityStates);
-    }
 
     /// <summary>
     /// Creates an event payload used when setting up the driver.
@@ -223,9 +221,8 @@ public static class ResponsePayloadHelpers
     /// </summary>
     /// <param name="deviceState">The device state.</param>
     public static byte[] CreateConnectEventResponsePayload(
-        in DeviceState deviceState)
-    {
-        return JsonSerializer.SerializeToUtf8Bytes(new ConnectEventMsg
+        in DeviceState deviceState) =>
+        JsonSerializer.SerializeToUtf8Bytes(new ConnectEventMsg
         {
             Kind = EventKind,
             Msg = "device_state",
@@ -233,7 +230,6 @@ public static class ResponsePayloadHelpers
             TimeStamp = DateTime.UtcNow,
             MsgData = new ConnectDeviceStateItem { State = deviceState }
         }, UnfoldedCircleJsonSerializerContext.Default.ConnectEventMsg);
-    }
 
     /// <summary>
     /// Creates a response payload signifying a validation error for a request.

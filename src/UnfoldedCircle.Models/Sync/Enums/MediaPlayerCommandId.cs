@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Sync;
 
 [JsonConverter(typeof(MediaPlayerCommandIdJsonConverter))]
-public enum MediaPlayerCommandId
+public enum MediaPlayerCommandId : sbyte
 {
     /// <summary>
     /// Switch on media player.

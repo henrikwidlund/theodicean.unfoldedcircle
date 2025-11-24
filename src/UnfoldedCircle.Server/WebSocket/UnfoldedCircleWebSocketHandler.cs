@@ -100,12 +100,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         var baseIdentifier = entityId.GetBaseIdentifier();
         var lookup = SessionHolder.BroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>();
-        if (lookup.TryAdd(baseIdentifier, 0))
-        {
-            cancellationTokenWrapper.AddSubscribedEntity(baseIdentifier);
-            return true;
-        }
-        return false;
+        if (!lookup.TryAdd(baseIdentifier, 0))
+            return false;
+
+        cancellationTokenWrapper.AddSubscribedEntity(baseIdentifier);
+        return true;
     }
 
     /// <summary>
@@ -117,8 +116,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected static void RemoveEntityIdToBroadcastingEvents(in ReadOnlySpan<char> entityId, CancellationTokenWrapper cancellationTokenWrapper)
     {
         var baseIdentifier = entityId.GetBaseIdentifier();
-        var lookup = SessionHolder.BroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>();
-        lookup.TryRemove(baseIdentifier, out _);
+        SessionHolder.BroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>().TryRemove(baseIdentifier, out _);
         cancellationTokenWrapper.RemoveSubscribedEntity(baseIdentifier);
     }
 
@@ -128,10 +126,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="entityId">The entity_id.</param>
     // ReSharper disable once UnusedMember.Global
     protected static bool IsBroadcastingEvents(in ReadOnlySpan<char> entityId)
-    {
-        var lookup = SessionHolder.BroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>();
-        return lookup.ContainsKey(entityId.GetBaseIdentifier());
-    }
+        => SessionHolder.BroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>().ContainsKey(entityId.GetBaseIdentifier());
 
     /// <summary>
     /// Removes the <paramref name="wsId"/> from the list of event receivers.
@@ -217,9 +212,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
 
-        var entities = configuration.Entities.Where(x => (x.DeviceId != null && string.Equals(x.DeviceId, removeInstruction.DeviceId, StringComparison.Ordinal))
-                                                         || removeInstruction.EntityIds?.Contains(x.EntityId, StringComparer.OrdinalIgnoreCase) is true
-                                                         || x.Host.Equals(removeInstruction.Host, StringComparison.OrdinalIgnoreCase))
+        var entities = configuration.Entities.Where(x =>
+                (x.DeviceId != null && string.Equals(x.DeviceId, removeInstruction.DeviceId, StringComparison.Ordinal))
+                || removeInstruction.EntityIds?.Contains(x.EntityId, StringComparer.OrdinalIgnoreCase) is true
+                || x.Host.Equals(removeInstruction.Host, StringComparison.OrdinalIgnoreCase))
             .ToArray();
 
         foreach (var entity in entities)

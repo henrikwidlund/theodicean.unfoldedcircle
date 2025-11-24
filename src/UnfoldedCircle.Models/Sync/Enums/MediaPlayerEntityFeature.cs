@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Sync;
 
 [JsonConverter(typeof(MediaPlayerEntityFeatureJsonConverter))]
-public enum MediaPlayerEntityFeature
+public enum MediaPlayerEntityFeature : sbyte
 {
     [Display(Name = "on_off")]
     OnOff = 1,

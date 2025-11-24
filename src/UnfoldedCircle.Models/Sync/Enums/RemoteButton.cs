@@ -5,7 +5,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Sync;
 
 [JsonConverter(typeof(RemoteCommandIdJsonConverter))]
-public enum RemoteButton
+public enum RemoteButton : sbyte
 {
     [Display(Name = RemoteButtonConstants.On)]
     On = 1,

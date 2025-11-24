@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Shared;
 
 [JsonConverter(typeof(RepeatModeJsonConverter))]
-public enum RepeatMode
+public enum RepeatMode : sbyte
 {
     [Display(Name = "OFF")]
     Off = 1,

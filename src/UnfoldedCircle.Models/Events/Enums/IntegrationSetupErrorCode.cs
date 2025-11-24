@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Events;
 
 [JsonConverter(typeof(IntegrationSetupErrorCodeJsonConverter))]
-public enum IntegrationSetupErrorCode
+public enum IntegrationSetupErrorCode : sbyte
 {
     [Display(Name = "NONE")]
     None = 1,

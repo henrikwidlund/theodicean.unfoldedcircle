@@ -4,7 +4,7 @@ using Theodicean.SourceGenerators;
 namespace UnfoldedCircle.Models.Events;
 
 [JsonConverter(typeof(DriverSetupChangeEventTypeJsonConverter))]
-public enum DriverSetupChangeEventType
+public enum DriverSetupChangeEventType : sbyte
 {
     /// <summary>
     /// setup started
