@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Sync;
 
+[EnumJsonConverter<MediaPlayerCommandId>(CaseSensitive = false, PropertyName = "cmd_id")]
 [JsonConverter(typeof(MediaPlayerCommandIdJsonConverter))]
 public enum MediaPlayerCommandId : sbyte
 {
@@ -345,6 +346,3 @@ public enum MediaPlayerCommandId : sbyte
     [Display(Name = MediaPlayerCommandIdConstants.Search)]
     Search
 }
-
-[EnumJsonConverter(typeof(MediaPlayerCommandId), CaseSensitive = false, PropertyName = "cmd_id")]
-public partial class MediaPlayerCommandIdJsonConverter;

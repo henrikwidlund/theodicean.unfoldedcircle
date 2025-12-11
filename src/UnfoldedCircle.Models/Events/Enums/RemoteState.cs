@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Events;
 
+[EnumJsonConverter<RemoteState>(CaseSensitive = false, PropertyName = "state")]
 [JsonConverter(typeof(RemoteStateJsonConverter))]
 public enum RemoteState : sbyte
 {
@@ -18,6 +19,3 @@ public enum RemoteState : sbyte
     [Display(Name = "UNKNOWN")]
     Unknown
 }
-
-[EnumJsonConverter(typeof(RemoteState), CaseSensitive = false, PropertyName = "state")]
-public partial class RemoteStateJsonConverter;

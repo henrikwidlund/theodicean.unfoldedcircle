@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Shared;
 
+[EnumJsonConverter<RepeatMode>(CaseSensitive = false, PropertyName = "repeat")]
 [JsonConverter(typeof(RepeatModeJsonConverter))]
 public enum RepeatMode : sbyte
 {
@@ -15,6 +16,3 @@ public enum RepeatMode : sbyte
     [Display(Name = "ONE")]
     One
 }
-
-[EnumJsonConverter(typeof(RepeatMode), CaseSensitive = false, PropertyName = "repeat")]
-public partial class RepeatModeJsonConverter;

@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Sync;
 
+[EnumJsonConverter<RemoteEntityAttribute>(CaseSensitive = false, PropertyName = "attributes")]
 [JsonConverter(typeof(RemoteEntityAttributeJsonConverter))]
 public enum RemoteEntityAttribute : sbyte
 {
@@ -12,6 +13,3 @@ public enum RemoteEntityAttribute : sbyte
     [Display(Name = "state")]
     State = 1
 }
-
-[EnumJsonConverter(typeof(RemoteEntityAttribute), CaseSensitive = false, PropertyName = "attributes")]
-public partial class RemoteEntityAttributeJsonConverter;

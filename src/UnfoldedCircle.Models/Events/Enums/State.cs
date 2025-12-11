@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Events;
 
+[EnumJsonConverter<State>(CaseSensitive = false, PropertyName = "state")]
 [JsonConverter(typeof(StateJsonConverter))]
 public enum State : sbyte
 {
@@ -30,6 +31,3 @@ public enum State : sbyte
     [Display(Name = "BUFFERING")]
     Buffering
 }
-
-[EnumJsonConverter(typeof(State), CaseSensitive = false, PropertyName = "state")]
-public partial class StateJsonConverter;

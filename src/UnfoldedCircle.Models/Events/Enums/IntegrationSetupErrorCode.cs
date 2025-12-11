@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Events;
 
+[EnumJsonConverter<IntegrationSetupErrorCode>(CaseSensitive = false, PropertyName = "error")]
 [JsonConverter(typeof(IntegrationSetupErrorCodeJsonConverter))]
 public enum IntegrationSetupErrorCode : sbyte
 {
@@ -24,6 +25,3 @@ public enum IntegrationSetupErrorCode : sbyte
     [Display(Name = "OTHER")]
     Other
 }
-
-[EnumJsonConverter(typeof(IntegrationSetupErrorCode), CaseSensitive = false, PropertyName = "error")]
-public partial class IntegrationSetupErrorCodeJsonConverter;

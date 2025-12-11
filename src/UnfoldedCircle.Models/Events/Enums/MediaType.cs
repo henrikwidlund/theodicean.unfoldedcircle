@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Events;
 
+[EnumJsonConverter<MediaType>(CaseSensitive = false, PropertyName = "media_type")]
 [JsonConverter(typeof(MediaTypeJsonConverter))]
 public enum MediaType : sbyte
 {
@@ -21,6 +22,3 @@ public enum MediaType : sbyte
     [Display(Name = "VIDEO")]
     Video
 }
-
-[EnumJsonConverter(typeof(MediaType), CaseSensitive = false, PropertyName = "media_type")]
-public partial class MediaTypeJsonConverter;
