@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Sync;
 
+[EnumJsonConverterAttribute<MediaPlayerEntityAttribute>(CaseSensitive = false, PropertyName = "attributes")]
 [JsonConverter(typeof(MediaPlayerEntityAttributeJsonConverter))]
 public enum MediaPlayerEntityAttribute : sbyte
 {
@@ -102,6 +103,3 @@ public enum MediaPlayerEntityAttribute : sbyte
     [Display(Name = "sound_mode_list")]
     SoundModeList
 }
-
-[EnumJsonConverter(typeof(MediaPlayerEntityAttribute), CaseSensitive = false, PropertyName = "attributes")]
-public partial class MediaPlayerEntityAttributeJsonConverter;

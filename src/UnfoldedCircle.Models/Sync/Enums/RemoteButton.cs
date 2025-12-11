@@ -4,6 +4,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Sync;
 
+[EnumJsonConverter<RemoteButton>(CaseSensitive = false, PropertyName = "button")]
 [JsonConverter(typeof(RemoteCommandIdJsonConverter))]
 public enum RemoteButton : sbyte
 {
@@ -88,6 +89,3 @@ public enum RemoteButton : sbyte
     [Display(Name = RemoteButtonConstants.Menu)]
     Menu
 }
-
-[EnumJsonConverter(typeof(RemoteButton), CaseSensitive = false, PropertyName = "button")]
-public partial class RemoteCommandIdJsonConverter;

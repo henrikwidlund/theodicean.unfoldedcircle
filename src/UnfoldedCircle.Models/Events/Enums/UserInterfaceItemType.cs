@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Events;
 
+[EnumJsonConverter<UserInterfaceItemType>(CaseSensitive = false, PropertyName = "type")]
 [JsonConverter(typeof(UserInterfaceItemTypeJsonConverter))]
 public enum UserInterfaceItemType : sbyte
 {
@@ -15,6 +16,3 @@ public enum UserInterfaceItemType : sbyte
     [Display(Name = "numpad")]
     Numpad
 }
-
-[EnumJsonConverter(typeof(UserInterfaceItemType), CaseSensitive = false, PropertyName = "type")]
-public partial class UserInterfaceItemTypeJsonConverter;

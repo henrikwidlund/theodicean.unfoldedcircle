@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Events;
 
+[EnumJsonConverter<DriverSetupChangeState>(CaseSensitive = false, PropertyName = "state")]
 [JsonConverter(typeof(DriverSetupChangeStateJsonConverter))]
 public enum DriverSetupChangeState : sbyte
 {
@@ -30,6 +31,3 @@ public enum DriverSetupChangeState : sbyte
     [Display(Name = "ERROR")]
     Error
 }
-
-[EnumJsonConverter(typeof(DriverSetupChangeState), CaseSensitive = false, PropertyName = "state")]
-public partial class DriverSetupChangeStateJsonConverter;

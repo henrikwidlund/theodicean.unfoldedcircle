@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Shared;
 
+[EnumJsonConverter<DeviceState>(CaseSensitive = false, PropertyName = "state")]
 [JsonConverter(typeof(DeviceStateJsonConverter))]
 public enum DeviceState : sbyte
 {
@@ -18,6 +19,3 @@ public enum DeviceState : sbyte
     [Display(Name = "ERROR")]
     Error
 }
-
-[EnumJsonConverter(typeof(DeviceState), CaseSensitive = false, PropertyName = "state")]
-public partial class DeviceStateJsonConverter;

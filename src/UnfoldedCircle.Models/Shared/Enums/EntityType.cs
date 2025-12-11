@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Shared;
 
+[EnumJsonConverter<EntityType>(CaseSensitive = false, PropertyName = "entity_type")]
 [JsonConverter(typeof(EntityTypeJsonConverter))]
 public enum EntityType : sbyte
 {
@@ -30,6 +31,3 @@ public enum EntityType : sbyte
     [Display(Name = "switch")]
     Switch
 }
-
-[EnumJsonConverter(typeof(EntityType), CaseSensitive = false, PropertyName = "entity_type")]
-public partial class EntityTypeJsonConverter;

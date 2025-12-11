@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Events;
 
+[EnumJsonConverter<RemoteFeature>(CaseSensitive = false, PropertyName = "features")]
 [JsonConverter(typeof(RemoteFeaturesJsonConverter))]
 public enum RemoteFeature : sbyte
 {
@@ -15,6 +16,3 @@ public enum RemoteFeature : sbyte
     [Display(Name = "toggle")]
     Toggle
 }
-
-[EnumJsonConverter(typeof(RemoteFeature), CaseSensitive = false, PropertyName = "features")]
-public partial class RemoteFeaturesJsonConverter;

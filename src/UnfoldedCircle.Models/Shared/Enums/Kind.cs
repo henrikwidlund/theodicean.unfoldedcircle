@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Shared;
 
+[EnumJsonConverter<Kind>(CaseSensitive = false, PropertyName = "kind")]
 [JsonConverter(typeof(KindJsonConverter))]
 public enum Kind : sbyte
 {
@@ -15,6 +16,3 @@ public enum Kind : sbyte
     [Display(Name = "event")]
     Event
 }
-
-[EnumJsonConverter(typeof(Kind), CaseSensitive = false, PropertyName = "kind")]
-public partial class KindJsonConverter;

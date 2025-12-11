@@ -3,6 +3,7 @@ using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Sync;
 
+[EnumJsonConverter<MediaPlayerEntityFeature>(CaseSensitive = false, PropertyName = "features")]
 [JsonConverter(typeof(MediaPlayerEntityFeatureJsonConverter))]
 public enum MediaPlayerEntityFeature : sbyte
 {
@@ -126,6 +127,3 @@ public enum MediaPlayerEntityFeature : sbyte
     [Display(Name = "settings")]
     Settings
 }
-
-[EnumJsonConverter(typeof(MediaPlayerEntityFeature), CaseSensitive = false, PropertyName = "features")]
-public partial class MediaPlayerEntityFeatureJsonConverter;
