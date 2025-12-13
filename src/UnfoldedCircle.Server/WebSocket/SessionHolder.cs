@@ -9,4 +9,5 @@ internal static class SessionHolder
     public static readonly ConcurrentDictionary<string, SetupStep> NextSetupSteps = new(StringComparer.OrdinalIgnoreCase);
     public static readonly ConcurrentDictionary<string, string> ReconfigureEntityMap = new(StringComparer.OrdinalIgnoreCase);
     public static readonly ConcurrentDictionary<string, CancellationTokenSource> CurrentRepeatCommandMap = new(StringComparer.OrdinalIgnoreCase);
+    public static readonly ConcurrentDictionary<string, HashSet<string>> SensorTypesMap = new(StringComparer.OrdinalIgnoreCase);
 }

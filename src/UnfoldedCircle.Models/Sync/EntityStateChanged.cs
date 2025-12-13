@@ -4,6 +4,7 @@ namespace UnfoldedCircle.Models.Sync;
 
 [JsonDerivedType(typeof(MediaPlayerEntityStateChanged))]
 [JsonDerivedType(typeof(RemoteEntityStateChanged))]
+[JsonDerivedType(typeof(SensorEntityStateChanged))]
 public abstract record EntityStateChanged
 {
     [JsonPropertyName("device_id")]

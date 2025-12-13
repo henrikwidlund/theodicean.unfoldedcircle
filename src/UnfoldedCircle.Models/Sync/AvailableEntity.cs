@@ -4,6 +4,7 @@ namespace UnfoldedCircle.Models.Sync;
 
 [JsonDerivedType(typeof(MediaPlayerAvailableEntity))]
 [JsonDerivedType(typeof(RemoteAvailableEntity))]
+[JsonDerivedType(typeof(SensorAvailableEntity))]
 public abstract record AvailableEntity;
 
 public record AvailableEntity<TFeature, TOptions> : AvailableEntity

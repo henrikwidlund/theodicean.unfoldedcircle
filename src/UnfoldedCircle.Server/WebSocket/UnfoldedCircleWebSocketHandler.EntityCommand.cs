@@ -46,7 +46,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="entityId">The entity_id to return values for.</param>
     // ReSharper disable once MemberCanBePrivate.Global
     protected IEnumerable<(string EntityId, EntityType EntitType)> GetEntities(string entityId)
-        => SupportedEntityTypes.Select(supportedEntityType => (entityId.GetIdentifier(supportedEntityType), supportedEntityType));
+        => SupportedEntityTypes.Select(supportedEntityType => (entityId.GetIdentifier(supportedEntityType),
+            supportedEntityType));
 
     /// <summary>
     /// Executed when a <c>entity_command</c> is received for a media player entity.
@@ -227,22 +228,33 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             if (entity.EntitType == EntityType.MediaPlayer)
             {
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateStateChangedResponsePayload(
+                    ResponsePayloadHelpers.CreateMediaPlayerStateChangedResponsePayload(
                         new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
-                        entity.EntityId.GetIdentifier(EntityType.MediaPlayer),
-                        EntityType.MediaPlayer),
+                        entity.EntityId.GetIdentifier(EntityType.MediaPlayer)),
                     wsId,
                     commandCancellationToken);
             }
             else if (entity.EntitType == EntityType.Remote)
             {
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateStateChangedResponsePayload(
+                    ResponsePayloadHelpers.CreateRemoteStateChangedResponsePayload(
                         new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
-                        entity.EntityId.GetIdentifier(EntityType.Remote),
-                        EntityType.Remote),
+                        entity.EntityId.GetIdentifier(EntityType.Remote)),
                     wsId,
                     commandCancellationToken);
+            }
+            else if (entity.EntitType == EntityType.Sensor)
+            {
+                if (SessionHolder.SensorTypesMap.TryGetValue(entity.EntityId.GetBaseIdentifier(), out var sensorTypes))
+                {
+                    await Task.WhenAll(sensorTypes.Select(x => SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateSensorStateChangedResponsePayload<string>(
+                            new SensorStateChangedEventMessageDataAttributes<string> { State = SensorState.On, Value = null },
+                            entity.EntityId.GetIdentifier(EntityType.Sensor, x),
+                            x),
+                        wsId,
+                        commandCancellationToken)));
+                }
             }
             else
                 _logger.UnsupportedEntityTypeWithEntityId(wsId, entity.EntitType, entity.EntityId);
