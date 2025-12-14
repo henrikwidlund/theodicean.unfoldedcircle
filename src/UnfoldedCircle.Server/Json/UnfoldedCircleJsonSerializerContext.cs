@@ -35,6 +35,8 @@ namespace UnfoldedCircle.Server.Json;
 [JsonSerializable(typeof(ExitStandbyEvent))]
 [JsonSerializable(typeof(StateChangedEvent<MediaPlayerStateChangedEventMessageDataAttributes>))]
 [JsonSerializable(typeof(StateChangedEvent<RemoteStateChangedEventMessageDataAttributes>))]
+[JsonSerializable(typeof(StateChangedEvent<SensorStateChangedEventMessageDataAttributes<int>>))]
+[JsonSerializable(typeof(StateChangedEvent<SensorStateChangedEventMessageDataAttributes<string>>))]
 [JsonSerializable(typeof(EntityType?))]
 public sealed partial class UnfoldedCircleJsonSerializerContext : JsonSerializerContext
 {
@@ -49,6 +51,6 @@ public sealed partial class UnfoldedCircleJsonSerializerContext : JsonSerializer
 
     internal static readonly UnfoldedCircleJsonSerializerContext InstanceWithoutCustomConverters = new(new JsonSerializerOptions
     {
-        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
     });
 }

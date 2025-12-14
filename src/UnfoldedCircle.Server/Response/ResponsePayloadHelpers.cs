@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization.Metadata;
+
 using UnfoldedCircle.Models.Events;
 using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Models.Sync;
@@ -249,16 +251,51 @@ public static class ResponsePayloadHelpers
         }, UnfoldedCircleJsonSerializerContext.Default.CommonRespRequiredValidationError);
 
     /// <summary>
-    /// Creates an event payload for when an entity's state has changed.
+    /// Creates an event payload for when a media player entity's state has changed.
     /// </summary>
     /// <param name="attributes">The attributes for the entity.</param>
     /// <param name="entityId">The entity_id.</param>
-    /// <param name="entityType">The entity type.</param>
-    /// <typeparam name="TAttributes">The type that the attribute is of.</typeparam>
-    public static byte[] CreateStateChangedResponsePayload<TAttributes>(
+    public static byte[] CreateMediaPlayerStateChangedResponsePayload(
+        MediaPlayerStateChangedEventMessageDataAttributes attributes,
+        string entityId) =>
+        CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.MediaPlayer,
+            UnfoldedCircleJsonSerializerContext.Default.StateChangedEventMediaPlayerStateChangedEventMessageDataAttributes);
+
+    /// <summary>
+    /// Creates an event payload for when a remote entity's state has changed.
+    /// </summary>
+    /// <param name="attributes">The attributes for the entity.</param>
+    /// <param name="entityId">The entity_id.</param>
+    public static byte[] CreateRemoteStateChangedResponsePayload(
+        RemoteStateChangedEventMessageDataAttributes attributes,
+        string entityId) =>
+        CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Remote,
+            UnfoldedCircleJsonSerializerContext.Default.StateChangedEventRemoteStateChangedEventMessageDataAttributes);
+
+    /// <summary>
+    /// Creates an event payload for when a sensor entity's state has changed.
+    /// </summary>
+    /// <param name="attributes">The attributes for the entity.</param>
+    /// <param name="entityId">The entity_id.</param>
+    /// <param name="suffix">
+    /// Optional suffix to add to the identifier.
+    /// </param>
+    public static byte[] CreateSensorStateChangedResponsePayload<TValue>(
+        SensorStateChangedEventMessageDataAttributes<TValue> attributes,
+        string entityId,
+        string? suffix) =>
+        CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Sensor,
+            typeof(TValue) == typeof(int)
+                ? UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesInt32
+                : UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesString,
+            suffix);
+
+    private static byte[] CreateEntityStateChangedResponsePayload<TAttributes>(
         TAttributes attributes,
         string entityId,
-        in EntityType entityType) where TAttributes : StateChangedEventMessageDataAttributes =>
+        in EntityType entityType,
+        JsonTypeInfo jsonTypeInfo,
+        string? suffix = null) where TAttributes : StateChangedEventMessageDataAttributes =>
         JsonSerializer.SerializeToUtf8Bytes(new StateChangedEvent<TAttributes>
             {
                 Kind = EventKind,
@@ -267,7 +304,27 @@ public static class ResponsePayloadHelpers
                 TimeStamp = DateTime.UtcNow,
                 MsgData = new StateChangedEventMessageData<TAttributes>
                 {
-                    EntityId = entityId.GetIdentifier(entityType),
+                    EntityId = entityId.GetIdentifier(entityType, suffix),
+                    EntityType = entityType,
+                    Attributes = attributes
+                }
+            },
+            jsonTypeInfo);
+
+    private static byte[] CreateStateChangedResponsePayload<TAttributes>(
+        TAttributes attributes,
+        string entityId,
+        in EntityType entityType,
+        string? suffix = null) where TAttributes : StateChangedEventMessageDataAttributes =>
+        JsonSerializer.SerializeToUtf8Bytes(new StateChangedEvent<TAttributes>
+            {
+                Kind = EventKind,
+                Msg = "entity_change",
+                Cat = "ENTITY",
+                TimeStamp = DateTime.UtcNow,
+                MsgData = new StateChangedEventMessageData<TAttributes>
+                {
+                    EntityId = entityId.GetIdentifier(entityType, suffix),
                     EntityType = entityType,
                     Attributes = attributes
                 }
