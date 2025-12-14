@@ -178,9 +178,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             SessionHolder.SensorTypesMap[entityId] = existingSuffixes;
         }
         else
-        {
             existingSuffixes.Add(sensorSuffix);
-        }
     }
 
     /// <summary>

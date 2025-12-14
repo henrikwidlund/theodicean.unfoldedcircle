@@ -251,7 +251,7 @@ public static class ResponsePayloadHelpers
         }, UnfoldedCircleJsonSerializerContext.Default.CommonRespRequiredValidationError);
 
     /// <summary>
-    /// Creates an event payload for when media player entity's state has changed.
+    /// Creates an event payload for when a media player entity's state has changed.
     /// </summary>
     /// <param name="attributes">The attributes for the entity.</param>
     /// <param name="entityId">The entity_id.</param>
@@ -262,7 +262,7 @@ public static class ResponsePayloadHelpers
             UnfoldedCircleJsonSerializerContext.Default.StateChangedEventMediaPlayerStateChangedEventMessageDataAttributes);
 
     /// <summary>
-    /// Creates an event payload for when remote entity's state has changed.
+    /// Creates an event payload for when a remote entity's state has changed.
     /// </summary>
     /// <param name="attributes">The attributes for the entity.</param>
     /// <param name="entityId">The entity_id.</param>
@@ -273,7 +273,7 @@ public static class ResponsePayloadHelpers
             UnfoldedCircleJsonSerializerContext.Default.StateChangedEventRemoteStateChangedEventMessageDataAttributes);
 
     /// <summary>
-    /// Creates an event payload for when remote entity's state has changed.
+    /// Creates an event payload for when a sensor entity's state has changed.
     /// </summary>
     /// <param name="attributes">The attributes for the entity.</param>
     /// <param name="entityId">The entity_id.</param>
