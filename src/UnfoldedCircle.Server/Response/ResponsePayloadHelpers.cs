@@ -310,26 +310,4 @@ public static class ResponsePayloadHelpers
                 }
             },
             jsonTypeInfo);
-
-    private static byte[] CreateStateChangedResponsePayload<TAttributes>(
-        TAttributes attributes,
-        string entityId,
-        in EntityType entityType,
-        string? suffix = null) where TAttributes : StateChangedEventMessageDataAttributes =>
-        JsonSerializer.SerializeToUtf8Bytes(new StateChangedEvent<TAttributes>
-            {
-                Kind = EventKind,
-                Msg = "entity_change",
-                Cat = "ENTITY",
-                TimeStamp = DateTime.UtcNow,
-                MsgData = new StateChangedEventMessageData<TAttributes>
-                {
-                    EntityId = entityId.GetIdentifier(entityType, suffix),
-                    EntityType = entityType,
-                    Attributes = attributes
-                }
-            },
-            entityType == EntityType.Remote
-                ? UnfoldedCircleJsonSerializerContext.Default.StateChangedEventRemoteStateChangedEventMessageDataAttributes
-                : UnfoldedCircleJsonSerializerContext.Default.StateChangedEventMediaPlayerStateChangedEventMessageDataAttributes);
 }

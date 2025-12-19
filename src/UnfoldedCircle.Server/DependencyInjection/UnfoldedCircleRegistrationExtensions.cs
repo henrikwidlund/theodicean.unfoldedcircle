@@ -38,11 +38,11 @@ public static class UnfoldedCircleRegistrationExtensions
             where TConfigurationItem : UnfoldedCircleConfigurationItem
             where TConfigurationService : class, IConfigurationService<TConfigurationItem>
             where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<MediaPlayerCommandId, TConfigurationItem> =>
-            AddUnfoldedCircleServer<
+            builder.AddUnfoldedCircleServer<
                 TUnfoldedCircleWebSocketHandler,
                 MediaPlayerCommandId,
                 TConfigurationService,
-                TConfigurationItem>(builder, configureOptions);
+                TConfigurationItem>(configureOptions);
 
         /// <summary>
         /// Adds the Unfolded Circle server to the application builder.
@@ -105,7 +105,7 @@ public static class UnfoldedCircleRegistrationExtensions
         public IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TConfigurationItem>(WebSocketOptions? webSocketOptions = null)
             where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<MediaPlayerCommandId, TConfigurationItem>
             where TConfigurationItem : UnfoldedCircleConfigurationItem =>
-            UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, MediaPlayerCommandId, TConfigurationItem>(builder, webSocketOptions);
+            builder.UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, MediaPlayerCommandId, TConfigurationItem>(webSocketOptions);
 
         /// <summary>
         /// Uses the Unfolded Circle server middleware in the application pipeline.

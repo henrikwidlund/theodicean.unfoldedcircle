@@ -23,13 +23,13 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Connection closed")]
     public static partial void WebSocketConnectionClosed(this ILogger logger, string wsId);
 
-    private static readonly Action<ILogger, Exception> _unfoldedCircleMiddlewareException = LoggerMessage.Define(
+    private static readonly Action<ILogger, Exception> UnfoldedCircleMiddlewareExceptionAction = LoggerMessage.Define(
         LogLevel.Error,
         new EventId(4, nameof(UnfoldedCircleMiddlewareException)),
         "An error occurred while handling WebSocket connection");
 
     public static void UnfoldedCircleMiddlewareException(this ILogger logger, Exception exception) =>
-        _unfoldedCircleMiddlewareException(logger, exception);
+        UnfoldedCircleMiddlewareExceptionAction(logger, exception);
 
     [LoggerMessage(EventId = 5, EventName = nameof(SendingMessage), Level = LogLevel.Trace,
         Message = "[{WSId}] WS: Sending message '{Message}'")]
@@ -55,13 +55,13 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Received message does not contain 'kind' property.")]
     public static partial void MissingKindProperty(this ILogger logger, string wsId);
 
-    private static readonly Action<ILogger, string, Exception> _handleWebSocketAsyncException = LoggerMessage.Define<string>(
+    private static readonly Action<ILogger, string, Exception> HandleWebSocketAsyncExceptionAction = LoggerMessage.Define<string>(
         LogLevel.Error,
         new EventId(11, nameof(HandleWebSocketAsyncException)),
         "[{WSId}] WS: Error while handling message.");
 
     public static void HandleWebSocketAsyncException(this ILogger logger, string wsId, Exception exception) =>
-        _handleWebSocketAsyncException(logger, wsId, exception);
+        HandleWebSocketAsyncExceptionAction(logger, wsId, exception);
 
     [LoggerMessage(EventId = 12, EventName = nameof(RemovingEntity), Level = LogLevel.Information,
         Message = "[{WSId}] Removing entity {@Entity}")]
@@ -71,13 +71,13 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Unknown entity command type {PayloadType}")]
     public static partial void UnknownEntityCommand(this ILogger logger, string wsId, string payloadType);
 
-    private static readonly Action<ILogger, string, EntityCommandMsgData<string, RemoteEntityCommandParams>, Exception> _entityCommandHandlingException = LoggerMessage.Define<string, EntityCommandMsgData<string, RemoteEntityCommandParams>>(
+    private static readonly Action<ILogger, string, EntityCommandMsgData<string, RemoteEntityCommandParams>, Exception> EntityCommandHandlingExceptionAction = LoggerMessage.Define<string, EntityCommandMsgData<string, RemoteEntityCommandParams>>(
         LogLevel.Error,
         new EventId(14, nameof(EntityCommandHandlingException)),
         "[{WSId}] WS: Error while handling entity command {@MsgData}");
 
     public static void EntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<string, RemoteEntityCommandParams> msgData, Exception exception) =>
-        _entityCommandHandlingException(logger, wsId, msgData, exception);
+        EntityCommandHandlingExceptionAction(logger, wsId, msgData, exception);
 
     [LoggerMessage(EventId = 15, EventName = nameof(UnsupportedEntityTypeWithEntityId), Level = LogLevel.Error,
         Message = "[{WSId}] WS: Unsupported entity type {EntityType} for entity {EntityId}.")]
@@ -87,13 +87,13 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Removed configuration for {EntityId}")]
     public static partial void RemovedConfiguration(this ILogger logger, string wsId, string entityId);
 
-    private static readonly Action<ILogger, string, string, Exception> _entityStateFailedCancelled = LoggerMessage.Define<string, string>(
+    private static readonly Action<ILogger, string, string, Exception> EntityStateFailedCancelledAction = LoggerMessage.Define<string, string>(
         LogLevel.Error,
         new EventId(17, nameof(EntityCommandHandlingException)),
         "[{WSId}] WS: Failed to get entity state for {EntityId} due to cancellation.");
 
     public static void EntityStateFailedCancelled(this ILogger logger, string wsId, string entityId, Exception exception) =>
-        _entityStateFailedCancelled(logger, wsId, entityId, exception);
+        EntityStateFailedCancelledAction(logger, wsId, entityId, exception);
 
     [LoggerMessage(EventId = 18, EventName = nameof(DriverSetupFailed), Level = LogLevel.Error,
         Message = "[{WSId}] WS: Setup driver failed. MsgData: {@MsgData}.")]
@@ -127,11 +127,11 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] No valid setup step found. Current step: {SetupStep}.")]
     public static partial void NoValidSetupStepFound(this ILogger logger, string wsId, in SetupStep setupStep);
 
-    private static readonly Action<ILogger, string, Exception> _errorDuringSetupProcess = LoggerMessage.Define<string>(
+    private static readonly Action<ILogger, string, Exception> ErrorDuringSetupProcessAction = LoggerMessage.Define<string>(
         LogLevel.Error,
         new EventId(26, nameof(EntityCommandHandlingException)),
         "[{WSId}] Error during setup process.");
 
     public static void ErrorDuringSetupProcess(this ILogger logger, string wsId, Exception exception) =>
-        _errorDuringSetupProcess(logger, wsId, exception);
+        ErrorDuringSetupProcessAction(logger, wsId, exception);
 }

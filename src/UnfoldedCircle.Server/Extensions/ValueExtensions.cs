@@ -38,7 +38,7 @@ public static class ValueExtensions
     /// <exception cref="ArgumentOutOfRangeException">An unknown value for <see cref="EntityType"/> was specified.</exception>
     public static string GetIdentifier(this string baseIdentifier, in EntityType entityType, string? suffix = null)
     {
-        var identifierSpan = GetBaseIdentifier(baseIdentifier.AsSpan());
+        var identifierSpan = baseIdentifier.AsSpan().GetBaseIdentifier();
 
         if (DisableEntityIdPrefixing)
             return baseIdentifier.Length != identifierSpan.Length ? identifierSpan.ToString() : baseIdentifier;
@@ -73,7 +73,7 @@ public static class ValueExtensions
     // ReSharper disable once UnusedMember.Global
     public static ReadOnlyMemory<char> GetIdentifier(this ReadOnlyMemory<char> baseIdentifier, in EntityType entityType, string? suffix = null)
     {
-        var identifierMemory = GetBaseIdentifier(baseIdentifier);
+        var identifierMemory = baseIdentifier.GetBaseIdentifier();
 
         if (DisableEntityIdPrefixing)
             return baseIdentifier.Length != identifierMemory.Length ? identifierMemory : baseIdentifier;

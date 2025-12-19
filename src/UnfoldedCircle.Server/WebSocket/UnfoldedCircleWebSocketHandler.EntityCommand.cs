@@ -248,7 +248,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 if (SessionHolder.SensorTypesMap.TryGetValue(entity.EntityId.GetBaseIdentifier(), out var sensorTypes))
                 {
                     await Task.WhenAll(sensorTypes.Select(x => SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateSensorStateChangedResponsePayload<string>(
+                        ResponsePayloadHelpers.CreateSensorStateChangedResponsePayload(
                             new SensorStateChangedEventMessageDataAttributes<string> { State = SensorState.On, Value = null },
                             entity.EntityId.GetIdentifier(EntityType.Sensor, x),
                             x),
