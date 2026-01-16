@@ -2,6 +2,8 @@ using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Console;
 
 using UnfoldedCircle.Models.Sync;
 using UnfoldedCircle.Server.Configuration;
@@ -19,6 +21,9 @@ namespace Microsoft.AspNetCore.Builder;
 // ReSharper disable once UnusedType.Global
 public static class UnfoldedCircleRegistrationExtensions
 {
+    private const string RequiresDynamicCodeMessage = "Binding TOptions to configuration values may require generating dynamic code at runtime.";
+    private const string TrimmingRequiresUnreferencedCodeMessage = "TOptions's dependent types may have their members trimmed. Ensure all required members are preserved.";
+
     /// <param name="builder">The <see cref="WebApplicationBuilder"/>.</param>
     extension(WebApplicationBuilder builder)
     {
@@ -31,6 +36,8 @@ public static class UnfoldedCircleRegistrationExtensions
         /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
         /// <returns>A <see cref="WebApplicationBuilder"/> with the Unfolded Circle server added to it.</returns>
         // ReSharper disable once UnusedMember.Global
+        [RequiresDynamicCode(RequiresDynamicCodeMessage)]
+        [RequiresUnreferencedCode(TrimmingRequiresUnreferencedCodeMessage)]
         public WebApplicationBuilder AddUnfoldedCircleServer<
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TUnfoldedCircleWebSocketHandler,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TConfigurationService,
@@ -54,6 +61,8 @@ public static class UnfoldedCircleRegistrationExtensions
         /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
         /// <returns>A <see cref="WebApplicationBuilder"/> with the Unfolded Circle server added to it.</returns>
         // ReSharper disable once MemberCanBePrivate.Global
+        [RequiresDynamicCode(RequiresDynamicCodeMessage)]
+        [RequiresUnreferencedCode(TrimmingRequiresUnreferencedCodeMessage)]
         public WebApplicationBuilder AddUnfoldedCircleServer<
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TUnfoldedCircleWebSocketHandler,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TMediaPlayerCommandId,
@@ -81,6 +90,13 @@ public static class UnfoldedCircleRegistrationExtensions
                 options.ListenAnyIP(builder.Configuration.GetOrDefault("UC_INTEGRATION_HTTP_PORT", unfoldedCircleOptions.ListeningPort));
                 options.AddServerHeader = false;
             });
+
+            builder.Logging.AddConsoleFormatter<CustomSystemdConsoleFormatter, ConsoleFormatterOptions>();
+            if (OperatingSystem.IsLinux())
+                builder.Logging.AddConsole(static options =>
+                {
+                    options.FormatterName = "CustomSystemd";
+                });
 
             builder.Services.AddSingleton<IConfigurationService<TConfigurationItem>, TConfigurationService>();
             builder.Services.AddHostedService<MDnsBackgroundService<TConfigurationItem>>();
