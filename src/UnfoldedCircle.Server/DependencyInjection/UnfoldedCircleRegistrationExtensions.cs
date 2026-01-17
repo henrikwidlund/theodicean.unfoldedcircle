@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
 
@@ -21,9 +22,6 @@ namespace Microsoft.AspNetCore.Builder;
 // ReSharper disable once UnusedType.Global
 public static class UnfoldedCircleRegistrationExtensions
 {
-    private const string RequiresDynamicCodeMessage = "Binding TOptions to configuration values may require generating dynamic code at runtime.";
-    private const string TrimmingRequiresUnreferencedCodeMessage = "TOptions's dependent types may have their members trimmed. Ensure all required members are preserved.";
-
     /// <param name="builder">The <see cref="WebApplicationBuilder"/>.</param>
     extension(WebApplicationBuilder builder)
     {
@@ -87,9 +85,7 @@ public static class UnfoldedCircleRegistrationExtensions
                 options.AddServerHeader = false;
             });
 
-#pragma warning disable IL2026, IL3050
-            builder.Logging.AddConsoleFormatter<CustomSystemdConsoleFormatter, ConsoleFormatterOptions>();
-#pragma warning restore IL3050, IL3050
+            builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ConsoleFormatter, CustomSystemdConsoleFormatter>());
 
             if (OperatingSystem.IsLinux())
                 builder.Logging.AddConsole(static options =>
