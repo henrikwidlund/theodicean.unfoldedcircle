@@ -36,8 +36,6 @@ public static class UnfoldedCircleRegistrationExtensions
         /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
         /// <returns>A <see cref="WebApplicationBuilder"/> with the Unfolded Circle server added to it.</returns>
         // ReSharper disable once UnusedMember.Global
-        [RequiresDynamicCode(RequiresDynamicCodeMessage)]
-        [RequiresUnreferencedCode(TrimmingRequiresUnreferencedCodeMessage)]
         public WebApplicationBuilder AddUnfoldedCircleServer<
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TUnfoldedCircleWebSocketHandler,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TConfigurationService,
@@ -61,8 +59,6 @@ public static class UnfoldedCircleRegistrationExtensions
         /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
         /// <returns>A <see cref="WebApplicationBuilder"/> with the Unfolded Circle server added to it.</returns>
         // ReSharper disable once MemberCanBePrivate.Global
-        [RequiresDynamicCode(RequiresDynamicCodeMessage)]
-        [RequiresUnreferencedCode(TrimmingRequiresUnreferencedCodeMessage)]
         public WebApplicationBuilder AddUnfoldedCircleServer<
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TUnfoldedCircleWebSocketHandler,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TMediaPlayerCommandId,
@@ -91,7 +87,10 @@ public static class UnfoldedCircleRegistrationExtensions
                 options.AddServerHeader = false;
             });
 
+#pragma warning disable IL2026, IL3050
             builder.Logging.AddConsoleFormatter<CustomSystemdConsoleFormatter, ConsoleFormatterOptions>();
+#pragma warning restore IL3050, IL3050
+
             if (OperatingSystem.IsLinux())
                 builder.Logging.AddConsole(static options =>
                 {
