@@ -30,6 +30,7 @@ namespace UnfoldedCircle.Server.Json;
 [JsonSerializable(typeof(GetEntityStatesMsg))]
 [JsonSerializable(typeof(EntityStates))]
 [JsonSerializable(typeof(UnfoldedCircleConfiguration<UnfoldedCircleConfigurationItem>))]
+[JsonSerializable(typeof(SubscribeEventsMsg))]
 [JsonSerializable(typeof(UnsubscribeEventsMsg))]
 [JsonSerializable(typeof(EnterStandbyEvent))]
 [JsonSerializable(typeof(ExitStandbyEvent))]

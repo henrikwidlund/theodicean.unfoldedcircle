@@ -64,7 +64,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/>.</param>
     /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
-    protected abstract ValueTask OnSubscribeEventsAsync(System.Net.WebSockets.WebSocket socket, CommonReq payload, string wsId, CancellationTokenWrapper cancellationTokenWrapper,
+    /// <remarks>
+    /// Event applies to the <see cref="SubscribeEventsMsgData.DeviceId"/> and <see cref="SubscribeEventsMsgData.EntityIds"/> on the MessageData property,
+    /// or all entities if both are null.
+    /// </remarks>
+    protected abstract ValueTask OnSubscribeEventsAsync(System.Net.WebSockets.WebSocket socket, SubscribeEventsMsg payload, string wsId, CancellationTokenWrapper cancellationTokenWrapper,
         CancellationToken commandCancellationToken);
 
     /// <summary>
@@ -176,8 +180,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
             case MessageEvent.SubscribeEvents:
             {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.SubscribeEvents)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
+                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SubscribeEventsMsg>(MessageEvent.SubscribeEvents)
+                                                       ?? UnfoldedCircleJsonSerializerContext.Default.SubscribeEventsMsg)!;
                 AddSocketToEventReceivers(wsId);
                 cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSource();
                 await SendMessageAsync(socket,
