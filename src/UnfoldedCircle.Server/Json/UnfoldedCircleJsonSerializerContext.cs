@@ -38,6 +38,8 @@ namespace UnfoldedCircle.Server.Json;
 [JsonSerializable(typeof(StateChangedEvent<RemoteStateChangedEventMessageDataAttributes>))]
 [JsonSerializable(typeof(StateChangedEvent<SensorStateChangedEventMessageDataAttributes<int>>))]
 [JsonSerializable(typeof(StateChangedEvent<SensorStateChangedEventMessageDataAttributes<string>>))]
+[JsonSerializable(typeof(StateChangedEvent<SensorStateChangedEventMessageDataAttributes<decimal>>))]
+[JsonSerializable(typeof(StateChangedEvent<SensorStateChangedEventMessageDataAttributes<double>>))]
 [JsonSerializable(typeof(EntityType?))]
 public sealed partial class UnfoldedCircleJsonSerializerContext : JsonSerializerContext
 {

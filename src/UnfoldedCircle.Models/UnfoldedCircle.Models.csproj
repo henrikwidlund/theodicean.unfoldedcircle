@@ -14,7 +14,7 @@
         <PackageId>Theodicean.UnfoldedCircle.Models</PackageId>
         <Authors>Henrik Widlund</Authors>
         <Copyright>© henrikwidlund</Copyright>
-        <Title>Multicast DNS</Title>
+        <Title>Unfolded Circle models</Title>
         <Description>Models for the Unfolded Circle integration API.</Description>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>https://github.com/henrikwidlund/theodicean.unfoldedcircle/releases</PackageReleaseNotes>
