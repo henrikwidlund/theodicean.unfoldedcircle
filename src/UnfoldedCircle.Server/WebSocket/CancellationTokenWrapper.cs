@@ -67,7 +67,7 @@ public sealed class CancellationTokenWrapper(
         {
             (ILogger innerLogger, ConcurrentDictionary<string, sbyte> innerSubscribedEntities) = ((ILogger, ConcurrentDictionary<string, sbyte>))callback!;
             foreach (var subscribedEntity in innerSubscribedEntities)
-                SessionHolder.BroadcastingEvents.TryRemove(subscribedEntity.Key, out _);
+                SessionHolder.EntityIdBroadcastingEvents.TryRemove(subscribedEntity.Key, out _);
 
             innerLogger.BroadcastCancelled(innerSubscribedEntities);
 

@@ -283,12 +283,18 @@ public static class ResponsePayloadHelpers
     public static byte[] CreateSensorStateChangedResponsePayload<TValue>(
         SensorStateChangedEventMessageDataAttributes<TValue> attributes,
         string entityId,
-        string? suffix) =>
-        CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Sensor,
-            typeof(TValue) == typeof(int)
-                ? UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesInt32
-                : UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesString,
-            suffix);
+        string? suffix)
+    {
+        return CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Sensor,
+            typeof(TValue) switch
+            {
+                var t when t == typeof(int) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesInt32,
+                var t when t == typeof(string) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesString,
+                var t when t == typeof(decimal) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesDecimal,
+                var t when t == typeof(double) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesDouble,
+                _ => throw new NotSupportedException($"The type '{typeof(TValue)}' is not supported for sensor state changed event message data attributes.")
+            }, suffix);
+    }
 
     private static byte[] CreateEntityStateChangedResponsePayload<TAttributes>(
         TAttributes attributes,

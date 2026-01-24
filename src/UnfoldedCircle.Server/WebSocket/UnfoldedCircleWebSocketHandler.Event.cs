@@ -70,6 +70,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
             case MessageEvent.Disconnect:
             {
+                TryRemoveSocketBroadcastingEvents(wsId);
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<DisconnectEvent>(MessageEvent.Disconnect)
                                                            ?? UnfoldedCircleJsonSerializerContext.Default.DisconnectEvent)!;
                 await (cancellationTokenWrapper.GetCurrentBroadcastCancellationTokenSource()?.CancelAsync() ?? Task.CompletedTask);
@@ -161,7 +162,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
 
             if (entityState is EntityState.Connected)
-                _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, unfoldedCircleConfigurationItem.EntityId, wsId, cancellationTokenWrapper),
+                _ = Task.Factory.StartNew(() => HandleEventUpdatesAsync(socket, wsId, cancellationTokenWrapper),
                     TaskCreationOptions.LongRunning);
         }
     }

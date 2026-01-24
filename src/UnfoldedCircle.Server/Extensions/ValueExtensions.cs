@@ -47,16 +47,34 @@ public static class ValueExtensions
 
         return entityType switch
         {
-            EntityType.Cover => baseIdentifier.StartsWith(CoverPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"COVER:{identifierSpan}{localSuffix}",
-            EntityType.Button => baseIdentifier.StartsWith(ButtonPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"BUTTON:{identifierSpan}{localSuffix}",
-            EntityType.Climate => baseIdentifier.StartsWith(ClimatePrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"CLIMATE:{identifierSpan}{localSuffix}",
-            EntityType.Light => baseIdentifier.StartsWith(LightPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"LIGHT:{identifierSpan}",
+            EntityType.Cover => GetIdentifierInternal(baseIdentifier, CoverPrefix, localSuffix),
+            EntityType.Button => GetIdentifierInternal(baseIdentifier, ButtonPrefix, localSuffix),
+            EntityType.Climate => GetIdentifierInternal(baseIdentifier, ClimatePrefix, localSuffix),
+            EntityType.Light => GetIdentifierInternal(baseIdentifier, LightPrefix, localSuffix),
             EntityType.MediaPlayer => baseIdentifier.Length != identifierSpan.Length ? identifierSpan.ToString() : baseIdentifier,
-            EntityType.Remote => baseIdentifier.StartsWith(RemotePrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"REMOTE:{identifierSpan}",
-            EntityType.Sensor => baseIdentifier.StartsWith(SensorPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"SENSOR:{identifierSpan}{localSuffix}",
-            EntityType.Switch => baseIdentifier.StartsWith(SwitchPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"SWITCH:{identifierSpan}{localSuffix}",
+            EntityType.Remote => GetIdentifierInternal(baseIdentifier, RemotePrefix, localSuffix),
+            EntityType.Sensor => GetIdentifierInternal(baseIdentifier, SensorPrefix, localSuffix),
+            EntityType.Switch => GetIdentifierInternal(baseIdentifier, SwitchPrefix, localSuffix),
             _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, message: null)
         };
+
+        static string GetIdentifierInternal(string identifier, string prefix, string? suffix)
+        {
+            if (!identifier.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                if (!string.IsNullOrWhiteSpace(suffix) && identifier.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+                    return $"{prefix}{identifier}";
+
+                return string.IsNullOrWhiteSpace(suffix)
+                    ? $"{prefix}{identifier}"
+                    : $"{prefix}{identifier}{suffix}";
+            }
+
+            if (string.IsNullOrWhiteSpace(suffix) || identifier.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+                return identifier;
+
+            return $"{identifier}{suffix}";
+        }
     }
 
     /// <summary>
@@ -82,16 +100,34 @@ public static class ValueExtensions
 
         return entityType switch
         {
-            EntityType.Cover => baseIdentifier.Span.StartsWith(CoverPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"COVER:{identifierMemory}{localSuffix}".AsMemory(),
-            EntityType.Button => baseIdentifier.Span.StartsWith(ButtonPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"BUTTON:{identifierMemory}{localSuffix}".AsMemory(),
-            EntityType.Climate => baseIdentifier.Span.StartsWith(ClimatePrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"CLIMATE:{identifierMemory}{localSuffix}".AsMemory(),
-            EntityType.Light => baseIdentifier.Span.StartsWith(LightPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"LIGHT:{identifierMemory}{localSuffix}".AsMemory(),
+            EntityType.Cover => GetIdentifierInternal(baseIdentifier, CoverPrefix, localSuffix),
+            EntityType.Button => GetIdentifierInternal(baseIdentifier, ButtonPrefix, localSuffix),
+            EntityType.Climate => GetIdentifierInternal(baseIdentifier, ClimatePrefix, localSuffix),
+            EntityType.Light => GetIdentifierInternal(baseIdentifier, LightPrefix, localSuffix),
             EntityType.MediaPlayer => baseIdentifier.Length != identifierMemory.Length ? identifierMemory : baseIdentifier,
-            EntityType.Remote => baseIdentifier.Span.StartsWith(RemotePrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"REMOTE:{identifierMemory}".AsMemory(),
-            EntityType.Sensor => baseIdentifier.Span.StartsWith(SensorPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"SENSOR:{identifierMemory}{localSuffix}".AsMemory(),
-            EntityType.Switch => baseIdentifier.Span.StartsWith(SwitchPrefix, StringComparison.OrdinalIgnoreCase) ? baseIdentifier : $"SWITCH:{identifierMemory}{localSuffix}".AsMemory(),
+            EntityType.Remote => GetIdentifierInternal(baseIdentifier, RemotePrefix, localSuffix),
+            EntityType.Sensor => GetIdentifierInternal(baseIdentifier, SensorPrefix, localSuffix),
+            EntityType.Switch => GetIdentifierInternal(baseIdentifier, SwitchPrefix, localSuffix),
             _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, message: null)
         };
+
+        static ReadOnlyMemory<char> GetIdentifierInternal(ReadOnlyMemory<char> identifier, string prefix, string? suffix)
+        {
+            if (!identifier.Span.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
+            {
+                if (!string.IsNullOrWhiteSpace(suffix) && identifier.Span.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+                    return $"{prefix}{identifier}".AsMemory();
+
+                return string.IsNullOrWhiteSpace(suffix)
+                    ? $"{prefix}{identifier}".AsMemory()
+                    : $"{prefix}{identifier}{suffix}".AsMemory();
+            }
+
+            if (string.IsNullOrWhiteSpace(suffix) || identifier.Span.EndsWith(suffix, StringComparison.OrdinalIgnoreCase))
+                return identifier;
+
+            return $"{identifier}{suffix}".AsMemory();
+        }
     }
 
     private const string CoverPrefix = "COVER:";

@@ -14,7 +14,7 @@
         <PackageId>Theodicean.UnfoldedCircle.Server</PackageId>
         <Authors>Henrik Widlund</Authors>
         <Copyright>© henrikwidlund</Copyright>
-        <Title>Multicast DNS</Title>
+        <Title>Unfolded Circle SDK</Title>
         <Description>An SDK for hosting integration drivers for the Unfolded Circle remotes.</Description>
         <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>https://github.com/henrikwidlund/theodicean.unfoldedcircle/releases</PackageReleaseNotes>
