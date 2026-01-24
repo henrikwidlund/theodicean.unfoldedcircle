@@ -90,7 +90,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         => SessionHolder.SubscribeEventsMap.TryGetValue(wsId, out var isSubscribed) && isSubscribed;
 
     /// <summary>
-    /// Checks if the <paramref name="wsId"/> is already added to broadcasting events.
+    /// Tries to add the <paramref name="wsId"/> to broadcasting events.
     /// </summary>
     /// <param name="wsId">ID of the websocket.</param>
     // ReSharper disable once UnusedMember.Global
@@ -101,6 +101,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="wsId">ID of the websocket.</param>
     // ReSharper disable once UnusedMember.Global
+    // ReSharper disable once MemberCanBePrivate.Global
     protected bool TryRemoveSocketBroadcastingEvents(string wsId) => SessionHolder.SocketBroadcastingEvents.TryRemove(wsId, out _);
 
     /// <summary>
@@ -128,9 +129,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     // ReSharper disable once UnusedMember.Global
     protected static void RemoveEntityIdToBroadcastingEvents(in ReadOnlySpan<char> entityId, CancellationTokenWrapper cancellationTokenWrapper)
     {
-        var baseIdentifier = entityId.GetBaseIdentifier();
-        SessionHolder.EntityIdBroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>().TryRemove(baseIdentifier, out _);
-        cancellationTokenWrapper.RemoveSubscribedEntity(baseIdentifier);
+        SessionHolder.EntityIdBroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>().TryRemove(entityId, out _);
+        cancellationTokenWrapper.RemoveSubscribedEntity(entityId);
     }
 
     /// <summary>
@@ -144,6 +144,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <summary>
     /// Gets the list of entity IDs that are currently subscribed to receive events.
     /// </summary>
+    // ReSharper disable once UnusedMember.Global
     protected IReadOnlyCollection<string> GetSubscribedEntityIds()
         => (IReadOnlyCollection<string>)SessionHolder.EntityIdBroadcastingEvents.Keys;
 
