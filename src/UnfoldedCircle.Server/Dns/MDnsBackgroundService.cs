@@ -4,6 +4,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 using UnfoldedCircle.Server.Configuration;
+using UnfoldedCircle.Server.DependencyInjection;
 
 namespace UnfoldedCircle.Server.Dns;
 
@@ -26,7 +27,7 @@ internal sealed class MDnsBackgroundService<TConfigurationItem>(
         // Get the local hostname
         _serviceProfile = new ServiceProfile(driverMetadata.DriverId,
             "_uc-integration._tcp",
-            _configuration.GetOrDefault<ushort>("UC_INTEGRATION_HTTP_PORT", 9001))
+            _configuration.GetOrDefault("UC_INTEGRATION_HTTP_PORT", UnfoldedCircleOptions.RandomPortAllowedPort))
         {
             HostName = $"{System.Net.Dns.GetHostName().Split('.')[0]}.local"
         };

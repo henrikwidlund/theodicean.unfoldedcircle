@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using System.Text.Json.Serialization.Metadata;
 
 using UnfoldedCircle.Server.Event;
@@ -27,7 +28,9 @@ public class UnfoldedCircleOptions
     /// and is only read at startup.</remarks>
     /// </summary>
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
-    public int ListeningPort { get; set; } = 9001;
+    public ushort ListeningPort { get; set; } = RandomPortAllowedPort;
+
+    internal static readonly ushort RandomPortAllowedPort = (ushort)RandomNumberGenerator.GetInt32(9201, 13332);
 
     /// <summary>
     /// Custom deserialization overrides for specific <see cref="MessageEvent"/> types.
