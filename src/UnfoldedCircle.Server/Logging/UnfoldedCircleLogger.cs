@@ -134,4 +134,16 @@ internal static partial class UnfoldedCircleLogger
 
     public static void ErrorDuringSetupProcess(this ILogger logger, string wsId, Exception exception) =>
         ErrorDuringSetupProcessAction(logger, wsId, exception);
+
+    [LoggerMessage(EventId = 27, EventName = nameof(EventProcessingAlreadyStarted), Level = LogLevel.Information,
+        Message = "[{WSId}] Event processing has already been started for this connection.")]
+    public static partial void EventProcessingAlreadyStarted(this ILogger logger, string wsId);
+
+    [LoggerMessage(EventId = 28, EventName = nameof(EventProcessingStartTimeout), Level = LogLevel.Information,
+        Message = "[{WSId}] Timeout while trying to start event processing for this connection.")]
+    public static partial void EventProcessingStartTimeout(this ILogger logger, string wsId);
+
+    [LoggerMessage(EventId = 29, EventName = nameof(EventProcessingNotStarted), Level = LogLevel.Information,
+        Message = "[{WSId}] Event processing has not been started for this connection.")]
+    public static partial void EventProcessingNotStarted(this ILogger logger, string wsId);
 }
