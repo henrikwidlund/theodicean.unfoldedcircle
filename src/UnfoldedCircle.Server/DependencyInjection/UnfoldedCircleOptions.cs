@@ -30,7 +30,7 @@ public class UnfoldedCircleOptions
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public ushort ListeningPort { get; set; } = RandomPortAllowedPort;
 
-    internal static readonly ushort RandomPortAllowedPort = (ushort)RandomNumberGenerator.GetInt32(9201, 13332);
+    private static readonly ushort RandomPortAllowedPort = (ushort)RandomNumberGenerator.GetInt32(9201, 13332);
 
     /// <summary>
     /// Custom deserialization overrides for specific <see cref="MessageEvent"/> types.

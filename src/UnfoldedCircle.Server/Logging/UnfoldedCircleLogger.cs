@@ -1,5 +1,3 @@
-using System.Collections.Concurrent;
-
 using Microsoft.Extensions.Logging;
 
 using UnfoldedCircle.Models.Shared;
@@ -13,7 +11,7 @@ internal static partial class UnfoldedCircleLogger
 {
     [LoggerMessage(EventId = 1, EventName = nameof(BroadcastCancelled), Level = LogLevel.Information,
         Message = "Broadcast cancelled for {@Entities}")]
-    public static partial void BroadcastCancelled(this ILogger logger, ConcurrentDictionary<string, sbyte> entities);
+    public static partial void BroadcastCancelled(this ILogger logger, IReadOnlySet<string> entities);
 
     [LoggerMessage(EventId = 2, EventName = nameof(WebSocketNewConnection), Level = LogLevel.Debug,
         Message = "[{WSId}] WS: New connection")]
@@ -134,4 +132,16 @@ internal static partial class UnfoldedCircleLogger
 
     public static void ErrorDuringSetupProcess(this ILogger logger, string wsId, Exception exception) =>
         ErrorDuringSetupProcessAction(logger, wsId, exception);
+
+    [LoggerMessage(EventId = 27, EventName = nameof(EventProcessingAlreadyStarted), Level = LogLevel.Information,
+        Message = "[{WSId}] Event processing has already been started for this connection.")]
+    public static partial void EventProcessingAlreadyStarted(this ILogger logger, string wsId);
+
+    [LoggerMessage(EventId = 28, EventName = nameof(EventProcessingStartTimeout), Level = LogLevel.Information,
+        Message = "[{WSId}] Timeout while trying to start event processing for this connection.")]
+    public static partial void EventProcessingStartTimeout(this ILogger logger, string wsId);
+
+    [LoggerMessage(EventId = 29, EventName = nameof(EventProcessingNotStarted), Level = LogLevel.Information,
+        Message = "[{WSId}] Event processing has not been started for this connection.")]
+    public static partial void EventProcessingNotStarted(this ILogger logger, string wsId);
 }

@@ -2,6 +2,7 @@ using Makaretu.Dns;
 
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using UnfoldedCircle.Server.Configuration;
 using UnfoldedCircle.Server.DependencyInjection;
@@ -11,13 +12,15 @@ namespace UnfoldedCircle.Server.Dns;
 internal sealed class MDnsBackgroundService<TConfigurationItem>(
     IConfiguration configuration,
     ILoggerFactory loggerFactory,
-    IConfigurationService<TConfigurationItem> configurationService)
+    IConfigurationService<TConfigurationItem> configurationService,
+    IOptions<UnfoldedCircleOptions> unfoldedCircleOptions)
     : IHostedService, IDisposable
     where TConfigurationItem : UnfoldedCircleConfigurationItem
 {
     private readonly IConfiguration _configuration = configuration;
     private readonly ILoggerFactory _loggerFactory = loggerFactory;
     private readonly IConfigurationService<TConfigurationItem> _configurationService = configurationService;
+    private readonly IOptions<UnfoldedCircleOptions> _unfoldedCircleOptions = unfoldedCircleOptions;
     private ServiceProfile? _serviceProfile;
     private ServiceDiscovery? _serviceDiscovery;
 
@@ -27,7 +30,7 @@ internal sealed class MDnsBackgroundService<TConfigurationItem>(
         // Get the local hostname
         _serviceProfile = new ServiceProfile(driverMetadata.DriverId,
             "_uc-integration._tcp",
-            _configuration.GetOrDefault("UC_INTEGRATION_HTTP_PORT", UnfoldedCircleOptions.RandomPortAllowedPort))
+            _configuration.GetOrDefault("UC_INTEGRATION_HTTP_PORT", _unfoldedCircleOptions.Value.ListeningPort))
         {
             HostName = $"{System.Net.Dns.GetHostName().Split('.')[0]}.local"
         };

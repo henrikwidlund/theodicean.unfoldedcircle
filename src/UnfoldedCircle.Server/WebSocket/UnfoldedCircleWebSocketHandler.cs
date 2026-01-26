@@ -11,7 +11,6 @@ using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Server.Configuration;
 using UnfoldedCircle.Server.DependencyInjection;
 using UnfoldedCircle.Server.Event;
-using UnfoldedCircle.Server.Extensions;
 using UnfoldedCircle.Server.Response;
 
 namespace UnfoldedCircle.Server.WebSocket;
@@ -103,50 +102,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     // ReSharper disable once UnusedMember.Global
     // ReSharper disable once MemberCanBePrivate.Global
     protected bool TryRemoveSocketBroadcastingEvents(string wsId) => SessionHolder.SocketBroadcastingEvents.TryRemove(wsId, out _);
-
-    /// <summary>
-    /// Marks the <paramref name="entityId"/> to receive events from the integration.
-    /// </summary>
-    /// <param name="entityId">The entity_id.</param>
-    /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> tied to the <paramref name="entityId"/>.</param>
-    /// <returns><see langword="true"/> if the key was added, otherwise <see langword="fakse"/>.</returns>
-    // ReSharper disable once UnusedMember.Global
-    protected static bool TryAddEntityIdToBroadcastingEvents(in ReadOnlySpan<char> entityId, CancellationTokenWrapper cancellationTokenWrapper)
-    {
-        var lookup = SessionHolder.EntityIdBroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>();
-        if (!lookup.TryAdd(entityId, 0))
-            return false;
-
-        cancellationTokenWrapper.AddSubscribedEntity(entityId);
-        return true;
-    }
-
-    /// <summary>
-    /// Removes the <paramref name="entityId"/> from receivers of events from the integration.
-    /// </summary>
-    /// <param name="entityId">The entity_id.</param>
-    /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> tied to the <paramref name="entityId"/>.</param>
-    // ReSharper disable once UnusedMember.Global
-    protected static void RemoveEntityIdToBroadcastingEvents(in ReadOnlySpan<char> entityId, CancellationTokenWrapper cancellationTokenWrapper)
-    {
-        SessionHolder.EntityIdBroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>().TryRemove(entityId, out _);
-        cancellationTokenWrapper.RemoveSubscribedEntity(entityId);
-    }
-
-    /// <summary>
-    /// Checks if the <paramref name="entityId"/> is currently used for broadcasting events.
-    /// </summary>
-    /// <param name="entityId">The entity_id.</param>
-    // ReSharper disable once UnusedMember.Global
-    protected static bool IsBroadcastingEvents(in ReadOnlySpan<char> entityId)
-        => SessionHolder.EntityIdBroadcastingEvents.GetAlternateLookup<ReadOnlySpan<char>>().ContainsKey(entityId.GetBaseIdentifier());
-
-    /// <summary>
-    /// Gets the list of entity IDs that are currently subscribed to receive events.
-    /// </summary>
-    // ReSharper disable once UnusedMember.Global
-    protected IReadOnlyCollection<string> GetSubscribedEntityIds()
-        => (IReadOnlyCollection<string>)SessionHolder.EntityIdBroadcastingEvents.Keys;
 
     /// <summary>
     /// Removes the <paramref name="wsId"/> from the list of event receivers.
