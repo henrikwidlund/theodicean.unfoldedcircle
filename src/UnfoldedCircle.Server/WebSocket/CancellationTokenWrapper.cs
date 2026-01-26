@@ -153,7 +153,7 @@ public sealed class CancellationTokenWrapper(
 
     void IDisposable.Dispose()
     {
-        if (!Interlocked.CompareExchange(ref _isDisposed, true, false))
+        if (Interlocked.Exchange(ref _isDisposed, true))
             return;
 
         _subscribedEntities.Clear();
@@ -163,7 +163,7 @@ public sealed class CancellationTokenWrapper(
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
-        if (!Interlocked.CompareExchange(ref _isDisposed, true, false))
+        if (Interlocked.Exchange(ref _isDisposed, true))
             return;
 
         _subscribedEntities.Clear();
