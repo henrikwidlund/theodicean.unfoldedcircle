@@ -19,7 +19,7 @@ public sealed class CancellationTokenWrapper(
     in CancellationToken applicationStopping,
     in CancellationToken requestAborted) : IDisposable, IAsyncDisposable
 {
-    private readonly ConcurrentDictionary<string, sbyte> _subscribedEntities = new(StringComparer.OrdinalIgnoreCase);
+    private readonly SubscribedEntitiesHolder _subscribedEntities = new();
 
     /// <summary>
     /// Adds an entity to the list of subscribed entities connected to this <see cref="CancellationTokenWrapper"/>.
@@ -29,7 +29,7 @@ public sealed class CancellationTokenWrapper(
     // ReSharper disable once UnusedMethodReturnValue.Global
     // ReSharper disable once UnusedMember.Global
     public bool AddSubscribedEntity(in ReadOnlySpan<char> entityId)
-        => _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>().TryAdd(entityId, 0);
+        => _subscribedEntities.AddSubscribedEntity(entityId);
 
     /// <summary>
     /// Removes an entity from the list of subscribed entities connected to this <see cref="CancellationTokenWrapper"/>.
@@ -39,7 +39,7 @@ public sealed class CancellationTokenWrapper(
     // ReSharper disable once UnusedMethodReturnValue.Global
     // ReSharper disable once UnusedMember.Global
     public bool RemoveSubscribedEntity(in ReadOnlySpan<char> entityId)
-        => _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>().TryRemove(entityId, out _);
+        => _subscribedEntities.RemoveSubscribedEntity(entityId);
 
     /// <summary>
     /// Removes all subscribed entities.
@@ -80,18 +80,18 @@ public sealed class CancellationTokenWrapper(
         _broadcastCancellationTokenSource = CancellationTokenSource.CreateLinkedTokenSource(RequestAborted, ApplicationStopping);
         _broadcastCancellationTokenSource.Token.Register(static callback =>
         {
-            (ILogger innerLogger, ConcurrentDictionary<string, sbyte> innerSubscribedEntities) = ((ILogger, ConcurrentDictionary<string, sbyte>))callback!;
-            innerLogger.BroadcastCancelled(innerSubscribedEntities);
+            (ILogger innerLogger, SubscribedEntitiesHolder innerSubscribedEntities) = ((ILogger, SubscribedEntitiesHolder))callback!;
+            innerLogger.BroadcastCancelled(innerSubscribedEntities.SubscribedEntities);
         }, (_logger, _subscribedEntities));
     }
 
-    private Func<System.Net.WebSockets.WebSocket, string, IReadOnlyList<string>, CancellationToken, Task>? _eventProcessor;
+    private Func<System.Net.WebSockets.WebSocket, string, SubscribedEntitiesHolder, CancellationToken, Task>? _eventProcessor;
 
     /// <summary>
     /// Registers the event processor.
     /// </summary>
     /// <param name="eventProcessor">The event processor.</param>
-    public void RegisterEventProcessor(Func<System.Net.WebSockets.WebSocket, string, IReadOnlyList<string>, CancellationToken, Task> eventProcessor)
+    public void RegisterEventProcessor(Func<System.Net.WebSockets.WebSocket, string, SubscribedEntitiesHolder, CancellationToken, Task> eventProcessor)
         => _eventProcessor ??= eventProcessor;
 
     private bool _isBroadcasting;
@@ -125,7 +125,7 @@ public sealed class CancellationTokenWrapper(
             _isBroadcasting = true;
             EnsureNonCancelledBroadcastCancellationTokenSource();
             // Fire and forget, logging happens in the invoked method
-            _ = _eventProcessor?.Invoke(_socket, _wsId, (IReadOnlyList<string>)_subscribedEntities.Keys, _broadcastCancellationTokenSource!.Token);
+            _ = _eventProcessor?.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource!.Token);
         }
         finally
         {
