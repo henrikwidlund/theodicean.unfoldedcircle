@@ -106,7 +106,7 @@ public sealed class CancellationTokenWrapper(
             return;
         }
 
-        if (!await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), RequestAborted))
+        if (!await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), _broadcastCancellationTokenSource!.Token))
         {
             _logger.EventProcessingStartTimeout(_wsId);
             return;
