@@ -36,6 +36,7 @@ public sealed class CancellationTokenWrapper(
     /// <param name="entityId">The entity_id.</param>
     /// <returns><see langowrd="true"/> if removed, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
+    // ReSharper disable once UnusedMember.Global
     public bool RemoveSubscribedEntity(in ReadOnlySpan<char> entityId)
         => _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>().TryRemove(entityId, out _);
 

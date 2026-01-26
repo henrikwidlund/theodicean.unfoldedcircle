@@ -11,7 +11,6 @@ using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Server.Configuration;
 using UnfoldedCircle.Server.DependencyInjection;
 using UnfoldedCircle.Server.Event;
-using UnfoldedCircle.Server.Extensions;
 using UnfoldedCircle.Server.Response;
 
 namespace UnfoldedCircle.Server.WebSocket;
@@ -103,20 +102,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     // ReSharper disable once UnusedMember.Global
     // ReSharper disable once MemberCanBePrivate.Global
     protected bool TryRemoveSocketBroadcastingEvents(string wsId) => SessionHolder.SocketBroadcastingEvents.TryRemove(wsId, out _);
-
-    /// <summary>
-    /// Marks the <paramref name="entityId"/> to receive events from the integration.
-    /// </summary>
-    /// <param name="wsId">ID of the websocket.</param>
-    /// <param name="entityId">The entity_id.</param>
-    /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> tied to the <paramref name="entityId"/>.</param>
-    /// <returns><see langword="true"/> if the key was added, otherwise <see langword="false"/>.</returns>
-    // ReSharper disable once UnusedMember.Global
-    protected static bool TryAddEntityIdToBroadcastingEvents(string wsId, in ReadOnlySpan<char> entityId, CancellationTokenWrapper cancellationTokenWrapper)
-    {
-        cancellationTokenWrapper.AddSubscribedEntity(entityId);
-        return true;
-    }
 
     /// <summary>
     /// Removes the <paramref name="wsId"/> from the list of event receivers.

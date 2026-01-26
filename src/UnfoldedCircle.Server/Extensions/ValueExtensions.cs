@@ -195,6 +195,7 @@ public static class ValueExtensions
     /// </summary>
     /// <param name="identifier">The identifier to get the base identifier for.</param>
     /// <returns>The base identifier.</returns>
+    // ReSharper disable once MemberCanBePrivate.Global
     public static ReadOnlySpan<char> GetBaseIdentifier(this in ReadOnlySpan<char> identifier)
     {
         var identifierSpan = identifier;
