@@ -110,7 +110,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="entityId">The entity_id.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> tied to the <paramref name="entityId"/>.</param>
-    /// <returns><see langword="true"/> if the key was added, otherwise <see langword="fakse"/>.</returns>
+    /// <returns><see langword="true"/> if the key was added, otherwise <see langword="false"/>.</returns>
     // ReSharper disable once UnusedMember.Global
     protected static bool TryAddEntityIdToBroadcastingEvents(string wsId, in ReadOnlySpan<char> entityId, CancellationTokenWrapper cancellationTokenWrapper)
     {

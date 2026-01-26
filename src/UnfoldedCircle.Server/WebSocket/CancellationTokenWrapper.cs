@@ -95,8 +95,6 @@ public sealed class CancellationTokenWrapper(
     private bool _isBroadcasting;
     private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
 
-    private Task? _currentEventProcessingTask;
-
     /// <summary>
     /// Starts event processing if not already started.
     /// </summary>
@@ -124,7 +122,8 @@ public sealed class CancellationTokenWrapper(
 
             _isBroadcasting = true;
             EnsureNonCancelledBroadcastCancellationTokenSource();
-            _currentEventProcessingTask = _eventProcessor?.Invoke(_socket, _wsId, (IReadOnlyList<string>)_subscribedEntities.Keys, _broadcastCancellationTokenSource!.Token);
+            // Fire and forget, logging happens in the invoked method
+            _ = _eventProcessor?.Invoke(_socket, _wsId, (IReadOnlyList<string>)_subscribedEntities.Keys, _broadcastCancellationTokenSource!.Token);
         }
         finally
         {
@@ -148,8 +147,13 @@ public sealed class CancellationTokenWrapper(
             await _broadcastCancellationTokenSource.CancelAsync();
     }
 
+    private bool _isDisposed;
+
     void IDisposable.Dispose()
     {
+        if (Interlocked.CompareExchange(ref _isDisposed, true, _isDisposed))
+            return;
+
         _subscribedEntities.Clear();
         _semaphoreSlim.Dispose();
         _broadcastCancellationTokenSource?.Dispose();
@@ -157,6 +161,9 @@ public sealed class CancellationTokenWrapper(
 
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
+        if (Interlocked.CompareExchange(ref _isDisposed, true, _isDisposed))
+            return;
+
         _subscribedEntities.Clear();
         _semaphoreSlim.Dispose();
         if (_broadcastCancellationTokenSource != null)
