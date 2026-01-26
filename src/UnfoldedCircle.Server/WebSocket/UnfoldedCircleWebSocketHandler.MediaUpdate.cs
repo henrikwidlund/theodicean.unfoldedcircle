@@ -9,7 +9,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="subscribedEntityIds">Entity ids that should receive updates.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/> for the session.</param>
-    internal protected abstract Task HandleEventUpdatesAsync(
+    protected internal abstract Task HandleEventUpdatesAsync(
         System.Net.WebSockets.WebSocket socket,
         string wsId,
         IReadOnlyList<string> subscribedEntityIds,
