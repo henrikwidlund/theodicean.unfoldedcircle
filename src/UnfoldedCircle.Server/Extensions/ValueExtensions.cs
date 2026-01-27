@@ -232,4 +232,21 @@ public static class ValueExtensions
     // ReSharper disable once UnusedMember.Global
     public static ReadOnlyMemory<char>? GetNullableBaseIdentifier(this in ReadOnlyMemory<char>? identifier)
         => identifier == null || identifier.Value.IsEmpty ? null : identifier.Value.GetBaseIdentifier();
+
+    /// <summary>
+    /// Gets the <see cref="EntityType"/> from the given <paramref name="identifier"/>.
+    /// </summary>
+    /// <param name="identifier">The identifier to get the type from.</param>
+    public static EntityType GetEntityTypeFromIdentifier(this ReadOnlySpan<char> identifier) =>
+        identifier switch
+        {
+            _ when identifier.StartsWith(CoverPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Cover,
+            _ when identifier.StartsWith(ButtonPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Button,
+            _ when identifier.StartsWith(ClimatePrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Climate,
+            _ when identifier.StartsWith(LightPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Light,
+            _ when identifier.StartsWith(RemotePrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Remote,
+            _ when identifier.StartsWith(SensorPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Sensor,
+            _ when identifier.StartsWith(SwitchPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Switch,
+            _ => EntityType.MediaPlayer
+        };
 }

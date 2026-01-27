@@ -26,7 +26,7 @@ public sealed class CancellationTokenWrapper(
     /// <returns><see langowrd="true"/> if added, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     // ReSharper disable once UnusedMember.Global
-    public bool AddSubscribedEntity(in ReadOnlySpan<char> entityId)
+    public bool AddSubscribedEntity(string entityId)
         => _subscribedEntities.AddSubscribedEntity(entityId);
 
     /// <summary>
@@ -36,7 +36,7 @@ public sealed class CancellationTokenWrapper(
     /// <returns><see langowrd="true"/> if removed, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     // ReSharper disable once UnusedMember.Global
-    public bool RemoveSubscribedEntity(in ReadOnlySpan<char> entityId)
+    public bool RemoveSubscribedEntity(string entityId)
         => _subscribedEntities.RemoveSubscribedEntity(entityId);
 
     /// <summary>
@@ -79,7 +79,7 @@ public sealed class CancellationTokenWrapper(
         _broadcastCancellationTokenSource.Token.Register(static callback =>
         {
             (ILogger innerLogger, SubscribedEntitiesHolder innerSubscribedEntities) = ((ILogger, SubscribedEntitiesHolder))callback!;
-            innerLogger.BroadcastCancelled(innerSubscribedEntities.SubscribedEntities);
+            innerLogger.BroadcastCancelled(innerSubscribedEntities.SubscribedEntities.Keys);
         }, (_logger, _subscribedEntities));
     }
 
@@ -106,6 +106,9 @@ public sealed class CancellationTokenWrapper(
             return;
         }
 
+        if (_broadcastCancellationTokenSource is null)
+            EnsureNonCancelledBroadcastCancellationTokenSource();
+
         if (!await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), _broadcastCancellationTokenSource!.Token))
         {
             _logger.EventProcessingStartTimeout(_wsId);
@@ -121,7 +124,6 @@ public sealed class CancellationTokenWrapper(
             }
 
             _isBroadcasting = true;
-            EnsureNonCancelledBroadcastCancellationTokenSource();
             // Fire and forget, logging happens in the invoked method
             _ = _eventProcessor?.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource!.Token);
         }
@@ -167,8 +169,6 @@ public sealed class CancellationTokenWrapper(
         _subscribedEntities.Clear();
         _semaphoreSlim.Dispose();
         if (_broadcastCancellationTokenSource != null)
-        {
             await _broadcastCancellationTokenSource.CancelAsync();
-        }
     }
 }
