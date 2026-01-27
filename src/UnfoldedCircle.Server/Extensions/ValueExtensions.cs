@@ -232,4 +232,31 @@ public static class ValueExtensions
     // ReSharper disable once UnusedMember.Global
     public static ReadOnlyMemory<char>? GetNullableBaseIdentifier(this in ReadOnlyMemory<char>? identifier)
         => identifier == null || identifier.Value.IsEmpty ? null : identifier.Value.GetBaseIdentifier();
+
+    /// <summary>
+    /// Gets the <see cref="EntityType"/> from the given <paramref name="identifier"/>.
+    /// </summary>
+    /// <remarks>
+    /// If the identifier is empty or does not start with any known prefix, <see cref="EntityType.MediaPlayer"/> is returned.
+    /// </remarks>
+    /// <param name="identifier">
+    /// The identifier to get the type from. If it does not start with any of the known entity prefixes,
+    /// it will be treated as a media player identifier and <see cref="EntityType.MediaPlayer"/> will be returned.
+    /// </param>
+    /// <returns>
+    /// The resolved <see cref="EntityType"/> based on the identifier prefix, or <see cref="EntityType.MediaPlayer"/>
+    /// when the identifier is empty or its prefix is unrecognized.
+    /// </returns>
+    public static EntityType GetEntityTypeFromIdentifier(this in ReadOnlySpan<char> identifier) =>
+        identifier switch
+        {
+            _ when identifier.StartsWith(CoverPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Cover,
+            _ when identifier.StartsWith(ButtonPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Button,
+            _ when identifier.StartsWith(ClimatePrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Climate,
+            _ when identifier.StartsWith(LightPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Light,
+            _ when identifier.StartsWith(RemotePrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Remote,
+            _ when identifier.StartsWith(SensorPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Sensor,
+            _ when identifier.StartsWith(SwitchPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Switch,
+            _ => EntityType.MediaPlayer
+        };
 }
