@@ -236,8 +236,18 @@ public static class ValueExtensions
     /// <summary>
     /// Gets the <see cref="EntityType"/> from the given <paramref name="identifier"/>.
     /// </summary>
-    /// <param name="identifier">The identifier to get the type from.</param>
-    public static EntityType GetEntityTypeFromIdentifier(this ReadOnlySpan<char> identifier) =>
+    /// <remarks>
+    /// If the identifier is empty or does not start with any known prefix, <see cref="EntityType.MediaPlayer"/> is returned.
+    /// </remarks>
+    /// <param name="identifier">
+    /// The identifier to get the type from. If it does not start with any of the known entity prefixes,
+    /// it will be treated as a media player identifier and <see cref="EntityType.MediaPlayer"/> will be returned.
+    /// </param>
+    /// <returns>
+    /// The resolved <see cref="EntityType"/> based on the identifier prefix, or <see cref="EntityType.MediaPlayer"/>
+    /// when the identifier is empty or its prefix is unrecognized.
+    /// </returns>
+    public static EntityType GetEntityTypeFromIdentifier(this in ReadOnlySpan<char> identifier) =>
         identifier switch
         {
             _ when identifier.StartsWith(CoverPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Cover,

@@ -20,7 +20,7 @@ public class SubscribedEntitiesHolder
     /// Adds a subscribed entity.
     /// </summary>
     /// <param name="entityId">Entity to add.</param>
-    internal bool AddSubscribedEntity(string entityId)
+    internal void AddSubscribedEntity(string entityId)
     {
         var baseIdentifier = entityId.GetBaseIdentifier();
         var entityType = entityId.GetEntityTypeFromIdentifier();
@@ -31,20 +31,18 @@ public class SubscribedEntitiesHolder
             set.Add(new SubscribedEntity(arg.entityId, arg.entityType));
             return set;
         }, (entityId, entityType));
-        return true;
     }
 
     /// <summary>
     /// Removes a subscribed entity.
     /// </summary>
     /// <param name="entityId">Entity to remove.</param>
-    internal bool RemoveSubscribedEntity(string entityId)
+    internal void RemoveSubscribedEntity(string entityId)
     {
         var baseIdentifier = entityId.AsSpan().GetBaseIdentifier();
         var alternateLookup = _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>();
         if (alternateLookup.TryGetValue(baseIdentifier, out var subscribedEntities))
             subscribedEntities.RemoveWhere(e => e.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase));
-        return true;
     }
 
     internal void Clear() => _subscribedEntities.Clear();

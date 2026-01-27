@@ -26,7 +26,7 @@ public sealed class CancellationTokenWrapper(
     /// <returns><see langowrd="true"/> if added, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     // ReSharper disable once UnusedMember.Global
-    public bool AddSubscribedEntity(string entityId)
+    public void AddSubscribedEntity(string entityId)
         => _subscribedEntities.AddSubscribedEntity(entityId);
 
     /// <summary>
@@ -36,7 +36,7 @@ public sealed class CancellationTokenWrapper(
     /// <returns><see langowrd="true"/> if removed, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     // ReSharper disable once UnusedMember.Global
-    public bool RemoveSubscribedEntity(string entityId)
+    public void RemoveSubscribedEntity(string entityId)
         => _subscribedEntities.RemoveSubscribedEntity(entityId);
 
     /// <summary>
