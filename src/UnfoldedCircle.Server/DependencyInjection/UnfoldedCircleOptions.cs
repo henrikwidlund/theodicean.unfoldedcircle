@@ -1,4 +1,4 @@
-using System.Security.Cryptography;
+using System.Globalization;
 using System.Text.Json.Serialization.Metadata;
 
 using UnfoldedCircle.Server.Event;
@@ -25,12 +25,12 @@ public class UnfoldedCircleOptions
     /// The default port to listen to for incoming connections.
     /// <remarks>
     /// This setting will only be used if the <c>UC_INTEGRATION_HTTP_PORT</c> environment variable is not set
-    /// and is only read at startup.</remarks>
+    /// and is only read at startup.
+    /// Default value is <c>UC_INTEGRATION_HTTP_PORT</c> -> <c>ASPNETCORE_URLS</c> -> <c>9001</c>
+    /// </remarks>
     /// </summary>
     // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
-    public ushort ListeningPort { get; set; } = RandomPortAllowedPort;
-
-    private static readonly ushort RandomPortAllowedPort = (ushort)RandomNumberGenerator.GetInt32(9201, 13332);
+    public ushort ListeningPort { get; set; } = GetListeningPort();
 
     /// <summary>
     /// Custom deserialization overrides for specific <see cref="MessageEvent"/> types.
@@ -48,4 +48,22 @@ public class UnfoldedCircleOptions
     /// <remarks>Default is 9.5 seconds.</remarks>
     // ReSharper disable once PropertyCanBeMadeInitOnly.Global
     public double MaxMessageHandlingWaitTimeInSeconds { get; set; } = 9.5;
+
+    private static ushort GetListeningPort()
+    {
+        var envPort = Environment.GetEnvironmentVariable("UC_INTEGRATION_HTTP_PORT");
+        if (ushort.TryParse(envPort, NumberFormatInfo.InvariantInfo, out var port))
+            return port;
+
+        envPort = Environment.GetEnvironmentVariable("ASPNETCORE_URLS");
+        if (!string.IsNullOrEmpty(envPort))
+        {
+            var span = envPort.AsSpan();
+            span = span.Slice(span.LastIndexOf(':') + 1).Trim('/');
+            if (ushort.TryParse(span, NumberFormatInfo.InvariantInfo, out port))
+                return port;
+        }
+
+        return 9001;
+    }
 }
