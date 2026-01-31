@@ -85,14 +85,6 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Removed configuration for {EntityId}")]
     public static partial void RemovedConfiguration(this ILogger logger, string wsId, string entityId);
 
-    private static readonly Action<ILogger, string, string, Exception> EntityStateFailedCancelledAction = LoggerMessage.Define<string, string>(
-        LogLevel.Error,
-        new EventId(17, nameof(EntityCommandHandlingException)),
-        "[{WSId}] WS: Failed to get entity state for {EntityId} due to cancellation.");
-
-    public static void EntityStateFailedCancelled(this ILogger logger, string wsId, string entityId, Exception exception) =>
-        EntityStateFailedCancelledAction(logger, wsId, entityId, exception);
-
     [LoggerMessage(EventId = 18, EventName = nameof(DriverSetupFailed), Level = LogLevel.Error,
         Message = "[{WSId}] WS: Setup driver failed. MsgData: {@MsgData}.")]
     public static partial void DriverSetupFailed(this ILogger logger, string wsId, SetupDriverMsgData msgData);
@@ -132,18 +124,6 @@ internal static partial class UnfoldedCircleLogger
 
     public static void ErrorDuringSetupProcess(this ILogger logger, string wsId, Exception exception) =>
         ErrorDuringSetupProcessAction(logger, wsId, exception);
-
-    [LoggerMessage(EventId = 27, EventName = nameof(EventProcessingAlreadyStarted), Level = LogLevel.Information,
-        Message = "[{WSId}] Event processing has already been started for this connection.")]
-    public static partial void EventProcessingAlreadyStarted(this ILogger logger, string wsId);
-
-    [LoggerMessage(EventId = 28, EventName = nameof(EventProcessingStartTimeout), Level = LogLevel.Information,
-        Message = "[{WSId}] Timeout while trying to start event processing for this connection.")]
-    public static partial void EventProcessingStartTimeout(this ILogger logger, string wsId);
-
-    [LoggerMessage(EventId = 29, EventName = nameof(EventProcessingNotStarted), Level = LogLevel.Information,
-        Message = "[{WSId}] Event processing has not been started for this connection.")]
-    public static partial void EventProcessingNotStarted(this ILogger logger, string wsId);
 
     [LoggerMessage(EventId = 30, EventName = nameof(ResettingEventProcessing), Level = LogLevel.Information,
         Message = "[{WSId}] WS: Resetting event processing due to task status {TaskStatus}.")]
