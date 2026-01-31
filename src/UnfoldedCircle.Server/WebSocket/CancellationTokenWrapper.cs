@@ -143,14 +143,13 @@ public sealed class CancellationTokenWrapper(
 
         try
         {
-            if (_broadcastTask is { Status:  TaskStatus.Canceled or TaskStatus.Faulted or TaskStatus.RanToCompletion })
+            if (_broadcastTask is { Status: TaskStatus.Canceled or TaskStatus.Faulted or TaskStatus.RanToCompletion })
             {
                 if (_broadcastTask.IsFaulted)
                     _logger.UnhandledExceptionDuringEvent(_wsId, _broadcastTask.Exception.GetBaseException());
 
                 _logger.ResettingEventProcessing(_wsId, _broadcastTask.Status);
                 _isBroadcasting = false;
-                _broadcastTask.Dispose();
                 _broadcastTask = null;
             }
         }
@@ -186,7 +185,6 @@ public sealed class CancellationTokenWrapper(
         _subscribedEntities.Clear();
         _semaphoreSlim.Dispose();
         _broadcastCancellationTokenSource?.Dispose();
-        _broadcastTask?.Dispose();
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()
@@ -198,6 +196,5 @@ public sealed class CancellationTokenWrapper(
         _semaphoreSlim.Dispose();
         if (_broadcastCancellationTokenSource != null)
             await _broadcastCancellationTokenSource.CancelAsync();
-        _broadcastTask?.Dispose();
     }
 }
