@@ -183,7 +183,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SubscribeEventsMsg>(MessageEvent.SubscribeEvents)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.SubscribeEventsMsg)!;
                 AddSocketToEventReceivers(wsId);
-                cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSource();
+                await cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSourceAsync();
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,

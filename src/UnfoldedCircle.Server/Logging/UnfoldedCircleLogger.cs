@@ -144,4 +144,20 @@ internal static partial class UnfoldedCircleLogger
     [LoggerMessage(EventId = 29, EventName = nameof(EventProcessingNotStarted), Level = LogLevel.Information,
         Message = "[{WSId}] Event processing has not been started for this connection.")]
     public static partial void EventProcessingNotStarted(this ILogger logger, string wsId);
+
+    [LoggerMessage(EventId = 30, EventName = nameof(ResettingEventProcessing), Level = LogLevel.Information,
+        Message = "[{WSId}] WS: Resetting event processing due to task status {TaskStatus}.")]
+    public static partial void ResettingEventProcessing(this ILogger logger, string wsId, TaskStatus taskStatus);
+
+    private static readonly Action<ILogger, string, Exception> UnhandledExceptionDuringEventAction = LoggerMessage.Define<string>(
+        LogLevel.Error,
+        new EventId(31, nameof(UnhandledExceptionDuringEvent)),
+        "[{WSId}] Unhandled exception during event.");
+
+    public static void UnhandledExceptionDuringEvent(this ILogger logger, string wsId, Exception exception) =>
+        UnhandledExceptionDuringEventAction(logger, wsId, exception);
+
+    [LoggerMessage(EventId = 32, EventName = nameof(EventProcessorNotRegistered), Level = LogLevel.Information,
+        Message = "[{WSId}] WS: Event processor not registered.")]
+    public static partial void EventProcessorNotRegistered(this ILogger logger, string wsId);
 }

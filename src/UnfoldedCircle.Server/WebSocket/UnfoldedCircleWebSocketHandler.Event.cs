@@ -61,7 +61,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             case MessageEvent.Connect:
             {
-                cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSource();
+                await cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSourceAsync();
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<ConnectEvent>(MessageEvent.Connect)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.ConnectEvent)!;
                 await HandleConnectOrExitStandbyAsync(socket, wsId, cancellationTokenWrapper, cancellationToken);
@@ -134,7 +134,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             wsId,
             cancellationToken);
 
-        cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSource();
+        await cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSourceAsync();
         var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
         if (configuration is { Entities.Count: > 0 })
         {
