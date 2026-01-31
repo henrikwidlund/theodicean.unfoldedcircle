@@ -94,12 +94,15 @@ public sealed class CancellationTokenWrapper(
 
     private bool _isBroadcasting;
     private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
+    private Task? _broadcastTask;
 
     /// <summary>
     /// Starts event processing if not already started.
     /// </summary>
     public async ValueTask StartEventProcessing()
     {
+        await RestartEventProcessingAsync();
+
         if (_isBroadcasting)
         {
             _logger.EventProcessingAlreadyStarted(_wsId);
@@ -125,7 +128,31 @@ public sealed class CancellationTokenWrapper(
 
             _isBroadcasting = true;
             // Fire and forget, logging happens in the invoked method
-            _ = _eventProcessor?.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource!.Token);
+            _broadcastTask = _eventProcessor?.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource!.Token);
+        }
+        finally
+        {
+            _semaphoreSlim.Release();
+        }
+    }
+
+    private async ValueTask RestartEventProcessingAsync()
+    {
+        if (!await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), RequestAborted))
+            return;
+
+        try
+        {
+            if (_broadcastTask is { Status:  TaskStatus.Canceled or TaskStatus.Faulted or TaskStatus.RanToCompletion })
+            {
+                if (_broadcastTask.IsFaulted)
+                    _logger.UnhandledExceptionDuringEvent(_wsId, _broadcastTask.Exception.GetBaseException());
+
+                _logger.ResettingEventProcessing(_wsId, _broadcastTask.Status);
+                _isBroadcasting = false;
+                _broadcastTask.Dispose();
+                _broadcastTask = null;
+            }
         }
         finally
         {
@@ -159,6 +186,7 @@ public sealed class CancellationTokenWrapper(
         _subscribedEntities.Clear();
         _semaphoreSlim.Dispose();
         _broadcastCancellationTokenSource?.Dispose();
+        _broadcastTask?.Dispose();
     }
 
     async ValueTask IAsyncDisposable.DisposeAsync()
@@ -170,5 +198,6 @@ public sealed class CancellationTokenWrapper(
         _semaphoreSlim.Dispose();
         if (_broadcastCancellationTokenSource != null)
             await _broadcastCancellationTokenSource.CancelAsync();
+        _broadcastTask?.Dispose();
     }
 }
