@@ -67,7 +67,7 @@ public sealed class CancellationTokenWrapper(
     public CancellationTokenSource? GetCurrentBroadcastCancellationTokenSource() => _broadcastCancellationTokenSource;
 
     /// <summary>
-    /// Enures that the broadcast cancellation token source is not canceled.
+    /// Ensures that the broadcast cancellation token source is not canceled.
     /// </summary>
     public async ValueTask EnsureNonCancelledBroadcastCancellationTokenSourceAsync()
     {
@@ -137,7 +137,7 @@ public sealed class CancellationTokenWrapper(
 
             if (_eventProcessor == null)
             {
-                _logger.EventProcessorNotRegistered(_wsId); // You may need to add this log method
+                _logger.EventProcessorNotRegistered(_wsId);
                 return;
             }
 
@@ -148,7 +148,7 @@ public sealed class CancellationTokenWrapper(
             }
             catch (Exception ex)
             {
-                _logger.EventProcessorException(_wsId, ex); // You may need to add this log method
+                _logger.UnhandledExceptionDuringEvent(_wsId, ex);
                 _isBroadcasting = false;
                 _broadcastTask = null;
                 throw;

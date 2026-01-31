@@ -160,12 +160,4 @@ internal static partial class UnfoldedCircleLogger
     [LoggerMessage(EventId = 32, EventName = nameof(EventProcessorNotRegistered), Level = LogLevel.Information,
         Message = "[{WSId}] WS: Event processor not registered.")]
     public static partial void EventProcessorNotRegistered(this ILogger logger, string wsId);
-
-    private static readonly Action<ILogger, string, Exception> EventProcessorExceptionAction = LoggerMessage.Define<string>(
-        LogLevel.Error,
-        new EventId(33, nameof(EventProcessorException)),
-        "[{WSId}] Unhandled exception during event.");
-
-    public static void EventProcessorException(this ILogger logger, string wsId, Exception exception) =>
-        EventProcessorExceptionAction(logger, wsId, exception);
 }
