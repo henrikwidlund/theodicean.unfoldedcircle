@@ -67,9 +67,24 @@ public sealed class CancellationTokenWrapper(
     public CancellationTokenSource? GetCurrentBroadcastCancellationTokenSource() => _broadcastCancellationTokenSource;
 
     /// <summary>
-    /// Enures that the broadcast cancellation token source is not cancelled.
+    /// Enures that the broadcast cancellation token source is not canceled.
     /// </summary>
-    public void EnsureNonCancelledBroadcastCancellationTokenSource()
+    public async ValueTask EnsureNonCancelledBroadcastCancellationTokenSourceAsync()
+    {
+        if (await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), RequestAborted))
+        {
+            try
+            {
+                EnsureNonCancelledBroadcastCancellationTokenSourceCore();
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
+        }
+    }
+
+    private void EnsureNonCancelledBroadcastCancellationTokenSourceCore()
     {
         if (_broadcastCancellationTokenSource is { IsCancellationRequested: false })
             return;
@@ -101,18 +116,7 @@ public sealed class CancellationTokenWrapper(
     /// </summary>
     public async ValueTask StartEventProcessing()
     {
-        await RestartEventProcessingAsync();
-
-        if (_isBroadcasting)
-        {
-            _logger.EventProcessingAlreadyStarted(_wsId);
-            return;
-        }
-
-        if (_broadcastCancellationTokenSource is null)
-            EnsureNonCancelledBroadcastCancellationTokenSource();
-
-        if (!await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), _broadcastCancellationTokenSource!.Token))
+        if (!await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), RequestAborted))
         {
             _logger.EventProcessingStartTimeout(_wsId);
             return;
@@ -120,42 +124,53 @@ public sealed class CancellationTokenWrapper(
 
         try
         {
+            RestartEventProcessing();
+
             if (_isBroadcasting)
             {
                 _logger.EventProcessingAlreadyStarted(_wsId);
                 return;
             }
 
-            _isBroadcasting = true;
-            // Fire and forget, logging happens in the invoked method
-            _broadcastTask = _eventProcessor?.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource!.Token);
-        }
-        finally
-        {
-            _semaphoreSlim.Release();
-        }
-    }
+            if (_broadcastCancellationTokenSource is null)
+                EnsureNonCancelledBroadcastCancellationTokenSourceCore();
 
-    private async ValueTask RestartEventProcessingAsync()
-    {
-        if (!await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), RequestAborted))
-            return;
-
-        try
-        {
-            if (_broadcastTask is { Status: TaskStatus.Canceled or TaskStatus.Faulted or TaskStatus.RanToCompletion })
+            if (_eventProcessor == null)
             {
-                if (_broadcastTask.IsFaulted)
-                    _logger.UnhandledExceptionDuringEvent(_wsId, _broadcastTask.Exception.GetBaseException());
+                _logger.EventProcessorNotRegistered(_wsId); // You may need to add this log method
+                return;
+            }
 
-                _logger.ResettingEventProcessing(_wsId, _broadcastTask.Status);
+            _isBroadcasting = true;
+            try
+            {
+                _broadcastTask = _eventProcessor.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource!.Token);
+            }
+            catch (Exception ex)
+            {
+                _logger.EventProcessorException(_wsId, ex); // You may need to add this log method
                 _isBroadcasting = false;
                 _broadcastTask = null;
+                throw;
             }
         }
         finally
         {
             _semaphoreSlim.Release();
+        }
+
+    }
+
+    private void RestartEventProcessing()
+    {
+        if (_broadcastTask is { Status: TaskStatus.Canceled or TaskStatus.Faulted or TaskStatus.RanToCompletion })
+        {
+            if (_broadcastTask.IsFaulted)
+                _logger.UnhandledExceptionDuringEvent(_wsId, _broadcastTask.Exception.GetBaseException());
+
+            _logger.ResettingEventProcessing(_wsId, _broadcastTask.Status);
+            _isBroadcasting = false;
+            _broadcastTask = null;
         }
     }
 
@@ -165,14 +180,24 @@ public sealed class CancellationTokenWrapper(
     // ReSharper disable once UnusedMember.Global
     public async ValueTask StopEventProcessingAsync()
     {
-        if (!_isBroadcasting)
+        if (await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), RequestAborted))
         {
-            _logger.EventProcessingNotStarted(_wsId);
-            return;
-        }
+            try
+            {
+                if (!_isBroadcasting)
+                {
+                    _logger.EventProcessingNotStarted(_wsId);
+                    return;
+                }
 
-        if (_broadcastCancellationTokenSource != null)
-            await _broadcastCancellationTokenSource.CancelAsync();
+                if (_broadcastCancellationTokenSource != null)
+                    await _broadcastCancellationTokenSource.CancelAsync();
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
+        }
     }
 
     private bool _isDisposed;
