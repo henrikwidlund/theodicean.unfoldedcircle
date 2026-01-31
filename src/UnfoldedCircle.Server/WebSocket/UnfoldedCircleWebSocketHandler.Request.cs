@@ -19,35 +19,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected abstract ValueTask<DeviceState> OnGetDeviceStateAsync(GetDeviceStateMsg payload, string wsId, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Gets the entity state for the given <paramref name="entity"/>.
-    /// </summary>
-    /// <param name="entity">The entity to get the state for.</param>
-    /// <param name="wsId">ID of the websocket.</param>
-    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    protected abstract ValueTask<EntityState> GetEntityStateAsync(TConfigurationItem entity, string wsId, CancellationToken cancellationToken);
-
-    /// <summary>
-    /// Represents the current state of an entity.
-    /// </summary>
-    protected enum EntityState : sbyte
-    {
-        /// <summary>
-        /// Entity is connected and operational.
-        /// </summary>
-        Connected,
-
-        /// <summary>
-        /// Entity is in a disconnected state.
-        /// </summary>
-        Disconnected,
-
-        /// <summary>
-        /// Error while processing the entity state.
-        /// </summary>
-        Error
-    }
-
-    /// <summary>
     /// Called when a <c>get_available_entities</c> request is received.
     /// </summary>
     /// <param name="payload">Payload of the request.</param>
@@ -183,12 +154,18 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SubscribeEventsMsg>(MessageEvent.SubscribeEvents)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.SubscribeEventsMsg)!;
                 AddSocketToEventReceivers(wsId);
-                await cancellationTokenWrapper.EnsureNonCancelledBroadcastCancellationTokenSourceAsync();
                 await SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
                     wsId,
                     cancellationToken);
-                await OnSubscribeEventsAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
+                try
+                {
+                    await OnSubscribeEventsAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
+                }
+                finally
+                {
+                    await cancellationTokenWrapper.StartEventProcessingAsync();
+                }
 
                 return;
             }
@@ -206,7 +183,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         payload.MsgData?.DeviceId.GetNullableBaseIdentifier(),
                         payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), Host: null),
                     cancellationTokenWrapper.ApplicationStopping);
-                
+
                 return;
             }
             case MessageEvent.GetEntityStates:

@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Microsoft.Extensions.Logging;
 
 namespace UnfoldedCircle.Server.WebSocket;
@@ -61,29 +63,7 @@ public sealed class CancellationTokenWrapper(
     private readonly ILogger _logger = logger;
     private CancellationTokenSource? _broadcastCancellationTokenSource;
 
-    /// <summary>
-    /// Gets the <see cref="CancellationTokenSource"/> that is used to control the cancellation of events.
-    /// </summary>
-    public CancellationTokenSource? GetCurrentBroadcastCancellationTokenSource() => _broadcastCancellationTokenSource;
-
-    /// <summary>
-    /// Ensures that the broadcast cancellation token source is not canceled.
-    /// </summary>
-    public async ValueTask EnsureNonCancelledBroadcastCancellationTokenSourceAsync()
-    {
-        if (await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), RequestAborted))
-        {
-            try
-            {
-                EnsureNonCancelledBroadcastCancellationTokenSourceCore();
-            }
-            finally
-            {
-                _semaphoreSlim.Release();
-            }
-        }
-    }
-
+    [MemberNotNull(nameof(_broadcastCancellationTokenSource))]
     private void EnsureNonCancelledBroadcastCancellationTokenSourceCore()
     {
         if (_broadcastCancellationTokenSource is { IsCancellationRequested: false })
@@ -107,97 +87,79 @@ public sealed class CancellationTokenWrapper(
     public void RegisterEventProcessor(Func<System.Net.WebSockets.WebSocket, string, SubscribedEntitiesHolder, CancellationToken, Task> eventProcessor)
         => _eventProcessor ??= eventProcessor;
 
-    private bool _isBroadcasting;
     private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
     private Task? _broadcastTask;
 
     /// <summary>
     /// Starts event processing if not already started.
     /// </summary>
-    public async ValueTask StartEventProcessing()
+    public async ValueTask StartEventProcessingAsync()
     {
-        if (!await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), RequestAborted))
-        {
-            _logger.EventProcessingStartTimeout(_wsId);
-            return;
-        }
-
-        try
-        {
-            RestartEventProcessing();
-
-            if (_isBroadcasting)
-            {
-                _logger.EventProcessingAlreadyStarted(_wsId);
-                return;
-            }
-
-            if (_broadcastCancellationTokenSource is null)
-                EnsureNonCancelledBroadcastCancellationTokenSourceCore();
-
-            if (_eventProcessor == null)
-            {
-                _logger.EventProcessorNotRegistered(_wsId);
-                return;
-            }
-
-            _isBroadcasting = true;
-            try
-            {
-                _broadcastTask = _eventProcessor.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource!.Token);
-            }
-            catch (Exception ex)
-            {
-                _logger.UnhandledExceptionDuringEvent(_wsId, ex);
-                _isBroadcasting = false;
-                _broadcastTask = null;
-                throw;
-            }
-        }
-        finally
-        {
-            _semaphoreSlim.Release();
-        }
-
-    }
-
-    private void RestartEventProcessing()
-    {
-        if (_broadcastTask is { Status: TaskStatus.Canceled or TaskStatus.Faulted or TaskStatus.RanToCompletion })
-        {
-            if (_broadcastTask.IsFaulted)
-                _logger.UnhandledExceptionDuringEvent(_wsId, _broadcastTask.Exception.GetBaseException());
-
-            _logger.ResettingEventProcessing(_wsId, _broadcastTask.Status);
-            _isBroadcasting = false;
-            _broadcastTask = null;
-        }
-    }
-
-    /// <summary>
-    /// Attempts to stop event processing.
-    /// </summary>
-    // ReSharper disable once UnusedMember.Global
-    public async ValueTask StopEventProcessingAsync()
-    {
-        if (await _semaphoreSlim.WaitAsync(TimeSpan.FromMilliseconds(100), RequestAborted))
+        if (await _semaphoreSlim.WaitAsync(TimeSpan.FromSeconds(1), RequestAborted))
         {
             try
             {
-                if (!_isBroadcasting)
+                if (_eventProcessor == null)
                 {
-                    _logger.EventProcessingNotStarted(_wsId);
+                    _logger.EventProcessorNotRegistered(_wsId);
                     return;
                 }
 
-                if (_broadcastCancellationTokenSource != null)
+                EnsureNonCancelledBroadcastCancellationTokenSourceCore();
+                if (_broadcastTask is not null)
+                {
+                    if (_broadcastTask.IsFaulted)
+                        _logger.UnhandledExceptionDuringEvent(_wsId, _broadcastTask.Exception.GetBaseException());
+
+                    _logger.ResettingEventProcessing(_wsId, _broadcastTask.Status);
                     await _broadcastCancellationTokenSource.CancelAsync();
+                }
+
+                _broadcastTask = _eventProcessor.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource!.Token);
+                return;
+            }
+            catch (Exception ex)
+            {
+                _logger.UnhandledExceptionDuringStartEvent(_wsId, ex);
+                _broadcastTask = null;
             }
             finally
             {
                 _semaphoreSlim.Release();
             }
         }
+
+        _logger.StartEventProcessorSemaphoreTimeout(_wsId);
+    }
+
+    /// <summary>
+    /// Attempts to stop event processing.
+    /// </summary>
+    public async ValueTask StopEventProcessingAsync()
+    {
+        if (await _semaphoreSlim.WaitAsync(TimeSpan.FromSeconds(1), RequestAborted))
+        {
+            try
+            {
+                if (_broadcastCancellationTokenSource != null)
+                    await _broadcastCancellationTokenSource.CancelAsync();
+
+                if (_broadcastTask is { IsFaulted: true })
+                    _logger.UnhandledExceptionDuringEvent(_wsId, _broadcastTask.Exception.GetBaseException());
+                _broadcastTask = null;
+                return;
+            }
+            catch (Exception ex)
+            {
+                _logger.UnhandledExceptionDuringStopEvent(_wsId, ex);
+            }
+            finally
+            {
+                _semaphoreSlim.Release();
+            }
+        }
+
+        _logger.StopEventProcessorSemaphoreTimeout(_wsId);
     }
 
     private bool _isDisposed;
