@@ -160,4 +160,28 @@ internal static partial class UnfoldedCircleLogger
     [LoggerMessage(EventId = 32, EventName = nameof(EventProcessorNotRegistered), Level = LogLevel.Information,
         Message = "[{WSId}] WS: Event processor not registered.")]
     public static partial void EventProcessorNotRegistered(this ILogger logger, string wsId);
+
+    private static readonly Action<ILogger, string, Exception> UnhandledExceptionDuringStartEventAction = LoggerMessage.Define<string>(
+        LogLevel.Error,
+        new EventId(33, nameof(UnhandledExceptionDuringStartEvent)),
+        "[{WSId}] Unhandled exception during start event.");
+
+    public static void UnhandledExceptionDuringStartEvent(this ILogger logger, string wsId, Exception exception) =>
+        UnhandledExceptionDuringStartEventAction(logger, wsId, exception);
+
+    private static readonly Action<ILogger, string, Exception> UnhandledExceptionDuringStopEventAction = LoggerMessage.Define<string>(
+        LogLevel.Error,
+        new EventId(34, nameof(UnhandledExceptionDuringStopEvent)),
+        "[{WSId}] Unhandled exception during stop event.");
+
+    public static void UnhandledExceptionDuringStopEvent(this ILogger logger, string wsId, Exception exception) =>
+        UnhandledExceptionDuringStopEventAction(logger, wsId, exception);
+
+    [LoggerMessage(EventId = 33, EventName = nameof(StartEventProcessorSemaphoreTimeout), Level = LogLevel.Information,
+        Message = "[{WSId}] WS: Failed to acquire semaphore lock for start event within the timeout.")]
+    public static partial void StartEventProcessorSemaphoreTimeout(this ILogger logger, string wsId);
+
+    [LoggerMessage(EventId = 34, EventName = nameof(StopEventProcessorSemaphoreTimeout), Level = LogLevel.Information,
+        Message = "[{WSId}] WS: Failed to acquire semaphore lock for stop event within the timeout.")]
+    public static partial void StopEventProcessorSemaphoreTimeout(this ILogger logger, string wsId);
 }

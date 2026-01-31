@@ -37,7 +37,7 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
                 await using var cancellationTokenWrapper = new CancellationTokenWrapper(wsId, socket, _loggerFactory.CreateLogger<CancellationTokenWrapper>(), _applicationLifetime.ApplicationStopping, context.RequestAborted);
                 cancellationTokenWrapper.RegisterEventProcessor((webSocket, coreWsId, subscribedEntityIds, cancellationToken) =>
                     _unfoldedCircleWebSocketHandler.HandleEventUpdatesAsync(webSocket, coreWsId, subscribedEntityIds, cancellationToken));
-                await cancellationTokenWrapper.StartEventProcessing();
+                await cancellationTokenWrapper.StartEventProcessingAsync();
                 var result = await _unfoldedCircleWebSocketHandler.HandleWebSocketAsync(socket, wsId, cancellationTokenWrapper);
                 await socket.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, context.RequestAborted);
 

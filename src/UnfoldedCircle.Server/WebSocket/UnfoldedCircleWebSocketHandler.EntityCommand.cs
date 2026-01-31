@@ -225,41 +225,46 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
         async Task SendPowerStatusAndBroadcastAsync((string EntityId, EntityType EntitType) entity)
         {
-            if (entity.EntitType == EntityType.MediaPlayer)
+            try
             {
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateMediaPlayerStateChangedResponsePayload(
-                        new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
-                        entity.EntityId.GetIdentifier(EntityType.MediaPlayer)),
-                    wsId,
-                    commandCancellationToken);
-            }
-            else if (entity.EntitType == EntityType.Remote)
-            {
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateRemoteStateChangedResponsePayload(
-                        new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
-                        entity.EntityId.GetIdentifier(EntityType.Remote)),
-                    wsId,
-                    commandCancellationToken);
-            }
-            else if (entity.EntitType == EntityType.Sensor)
-            {
-                if (SessionHolder.SensorTypesMap.TryGetValue(entity.EntityId.GetBaseIdentifier(), out var sensorTypes))
+                if (entity.EntitType == EntityType.MediaPlayer)
                 {
-                    await Task.WhenAll(sensorTypes.Select(x => SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateSensorStateChangedResponsePayload(
-                            new SensorStateChangedEventMessageDataAttributes<string> { State = SensorState.On, Value = null },
-                            entity.EntityId.GetIdentifier(EntityType.Sensor, x),
-                            x),
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateMediaPlayerStateChangedResponsePayload(
+                            new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
+                            entity.EntityId.GetIdentifier(EntityType.MediaPlayer)),
                         wsId,
-                        commandCancellationToken)));
+                        commandCancellationToken);
                 }
+                else if (entity.EntitType == EntityType.Remote)
+                {
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateRemoteStateChangedResponsePayload(
+                            new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
+                            entity.EntityId.GetIdentifier(EntityType.Remote)),
+                        wsId,
+                        commandCancellationToken);
+                }
+                else if (entity.EntitType == EntityType.Sensor)
+                {
+                    if (SessionHolder.SensorTypesMap.TryGetValue(entity.EntityId.GetBaseIdentifier(), out var sensorTypes))
+                    {
+                        await Task.WhenAll(sensorTypes.Select(x => SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateSensorStateChangedResponsePayload(
+                                new SensorStateChangedEventMessageDataAttributes<string> { State = SensorState.On, Value = null },
+                                entity.EntityId.GetIdentifier(EntityType.Sensor, x),
+                                x),
+                            wsId,
+                            commandCancellationToken)));
+                    }
+                }
+                else
+                    _logger.UnsupportedEntityTypeWithEntityId(wsId, entity.EntitType, entity.EntityId);
             }
-            else
-                _logger.UnsupportedEntityTypeWithEntityId(wsId, entity.EntitType, entity.EntityId);
-
-            await cancellationTokenWrapper.StartEventProcessing();
+            finally
+            {
+                await cancellationTokenWrapper.StartEventProcessingAsync();
+            }
         }
     }
 
