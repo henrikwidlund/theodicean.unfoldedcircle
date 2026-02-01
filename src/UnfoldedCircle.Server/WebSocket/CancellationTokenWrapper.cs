@@ -105,17 +105,17 @@ public sealed class CancellationTokenWrapper(
                     return;
                 }
 
-                EnsureNonCancelledBroadcastCancellationTokenSourceCore();
                 if (_broadcastTask is not null)
                 {
                     if (_broadcastTask.IsFaulted)
                         _logger.UnhandledExceptionDuringEvent(_wsId, _broadcastTask.Exception.GetBaseException());
 
                     _logger.ResettingEventProcessing(_wsId, _broadcastTask.Status);
-                    await _broadcastCancellationTokenSource.CancelAsync();
+                    await (_broadcastCancellationTokenSource?.CancelAsync() ?? Task.CompletedTask);
                 }
 
-                _broadcastTask = _eventProcessor.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource!.Token);
+                EnsureNonCancelledBroadcastCancellationTokenSourceCore();
+                _broadcastTask = _eventProcessor.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource.Token);
                 return;
             }
             catch (Exception ex)
