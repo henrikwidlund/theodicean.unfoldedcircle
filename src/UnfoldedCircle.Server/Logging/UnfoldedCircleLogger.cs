@@ -164,4 +164,8 @@ internal static partial class UnfoldedCircleLogger
     [LoggerMessage(EventId = 36, EventName = nameof(StopEventProcessorSemaphoreTimeout), Level = LogLevel.Information,
         Message = "[{WSId}] WS: Failed to acquire semaphore lock for stop event within the timeout.")]
     public static partial void StopEventProcessorSemaphoreTimeout(this ILogger logger, string wsId);
+
+    [LoggerMessage(EventId = 36, EventName = nameof(EventProcessingAlreadyRunning), Level = LogLevel.Information,
+        Message = "[{WSId}] WS: Events are already running.")]
+    public static partial void EventProcessingAlreadyRunning(this ILogger logger, string wsId);
 }

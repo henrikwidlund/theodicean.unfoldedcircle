@@ -105,6 +105,12 @@ public sealed class CancellationTokenWrapper(
                     return;
                 }
 
+                if (_broadcastTask is { Status: TaskStatus.Running })
+                {
+                    _logger.EventProcessingAlreadyRunning(_wsId);
+                    return;
+                }
+
                 if (_broadcastTask is not null)
                 {
                     if (_broadcastTask.IsFaulted)
