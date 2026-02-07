@@ -309,7 +309,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
         }
         else
-            await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, commandCancellationToken);
+            commandResult = await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, commandCancellationToken);
 
         return commandResult ?? EntityCommandResult.Other;
     }
