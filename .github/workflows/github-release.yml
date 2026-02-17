@@ -11,6 +11,11 @@ permissions:
 jobs:
   build_and_publish:
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      attestations: write
+      artifact-metadata: write
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -62,3 +67,17 @@ jobs:
           dotnet nuget push "./artifacts/*.nupkg" --source https://api.nuget.org/v3/index.json \
             --api-key "$NUGET_API_KEY" \
             --skip-duplicate
+
+      - name: Publish
+        uses: softprops/action-gh-release@a06a81a03ee405af7f2048a818ed3f03bbf83c7b
+        with:
+          files: |
+            ./artifacts/*.nupkg
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v3.2.0
+        with:
+          subject-path: |
+            ./artifacts/*.nupkg
