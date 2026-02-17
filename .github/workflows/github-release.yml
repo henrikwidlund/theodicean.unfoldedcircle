@@ -73,6 +73,7 @@ jobs:
         with:
           files: |
             ./artifacts/*.nupkg
+            ./artifacts/*.snupkg
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -81,3 +82,4 @@ jobs:
         with:
           subject-path: |
             ./artifacts/*.nupkg
+            ./artifacts/*.snupkg
