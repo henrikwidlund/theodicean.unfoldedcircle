@@ -42,7 +42,7 @@
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.5" />
+      <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.6" />
     </ItemGroup>
 
 </Project>
