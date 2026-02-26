@@ -179,7 +179,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
     /// <param name="sensorSuffix">The suffix identifying the sensor.</param>
-    protected void RegisterSensor(string entityId, string sensorSuffix)
+    protected static void RegisterSensor(string entityId, string sensorSuffix)
     {
         if (!SessionHolder.SensorTypesMap.TryGetValue(entityId, out var existingSuffixes))
         {
@@ -195,7 +195,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
     /// <param name="selectSuffix">The suffix identifying the select.</param>
-    protected void RegisterSelect(string entityId, string selectSuffix)
+    protected static void RegisterSelect(string entityId, string selectSuffix)
     {
         if (!SessionHolder.SelectTypesMap.TryGetValue(entityId, out var existingSuffixes))
         {

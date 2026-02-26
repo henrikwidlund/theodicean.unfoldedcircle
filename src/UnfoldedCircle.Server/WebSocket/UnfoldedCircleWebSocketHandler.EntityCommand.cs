@@ -19,7 +19,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
     /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
-    /// <returns><see langword="true"/> if successful, otherwise <see langword="false"/></returns>
     /// <remarks>You must emit power on/off events accordingly.</remarks>
     protected abstract ValueTask<EntityCommandResult> OnRemoteCommandAsync(
         System.Net.WebSockets.WebSocket socket,
@@ -38,7 +37,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
     /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
-    /// <returns><see langword="true"/> if successful, otherwise <see langword="false"/></returns>
     /// <remarks>You must emit power on/off events accordingly.</remarks>
     protected abstract ValueTask<EntityCommandResult> OnClimateHvacModeCommandAsync(
         System.Net.WebSockets.WebSocket socket,
@@ -57,7 +55,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
     /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
-    /// <returns><see langword="true"/> if successful, otherwise <see langword="false"/></returns>
     /// <remarks>You must emit power on/off events accordingly.</remarks>
     protected abstract ValueTask<EntityCommandResult> OnClimatePowerCommandAsync(
         System.Net.WebSockets.WebSocket socket,
@@ -173,7 +170,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
     /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
-    /// <returns><see langword="true"/> if successful, otherwise <see langword="false"/></returns>
     protected abstract ValueTask<EntityCommandResult> OnMediaPlayerCommandAsync(System.Net.WebSockets.WebSocket socket,
         MediaPlayerEntityCommandMsgData<TMediaPlayerCommandId> payload,
         string wsId,
@@ -265,12 +261,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         else
         {
             await SendMessageAsync(socket,
-                ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                    new ValidationError
-                    {
-                        Code = "INV_ARGUMENT",
-                        Message = "Unknown command"
-                    }),
+                ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload, Constants.ValidationErrorUnknownCommand),
                 wsId,
                 commandCancellationToken);
         }
@@ -299,12 +290,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             else if (entityCommandResult is EntityCommandResult.Failure)
             {
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                        new ValidationError
-                        {
-                            Code = "INV_ARGUMENT",
-                            Message = "Unknown command"
-                        }),
+                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload, Constants.ValidationErrorUnknownCommand),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
             }
@@ -347,12 +333,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             else if (entityCommandResult is EntityCommandResult.Failure)
             {
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                        new ValidationError
-                        {
-                            Code = "INV_ARGUMENT",
-                            Message = "Unknown command"
-                        }),
+                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload, Constants.ValidationErrorUnknownCommand),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
             }
@@ -391,7 +372,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
             if (result.CommandResult is not EntityCommandResult.Failure and not EntityCommandResult.Handled)
             {
-                Task.WaitAll(SendMessageAsync(socket,
+                await Task.WhenAll(SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateSelectStateChangedResponsePayload(
                             new SelectStateChangedEventMessageDataAttributes { CurrentOption = result.SelectedOption },
                             payload.MsgData.EntityId.GetBaseIdentifier(),
@@ -403,12 +384,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             else if (result.CommandResult is EntityCommandResult.Failure)
             {
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                        new ValidationError
-                        {
-                            Code = "INV_ARGUMENT",
-                            Message = "Unknown command"
-                        }),
+                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload, Constants.ValidationErrorUnknownCommand),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
             }
@@ -634,4 +610,13 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             }
         }
     }
+}
+
+file static class Constants
+{
+    internal static readonly ValidationError ValidationErrorUnknownCommand = new ValidationError
+    {
+        Code = "INV_ARGUMENT",
+        Message =  "Unknown command"
+    };
 }

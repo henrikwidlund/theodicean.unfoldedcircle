@@ -165,13 +165,13 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Failed to acquire semaphore lock for stop event within the timeout.")]
     public static partial void StopEventProcessorSemaphoreTimeout(this ILogger logger, string wsId);
 
-    [LoggerMessage(EventId = 36, EventName = nameof(EventProcessingAlreadyRunning), Level = LogLevel.Information,
+    [LoggerMessage(EventId = 37, EventName = nameof(EventProcessingAlreadyRunning), Level = LogLevel.Information,
         Message = "[{WSId}] WS: Events are already running.")]
     public static partial void EventProcessingAlreadyRunning(this ILogger logger, string wsId);
 
     private static readonly Action<ILogger, string, EntityCommandMsgData<ClimateCommandId, ClimateEntityCommandParams>, Exception> ClimateEntityCommandHandlingExceptionAction = LoggerMessage.Define<string, EntityCommandMsgData<ClimateCommandId, ClimateEntityCommandParams>>(
         LogLevel.Error,
-        new EventId(37, nameof(ClimateEntityCommandHandlingException)),
+        new EventId(38, nameof(ClimateEntityCommandHandlingException)),
         "[{WSId}] WS: Error while handling climate entity command {@MsgData}");
 
     public static void ClimateEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<ClimateCommandId, ClimateEntityCommandParams> msgData, Exception exception) =>
@@ -179,7 +179,7 @@ internal static partial class UnfoldedCircleLogger
 
     private static readonly Action<ILogger, string, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams>, Exception> SelectEntityCommandHandlingExceptionAction = LoggerMessage.Define<string, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams>>(
         LogLevel.Error,
-        new EventId(38, nameof(SelectEntityCommandHandlingException)),
+        new EventId(39, nameof(SelectEntityCommandHandlingException)),
         "[{WSId}] WS: Error while handling select entity command {@MsgData}");
 
     public static void SelectEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams> msgData, Exception exception) =>

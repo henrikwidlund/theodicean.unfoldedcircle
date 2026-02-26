@@ -31,5 +31,5 @@ public record ClimateOptions
     /// </summary>
     /// <remarks>Default: 10</remarks>
     [JsonPropertyName("min_temperature")]
-    public float? MinTemperature { get; set; }
+    public float? MinTemperature { get; init; }
 }
