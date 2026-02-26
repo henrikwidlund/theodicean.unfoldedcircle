@@ -53,7 +53,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> that the request was sent to.</param>
     /// <param name="payload">Payload of the request.</param>
-    /// <param name="powerOn">Weather to power the device on or off.</param>
+    /// <param name="powerOn">Whether to power the device on or off.</param>
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
     /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
@@ -161,7 +161,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="entityId">The entity_id to return values for.</param>
     // ReSharper disable once MemberCanBePrivate.Global
-    protected IEnumerable<(string EntityId, EntityType EntitType)> GetEntities(string entityId)
+    protected IEnumerable<(string EntityId, EntityType EntityType)> GetEntities(string entityId)
         => SupportedEntityTypes.Select(supportedEntityType => (entityId.GetIdentifier(supportedEntityType),
             supportedEntityType));
 
@@ -449,11 +449,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
         return;
 
-        async Task SendPowerStatusAndBroadcastAsync((string EntityId, EntityType EntitType) entity)
+        async Task SendPowerStatusAndBroadcastAsync((string EntityId, EntityType EntityType) entity)
         {
             try
             {
-                if (entity.EntitType == EntityType.MediaPlayer)
+                if (entity.EntityType == EntityType.MediaPlayer)
                 {
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateMediaPlayerStateChangedResponsePayload(
@@ -462,7 +462,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         wsId,
                         commandCancellationToken);
                 }
-                else if (entity.EntitType == EntityType.Remote)
+                else if (entity.EntityType == EntityType.Remote)
                 {
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateRemoteStateChangedResponsePayload(
@@ -471,7 +471,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         wsId,
                         commandCancellationToken);
                 }
-                else if (entity.EntitType == EntityType.Sensor)
+                else if (entity.EntityType == EntityType.Sensor)
                 {
                     if (SessionHolder.SensorTypesMap.TryGetValue(entity.EntityId.GetBaseIdentifier(), out var sensorTypes))
                     {
@@ -484,7 +484,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                             commandCancellationToken)));
                     }
                 }
-                else if (entity.EntitType == EntityType.Climate)
+                else if (entity.EntityType == EntityType.Climate)
                 {
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateClimateStateChangedResponsePayload(
@@ -496,8 +496,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         wsId,
                         commandCancellationToken);
                 }
-                else if (entity.EntitType != EntityType.Select)
-                    _logger.UnsupportedEntityTypeWithEntityId(wsId, entity.EntitType, entity.EntityId);
+                else if (entity.EntityType != EntityType.Select)
+                    _logger.UnsupportedEntityTypeWithEntityId(wsId, entity.EntityType, entity.EntityId);
             }
             finally
             {

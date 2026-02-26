@@ -145,7 +145,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         return GetEntities(entityId).Select(x =>
         {
-            if (x.EntitType == EntityType.Sensor && SessionHolder.SensorTypesMap.TryGetValue(x.EntityId, out var sensorSuffixes))
+            if (x.EntityType == EntityType.Sensor && SessionHolder.SensorTypesMap.TryGetValue(x.EntityId, out var sensorSuffixes))
             {
                 return Task.WhenAll(sensorSuffixes.Select(suffix => SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateSensorStateChangedResponsePayload(
@@ -153,7 +153,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         suffix), wsId, cancellationToken)));
             }
 
-            if (x.EntitType == EntityType.Select && SessionHolder.SelectTypesMap.TryGetValue(x.EntityId, out var selectSuffixes))
+            if (x.EntityType == EntityType.Select && SessionHolder.SelectTypesMap.TryGetValue(x.EntityId, out var selectSuffixes))
             {
                 return Task.WhenAll(selectSuffixes.Select(suffix => SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateSelectStateChangedResponsePayload(
@@ -161,7 +161,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         suffix), wsId, cancellationToken)));
             }
 
-            return x.EntitType switch
+            return x.EntityType switch
             {
                 EntityType.MediaPlayer => SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateMediaPlayerStateChangedResponsePayload(new MediaPlayerStateChangedEventMessageDataAttributes { State = State.Unavailable }, x.EntityId),
@@ -183,7 +183,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         if (!SessionHolder.SensorTypesMap.TryGetValue(entityId, out var existingSuffixes))
         {
-            existingSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            existingSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { sensorSuffix };
             SessionHolder.SensorTypesMap[entityId] = existingSuffixes;
         }
         else
@@ -199,7 +199,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         if (!SessionHolder.SelectTypesMap.TryGetValue(entityId, out var existingSuffixes))
         {
-            existingSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            existingSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { selectSuffix };
             SessionHolder.SelectTypesMap[entityId] = existingSuffixes;
         }
         else
