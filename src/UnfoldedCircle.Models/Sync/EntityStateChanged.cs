@@ -2,8 +2,10 @@ using UnfoldedCircle.Models.Shared;
 
 namespace UnfoldedCircle.Models.Sync;
 
+[JsonDerivedType(typeof(ClimateEntityStateChanged))]
 [JsonDerivedType(typeof(MediaPlayerEntityStateChanged))]
 [JsonDerivedType(typeof(RemoteEntityStateChanged))]
+[JsonDerivedType(typeof(SelectEntityStateChanged))]
 [JsonDerivedType(typeof(SensorEntityStateChanged))]
 public abstract record EntityStateChanged
 {

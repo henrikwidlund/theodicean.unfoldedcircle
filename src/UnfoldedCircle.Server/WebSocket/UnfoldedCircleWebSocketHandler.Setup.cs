@@ -145,20 +145,32 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         return GetEntities(entityId).Select(x =>
         {
-            if (x.EntitType == EntityType.Sensor && SessionHolder.SensorTypesMap.TryGetValue(x.EntityId, out var sensorSuffixes))
+            if (x.EntityType == EntityType.Sensor && SessionHolder.SensorTypesMap.TryGetValue(x.EntityId, out var sensorSuffixes))
             {
                 return Task.WhenAll(sensorSuffixes.Select(suffix => SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateSensorStateChangedResponsePayload(
                         new SensorStateChangedEventMessageDataAttributes<string> { State = SensorState.Unavailable, Value = null }, x.EntityId,
                         suffix), wsId, cancellationToken)));
             }
-            return x.EntitType switch
+
+            if (x.EntityType == EntityType.Select && SessionHolder.SelectTypesMap.TryGetValue(x.EntityId, out var selectSuffixes))
+            {
+                return Task.WhenAll(selectSuffixes.Select(suffix => SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateSelectStateChangedResponsePayload(
+                        new SelectStateChangedEventMessageDataAttributes { State = SelectState.Unavailable }, x.EntityId,
+                        suffix), wsId, cancellationToken)));
+            }
+
+            return x.EntityType switch
             {
                 EntityType.MediaPlayer => SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateMediaPlayerStateChangedResponsePayload(new MediaPlayerStateChangedEventMessageDataAttributes { State = State.Unavailable }, x.EntityId),
                     wsId, cancellationToken),
                 EntityType.Remote => SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateRemoteStateChangedResponsePayload(new RemoteStateChangedEventMessageDataAttributes { State = RemoteState.Unavailable }, x.EntityId),
+                    wsId, cancellationToken),
+                EntityType.Climate => SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateClimateStateChangedResponsePayload(new ClimateStateChangedEventMessageDataAttributes { State = ClimateState.Unavailable }, x.EntityId),
                     wsId, cancellationToken),
                 _ => Task.CompletedTask
             };
@@ -170,15 +182,31 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
     /// <param name="sensorSuffix">The suffix identifying the sensor.</param>
-    protected void RegisterSensor(string entityId, string sensorSuffix)
+    protected static void RegisterSensor(string entityId, string sensorSuffix)
     {
         if (!SessionHolder.SensorTypesMap.TryGetValue(entityId, out var existingSuffixes))
         {
-            existingSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            existingSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { sensorSuffix };
             SessionHolder.SensorTypesMap[entityId] = existingSuffixes;
         }
         else
             existingSuffixes.Add(sensorSuffix);
+    }
+
+    /// <summary>
+    /// Registers a select with the given <paramref name="selectSuffix"/> for the <paramref name="entityId"/>.
+    /// </summary>
+    /// <param name="entityId">The entity_id.</param>
+    /// <param name="selectSuffix">The suffix identifying the select.</param>
+    protected static void RegisterSelect(string entityId, string selectSuffix)
+    {
+        if (!SessionHolder.SelectTypesMap.TryGetValue(entityId, out var existingSuffixes))
+        {
+            existingSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { selectSuffix };
+            SessionHolder.SelectTypesMap[entityId] = existingSuffixes;
+        }
+        else
+            existingSuffixes.Add(selectSuffix);
     }
 
     /// <summary>

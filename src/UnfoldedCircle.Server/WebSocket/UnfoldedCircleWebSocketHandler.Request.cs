@@ -76,6 +76,20 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected virtual RemoteEntityCommandMsgData GetRemoteCommandPayload(JsonDocument jsonDocument)
         => jsonDocument.Deserialize<RemoteEntityCommandMsgData>(UnfoldedCircleJsonSerializerContext.Default.RemoteEntityCommandMsgData)!;
 
+    /// <summary>
+    /// Deserializes the payload of a climate entity command message.
+    /// </summary>
+    /// <param name="jsonDocument">The <see cref="JsonDocument"/> that should be deserialized.</param>
+    protected virtual ClimateEntityCommandMsgData GetClimateCommandPayload(JsonDocument jsonDocument)
+        => jsonDocument.Deserialize<ClimateEntityCommandMsgData>(UnfoldedCircleJsonSerializerContext.Default.ClimateEntityCommandMsgData)!;
+
+    /// <summary>
+    /// Deserializes the payload of a select entity command message.
+    /// </summary>
+    /// <param name="jsonDocument">The <see cref="JsonDocument"/> that should be deserialized.</param>
+    protected virtual SelectEntityCommandMsgData GetSelectCommandPayload(JsonDocument jsonDocument)
+        => jsonDocument.Deserialize<SelectEntityCommandMsgData>(UnfoldedCircleJsonSerializerContext.Default.SelectEntityCommandMsgData)!;
+
     private async Task HandleRequestMessageAsync(
         System.Net.WebSockets.WebSocket socket,
         string wsId,
@@ -276,6 +290,16 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 else if (entityType == EntityType.Remote)
                 {
                     var payload = GetRemoteCommandPayload(jsonDocument);
+                    await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
+                }
+                else if (entityType == EntityType.Climate)
+                {
+                    var payload = GetClimateCommandPayload(jsonDocument);
+                    await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
+                }
+                else if (entityType == EntityType.Select)
+                {
+                    var payload = GetSelectCommandPayload(jsonDocument);
                     await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
                 }
                 else
