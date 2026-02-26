@@ -69,13 +69,13 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Unknown entity command type {PayloadType}")]
     public static partial void UnknownEntityCommand(this ILogger logger, string wsId, string payloadType);
 
-    private static readonly Action<ILogger, string, EntityCommandMsgData<string, RemoteEntityCommandParams>, Exception> EntityCommandHandlingExceptionAction = LoggerMessage.Define<string, EntityCommandMsgData<string, RemoteEntityCommandParams>>(
+    private static readonly Action<ILogger, string, EntityCommandMsgData<string, RemoteEntityCommandParams>, Exception> RemoteEntityCommandHandlingExceptionAction = LoggerMessage.Define<string, EntityCommandMsgData<string, RemoteEntityCommandParams>>(
         LogLevel.Error,
-        new EventId(14, nameof(EntityCommandHandlingException)),
-        "[{WSId}] WS: Error while handling entity command {@MsgData}");
+        new EventId(14, nameof(RemoteEntityCommandHandlingException)),
+        "[{WSId}] WS: Error while handling remote entity command {@MsgData}");
 
-    public static void EntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<string, RemoteEntityCommandParams> msgData, Exception exception) =>
-        EntityCommandHandlingExceptionAction(logger, wsId, msgData, exception);
+    public static void RemoteEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<string, RemoteEntityCommandParams> msgData, Exception exception) =>
+        RemoteEntityCommandHandlingExceptionAction(logger, wsId, msgData, exception);
 
     [LoggerMessage(EventId = 15, EventName = nameof(UnsupportedEntityTypeWithEntityId), Level = LogLevel.Error,
         Message = "[{WSId}] WS: Unsupported entity type {EntityType} for entity {EntityId}.")]
@@ -119,7 +119,7 @@ internal static partial class UnfoldedCircleLogger
 
     private static readonly Action<ILogger, string, Exception> ErrorDuringSetupProcessAction = LoggerMessage.Define<string>(
         LogLevel.Error,
-        new EventId(26, nameof(EntityCommandHandlingException)),
+        new EventId(26, nameof(ErrorDuringSetupProcess)),
         "[{WSId}] Error during setup process.");
 
     public static void ErrorDuringSetupProcess(this ILogger logger, string wsId, Exception exception) =>
@@ -168,4 +168,20 @@ internal static partial class UnfoldedCircleLogger
     [LoggerMessage(EventId = 36, EventName = nameof(EventProcessingAlreadyRunning), Level = LogLevel.Information,
         Message = "[{WSId}] WS: Events are already running.")]
     public static partial void EventProcessingAlreadyRunning(this ILogger logger, string wsId);
+
+    private static readonly Action<ILogger, string, EntityCommandMsgData<ClimateCommandId, ClimateEntityCommandParams>, Exception> ClimateEntityCommandHandlingExceptionAction = LoggerMessage.Define<string, EntityCommandMsgData<ClimateCommandId, ClimateEntityCommandParams>>(
+        LogLevel.Error,
+        new EventId(37, nameof(ClimateEntityCommandHandlingException)),
+        "[{WSId}] WS: Error while handling climate entity command {@MsgData}");
+
+    public static void ClimateEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<ClimateCommandId, ClimateEntityCommandParams> msgData, Exception exception) =>
+        ClimateEntityCommandHandlingExceptionAction(logger, wsId, msgData, exception);
+
+    private static readonly Action<ILogger, string, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams>, Exception> SelectEntityCommandHandlingExceptionAction = LoggerMessage.Define<string, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams>>(
+        LogLevel.Error,
+        new EventId(38, nameof(SelectEntityCommandHandlingException)),
+        "[{WSId}] WS: Error while handling select entity command {@MsgData}");
+
+    public static void SelectEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams> msgData, Exception exception) =>
+        SelectEntityCommandHandlingExceptionAction(logger, wsId, msgData, exception);
 }

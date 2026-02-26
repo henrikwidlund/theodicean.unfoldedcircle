@@ -152,6 +152,15 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         new SensorStateChangedEventMessageDataAttributes<string> { State = SensorState.Unavailable, Value = null }, x.EntityId,
                         suffix), wsId, cancellationToken)));
             }
+
+            if (x.EntitType == EntityType.Select && SessionHolder.SelectTypesMap.TryGetValue(x.EntityId, out var selectSuffixes))
+            {
+                return Task.WhenAll(selectSuffixes.Select(suffix => SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateSelectStateChangedResponsePayload(
+                        new SelectStateChangedEventMessageDataAttributes { State = SelectState.Unavailable }, x.EntityId,
+                        suffix), wsId, cancellationToken)));
+            }
+
             return x.EntitType switch
             {
                 EntityType.MediaPlayer => SendMessageAsync(socket,
@@ -179,6 +188,22 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
         else
             existingSuffixes.Add(sensorSuffix);
+    }
+
+    /// <summary>
+    /// Registers a select with the given <paramref name="selectSuffix"/> for the <paramref name="entityId"/>.
+    /// </summary>
+    /// <param name="entityId">The entity_id.</param>
+    /// <param name="selectSuffix">The suffix identifying the select.</param>
+    protected void RegisterSelect(string entityId, string selectSuffix)
+    {
+        if (!SessionHolder.SelectTypesMap.TryGetValue(entityId, out var existingSuffixes))
+        {
+            existingSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            SessionHolder.SelectTypesMap[entityId] = existingSuffixes;
+        }
+        else
+            existingSuffixes.Add(selectSuffix);
     }
 
     /// <summary>

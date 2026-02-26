@@ -1,5 +1,4 @@
 using UnfoldedCircle.Models.Events;
-using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Models.Sync;
 using UnfoldedCircle.Server.Configuration;
 
@@ -22,7 +21,9 @@ namespace UnfoldedCircle.Server.Json;
 [JsonSerializable(typeof(SetupDriverMsg))]
 [JsonSerializable(typeof(DriverSetupChangeEvent))]
 [JsonSerializable(typeof(MediaPlayerEntityCommandMsgData<MediaPlayerCommandId>))]
+[JsonSerializable(typeof(ClimateEntityCommandMsgData))]
 [JsonSerializable(typeof(RemoteEntityCommandMsgData))]
+[JsonSerializable(typeof(SelectEntityCommandMsgData))]
 [JsonSerializable(typeof(CommonRespRequired<ValidationError>))]
 [JsonSerializable(typeof(GetDeviceStateMsg))]
 [JsonSerializable(typeof(SetDriverUserDataMsg))]
@@ -40,7 +41,8 @@ namespace UnfoldedCircle.Server.Json;
 [JsonSerializable(typeof(StateChangedEvent<SensorStateChangedEventMessageDataAttributes<string>>))]
 [JsonSerializable(typeof(StateChangedEvent<SensorStateChangedEventMessageDataAttributes<decimal>>))]
 [JsonSerializable(typeof(StateChangedEvent<SensorStateChangedEventMessageDataAttributes<double>>))]
-[JsonSerializable(typeof(EntityType?))]
+[JsonSerializable(typeof(StateChangedEvent<ClimateStateChangedEventMessageDataAttributes>))]
+[JsonSerializable(typeof(StateChangedEvent<SelectStateChangedEventMessageDataAttributes>))]
 public sealed partial class UnfoldedCircleJsonSerializerContext : JsonSerializerContext
 {
     static UnfoldedCircleJsonSerializerContext()

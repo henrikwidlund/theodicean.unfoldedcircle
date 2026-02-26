@@ -11,7 +11,7 @@ namespace UnfoldedCircle.Server.WebSocket;
 public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>
 {
     /// <summary>
-    /// Executed when a <c>entity_command</c> is received for a media player entity.
+    /// Executed when a <c>entity_command</c> is received for a remote entity.
     /// </summary>
     /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> that the request was sent to.</param>
     /// <param name="payload">Payload of the request.</param>
@@ -28,6 +28,122 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper,
         CancellationToken commandCancellationToken);
+
+    /// <summary>
+    /// Executed when a <c>hvac_mode</c> <c>entity_command</c> is received for a climate entity.
+    /// </summary>
+    /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> that the request was sent to.</param>
+    /// <param name="payload">Payload of the request.</param>
+    /// <param name="hvacMode">The HVAC Mode to change to.</param>
+    /// <param name="wsId">ID of the websocket.</param>
+    /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
+    /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
+    /// <returns><see langword="true"/> if successful, otherwise <see langword="false"/></returns>
+    /// <remarks>You must emit power on/off events accordingly.</remarks>
+    protected abstract ValueTask<EntityCommandResult> OnClimateHvacModeCommandAsync(
+        System.Net.WebSockets.WebSocket socket,
+        ClimateEntityCommandMsgData payload,
+        HvacMode hvacMode,
+        string wsId,
+        CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken commandCancellationToken);
+
+    /// <summary>
+    /// Executed when a power <c>entity_command</c> is received for a climate entity.
+    /// </summary>
+    /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> that the request was sent to.</param>
+    /// <param name="payload">Payload of the request.</param>
+    /// <param name="powerOn">Weather to power the device on or off.</param>
+    /// <param name="wsId">ID of the websocket.</param>
+    /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
+    /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
+    /// <returns><see langword="true"/> if successful, otherwise <see langword="false"/></returns>
+    /// <remarks>You must emit power on/off events accordingly.</remarks>
+    protected abstract ValueTask<EntityCommandResult> OnClimatePowerCommandAsync(
+        System.Net.WebSockets.WebSocket socket,
+        ClimateEntityCommandMsgData payload,
+        bool powerOn,
+        string wsId,
+        CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken commandCancellationToken);
+
+    /// <summary>
+    /// Executed when a <c>target_temperature</c> <c>entity_command</c> is received for a climate entity.
+    /// </summary>
+    /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> that the request was sent to.</param>
+    /// <param name="payload">Payload of the request.</param>
+    /// <param name="targetTemperature">The target temperature to set.</param>
+    /// <param name="wsId">ID of the websocket.</param>
+    /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
+    /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
+    /// <remarks>You must emit power on/off events accordingly.</remarks>
+    protected abstract ValueTask<EntityCommandResult> OnClimateTargetTemperatureCommandAsync(
+        System.Net.WebSockets.WebSocket socket,
+        ClimateEntityCommandMsgData payload,
+        float targetTemperature,
+        string wsId,
+        CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken commandCancellationToken);
+
+    /// <summary>
+    /// Executed when a <c>select_option</c> <c>entity_command</c> is received for a select entity.
+    /// </summary>
+    /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> that the request was sent to.</param>
+    /// <param name="payload">Payload of the request.</param>
+    /// <param name="option">The option to select.</param>
+    /// <param name="wsId">ID of the websocket.</param>
+    /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
+    /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
+    protected abstract ValueTask<SelectCommandResult> OnSelectOptionCommandAsync(
+        System.Net.WebSockets.WebSocket socket,
+        SelectEntityCommandMsgData payload,
+        string option,
+        string wsId,
+        CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken commandCancellationToken);
+
+    /// <summary>
+    /// Executed when a <c>select_first</c> or <c>select_last</c> <c>entity_command</c> is received for a select entity.
+    /// </summary>
+    /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> that the request was sent to.</param>
+    /// <param name="payload">Payload of the request.</param>
+    /// <param name="first">If <see langword="true"/>, the first option should be selected, otherwise the last.</param>
+    /// <param name="wsId">ID of the websocket.</param>
+    /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
+    /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
+    protected abstract ValueTask<SelectCommandResult> OnSelectFirstLastCommandAsync(
+        System.Net.WebSockets.WebSocket socket,
+        SelectEntityCommandMsgData payload,
+        bool first,
+        string wsId,
+        CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken commandCancellationToken);
+
+    /// <summary>
+    /// Executed when a <c>select_next</c> or <c>select_previous</c> <c>entity_command</c> is received for a select entity.
+    /// </summary>
+    /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> that the request was sent to.</param>
+    /// <param name="payload">Payload of the request.</param>
+    /// <param name="next">If <see langword="true"/>, the next option should be selected, otherwise the previous.</param>
+    /// <param name="cycle">If <see langword="true"/>, the selection should cycle to the beginning/end of the options if the end/beginning is reached.</param>
+    /// <param name="wsId">ID of the websocket.</param>
+    /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
+    /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
+    protected abstract ValueTask<SelectCommandResult> OnSelectNextPreviousCommandAsync(
+        System.Net.WebSockets.WebSocket socket,
+        SelectEntityCommandMsgData payload,
+        bool next,
+        bool cycle,
+        string wsId,
+        CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken commandCancellationToken);
+
+    /// <summary>
+    /// Holder for the result of a select option command, allowing to specify both the command result and the selected option to return in the response.
+    /// </summary>
+    /// <param name="CommandResult">The result of the command execution.</param>
+    /// <param name="SelectedOption">The option that was selected as a result of the command.</param>
+    protected sealed record SelectCommandResult(EntityCommandResult CommandResult, string SelectedOption);
 
     /// <summary>
     /// Determines if the entity with the given <paramref name="entityId"/> is reachable.
@@ -124,6 +240,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             case RemoteEntityCommandMsgData remoteEntityCommandMsgData:
                 await HandleRemoteCommandAsync(socket, remoteEntityCommandMsgData, wsId, cancellationTokenWrapper, commandCancellationToken);
                 break;
+            case ClimateEntityCommandMsgData climateEntityCommandMsgData:
+                await HandleClimateCommandAsync(socket, climateEntityCommandMsgData, wsId, cancellationTokenWrapper, commandCancellationToken);
+                break;
+            case SelectEntityCommandMsgData selectEntityCommandMsgData:
+                await HandleSelectCommandAsync(socket, selectEntityCommandMsgData, wsId, cancellationTokenWrapper, commandCancellationToken);
+                break;
             default:
                 if (_logger.IsEnabled(LogLevel.Warning))
                     _logger.UnknownEntityCommand(wsId, payload.GetType().Name);
@@ -189,7 +311,111 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
         catch (Exception e)
         {
-            _logger.EntityCommandHandlingException(wsId, payload.MsgData, e);
+            _logger.RemoteEntityCommandHandlingException(wsId, payload.MsgData, e);
+
+            await SendMessageAsync(socket,
+                ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                    new ValidationError
+                    {
+                        Code = "ERROR",
+                        Message = "Error while handling command"
+                    }),
+                wsId,
+                cancellationTokenWrapper.RequestAborted);
+        }
+    }
+
+    private async Task HandleClimateCommandAsync(System.Net.WebSockets.WebSocket socket,
+        ClimateEntityCommandMsgData payload,
+        string wsId,
+        CancellationTokenWrapper cancellationTokenWrapper,
+        CancellationToken commandCancellationToken)
+    {
+        try
+        {
+            var entityCommandResult = payload.MsgData.CommandId switch
+            {
+                ClimateCommandId.On => await OnClimatePowerCommandAsync(socket, payload, true, wsId, cancellationTokenWrapper, commandCancellationToken),
+                ClimateCommandId.Off => await OnClimatePowerCommandAsync(socket, payload, false, wsId, cancellationTokenWrapper, commandCancellationToken),
+                ClimateCommandId.HvacMode => await OnClimateHvacModeCommandAsync(socket, payload, payload.MsgData.Params!.HvacMode!.Value, wsId, cancellationTokenWrapper, commandCancellationToken),
+                ClimateCommandId.TargetTemperature => await OnClimateTargetTemperatureCommandAsync(socket, payload, payload.MsgData.Params!.Temperature!.Value, wsId, cancellationTokenWrapper, commandCancellationToken),
+                _ => EntityCommandResult.Failure
+            };
+
+            if (entityCommandResult is not EntityCommandResult.Failure and not EntityCommandResult.Handled)
+                await HandleCommandResultCoreAsync(socket, wsId, payload, entityCommandResult, cancellationTokenWrapper, commandCancellationToken);
+            else if (entityCommandResult is EntityCommandResult.Failure)
+            {
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                        new ValidationError
+                        {
+                            Code = "INV_ARGUMENT",
+                            Message = "Unknown command"
+                        }),
+                    wsId,
+                    cancellationTokenWrapper.RequestAborted);
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.ClimateEntityCommandHandlingException(wsId, payload.MsgData, e);
+
+            await SendMessageAsync(socket,
+                ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                    new ValidationError
+                    {
+                        Code = "ERROR",
+                        Message = "Error while handling command"
+                    }),
+                wsId,
+                cancellationTokenWrapper.RequestAborted);
+        }
+    }
+
+    private async Task HandleSelectCommandAsync(System.Net.WebSockets.WebSocket socket, SelectEntityCommandMsgData payload, string wsId, CancellationTokenWrapper cancellationTokenWrapper, CancellationToken commandCancellationToken)
+    {
+        try
+        {
+            var result = payload.MsgData.CommandId switch
+            {
+                SelectCommandId.SelectFirst or SelectCommandId.SelectLast => await OnSelectFirstLastCommandAsync(socket, payload,
+                    payload.MsgData.CommandId == SelectCommandId.SelectFirst, wsId, cancellationTokenWrapper, commandCancellationToken),
+                SelectCommandId.SelectNext or SelectCommandId.SelectPrevious => await OnSelectNextPreviousCommandAsync(socket, payload,
+                    payload.MsgData.CommandId == SelectCommandId.SelectNext, payload.MsgData.Params?.Cycle ?? false, wsId,
+                    cancellationTokenWrapper, commandCancellationToken),
+                SelectCommandId.SelectOption => await OnSelectOptionCommandAsync(socket, payload,
+                    payload.MsgData.Params?.Option ?? string.Empty, wsId, cancellationTokenWrapper, commandCancellationToken),
+                _ => new SelectCommandResult(EntityCommandResult.Failure, string.Empty)
+            };
+
+            if (result.CommandResult is not EntityCommandResult.Failure and not EntityCommandResult.Handled)
+            {
+                Task.WaitAll(SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateSelectStateChangedResponsePayload(
+                            new SelectStateChangedEventMessageDataAttributes { CurrentOption = result.SelectedOption },
+                            payload.MsgData.EntityId.GetBaseIdentifier(),
+                            payload.MsgData.EntityId.GetSuffix()),
+                        wsId,
+                        commandCancellationToken),
+                    HandleCommandResultCoreAsync(socket, wsId, payload, result.CommandResult, cancellationTokenWrapper, commandCancellationToken));
+            }
+            else if (result.CommandResult is EntityCommandResult.Failure)
+            {
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                        new ValidationError
+                        {
+                            Code = "INV_ARGUMENT",
+                            Message = "Unknown command"
+                        }),
+                    wsId,
+                    cancellationTokenWrapper.RequestAborted);
+            }
+        }
+        catch (Exception e)
+        {
+            _logger.SelectEntityCommandHandlingException(wsId, payload.MsgData, e);
 
             await SendMessageAsync(socket,
                 ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -258,7 +484,19 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                             commandCancellationToken)));
                     }
                 }
-                else
+                else if (entity.EntitType == EntityType.Climate)
+                {
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateClimateStateChangedResponsePayload(
+                            new ClimateStateChangedEventMessageDataAttributes
+                            {
+                                State = entityCommandResult == EntityCommandResult.PowerOn ? ClimateState.Auto : ClimateState.Off
+                            },
+                            entity.EntityId.GetIdentifier(EntityType.Climate)),
+                        wsId,
+                        commandCancellationToken);
+                }
+                else if (entity.EntitType != EntityType.Select)
                     _logger.UnsupportedEntityTypeWithEntityId(wsId, entity.EntitType, entity.EntityId);
             }
             finally

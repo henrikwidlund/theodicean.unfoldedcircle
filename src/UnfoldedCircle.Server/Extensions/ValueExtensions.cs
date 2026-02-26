@@ -53,6 +53,7 @@ public static class ValueExtensions
             EntityType.Light => GetIdentifierInternal(baseIdentifier, LightPrefix, localSuffix),
             EntityType.MediaPlayer => baseIdentifier.Length != identifierSpan.Length ? identifierSpan.ToString() : baseIdentifier,
             EntityType.Remote => GetIdentifierInternal(baseIdentifier, RemotePrefix, localSuffix),
+            EntityType.Select => GetIdentifierInternal(baseIdentifier, SelectPrefix, localSuffix),
             EntityType.Sensor => GetIdentifierInternal(baseIdentifier, SensorPrefix, localSuffix),
             EntityType.Switch => GetIdentifierInternal(baseIdentifier, SwitchPrefix, localSuffix),
             _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, message: null)
@@ -106,6 +107,7 @@ public static class ValueExtensions
             EntityType.Light => GetIdentifierInternal(baseIdentifier, LightPrefix, localSuffix),
             EntityType.MediaPlayer => baseIdentifier.Length != identifierMemory.Length ? identifierMemory : baseIdentifier,
             EntityType.Remote => GetIdentifierInternal(baseIdentifier, RemotePrefix, localSuffix),
+            EntityType.Select => GetIdentifierInternal(baseIdentifier, SelectPrefix, localSuffix),
             EntityType.Sensor => GetIdentifierInternal(baseIdentifier, SensorPrefix, localSuffix),
             EntityType.Switch => GetIdentifierInternal(baseIdentifier, SwitchPrefix, localSuffix),
             _ => throw new ArgumentOutOfRangeException(nameof(entityType), entityType, message: null)
@@ -135,12 +137,13 @@ public static class ValueExtensions
     private const string ClimatePrefix = "CLIMATE:";
     private const string LightPrefix = "LIGHT:";
     private const string RemotePrefix = "REMOTE:";
+    private const string SelectPrefix = "SELECT:";
     private const string SensorPrefix = "SENSOR:";
     private const string SwitchPrefix = "SWITCH:";
 
     private static readonly FrozenSet<string> PrefixesSet =
     [
-        CoverPrefix, ButtonPrefix, ClimatePrefix, LightPrefix, RemotePrefix, SensorPrefix, SwitchPrefix
+        CoverPrefix, ButtonPrefix, ClimatePrefix, LightPrefix, RemotePrefix, SelectPrefix, SensorPrefix, SwitchPrefix
     ];
 
     /// <summary>
@@ -255,8 +258,20 @@ public static class ValueExtensions
             _ when identifier.StartsWith(ClimatePrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Climate,
             _ when identifier.StartsWith(LightPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Light,
             _ when identifier.StartsWith(RemotePrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Remote,
+            _ when identifier.StartsWith(SelectPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Select,
             _ when identifier.StartsWith(SensorPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Sensor,
             _ when identifier.StartsWith(SwitchPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Switch,
             _ => EntityType.MediaPlayer
         };
+
+    /// <summary>
+    /// Gets the suffix from the given <paramref name="identifier"/> if it ends with a suffix, or <see langword="null"/> if it does not have a suffix.
+    /// </summary>
+    /// <param name="identifier">The identifier to get the suffix from.</param>
+    /// <returns>The suffix of the identifier, or <see langword="null"/> if it does not have a suffix.</returns>
+    public static string? GetSuffix(this in ReadOnlySpan<char> identifier)
+    {
+        var suffixStartIndex = identifier.LastIndexOf('_');
+        return suffixStartIndex < 0 ? null : identifier[(suffixStartIndex + 1)..].ToString();
+    }
 }

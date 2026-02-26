@@ -259,7 +259,8 @@ public static class ResponsePayloadHelpers
         MediaPlayerStateChangedEventMessageDataAttributes attributes,
         string entityId) =>
         CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.MediaPlayer,
-            UnfoldedCircleJsonSerializerContext.Default.StateChangedEventMediaPlayerStateChangedEventMessageDataAttributes);
+            UnfoldedCircleJsonSerializerContext.Default.StateChangedEventMediaPlayerStateChangedEventMessageDataAttributes,
+            null);
 
     /// <summary>
     /// Creates an event payload for when a remote entity's state has changed.
@@ -270,7 +271,8 @@ public static class ResponsePayloadHelpers
         RemoteStateChangedEventMessageDataAttributes attributes,
         string entityId) =>
         CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Remote,
-            UnfoldedCircleJsonSerializerContext.Default.StateChangedEventRemoteStateChangedEventMessageDataAttributes);
+            UnfoldedCircleJsonSerializerContext.Default.StateChangedEventRemoteStateChangedEventMessageDataAttributes,
+            null);
 
     /// <summary>
     /// Creates an event payload for when a sensor entity's state has changed.
@@ -296,12 +298,40 @@ public static class ResponsePayloadHelpers
             }, suffix);
     }
 
+    /// <summary>
+    /// Creates an event payload for when a climate entity's state has changed.
+    /// </summary>
+    /// <param name="attributes">The attributes for the entity.</param>
+    /// <param name="entityId">The entity_id.</param>
+    public static byte[] CreateClimateStateChangedResponsePayload(
+        ClimateStateChangedEventMessageDataAttributes attributes,
+        string entityId) =>
+        CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Climate,
+            UnfoldedCircleJsonSerializerContext.Default.StateChangedEventClimateStateChangedEventMessageDataAttributes,
+            null);
+
+    /// <summary>
+    /// Creates an event payload for when a select entity's state has changed.
+    /// </summary>
+    /// <param name="attributes">The attributes for the entity.</param>
+    /// <param name="entityId">The entity_id.</param>
+    /// <param name="suffix">
+    /// Optional suffix to add to the identifier.
+    /// </param>
+    public static byte[] CreateSelectStateChangedResponsePayload(
+        SelectStateChangedEventMessageDataAttributes attributes,
+        string entityId,
+        string? suffix) =>
+        CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Select,
+            UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSelectStateChangedEventMessageDataAttributes,
+            suffix);
+
     private static byte[] CreateEntityStateChangedResponsePayload<TAttributes>(
         TAttributes attributes,
         string entityId,
         in EntityType entityType,
         JsonTypeInfo jsonTypeInfo,
-        string? suffix = null) where TAttributes : StateChangedEventMessageDataAttributes =>
+        string? suffix) where TAttributes : StateChangedEventMessageDataAttributes =>
         JsonSerializer.SerializeToUtf8Bytes(new StateChangedEvent<TAttributes>
             {
                 Kind = EventKind,

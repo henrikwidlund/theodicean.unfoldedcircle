@@ -7,15 +7,15 @@ namespace UnfoldedCircle.Models.Shared;
 [JsonConverter(typeof(EntityTypeJsonConverter))]
 public enum EntityType : sbyte
 {
-    [Display(Name = "cover")]
-    Cover = 1,
-    
     [Display(Name = "button")]
-    Button,
+    Button = 1,
     
     [Display(Name = "climate")]
     Climate,
-    
+
+    [Display(Name = "cover")]
+    Cover,
+
     [Display(Name = "light")]
     Light,
     
@@ -24,7 +24,10 @@ public enum EntityType : sbyte
 
     [Display(Name = "remote")]
     Remote,
-    
+
+    [Display(Name = "select")]
+    Select,
+
     [Display(Name = "sensor")]
     Sensor,
     
