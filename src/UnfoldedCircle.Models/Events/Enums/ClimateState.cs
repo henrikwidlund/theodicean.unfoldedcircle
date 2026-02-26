@@ -43,7 +43,7 @@ public enum ClimateState
     Fan,
 
     /// <summary>
-    /// The device is set to automatic mode. This is device dependant, e.g. according to a schedule, presence detection, etc.
+    /// The device is set to automatic mode. This is device dependent, e.g. according to a schedule, presence detection, etc.
     /// </summary>
     [Display(Name = "AUTO")]
     Auto,

@@ -37,7 +37,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
     /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
-    /// <remarks>You must emit power on/off events accordingly.</remarks>
     protected abstract ValueTask<EntityCommandResult> OnClimateHvacModeCommandAsync(
         System.Net.WebSockets.WebSocket socket,
         ClimateEntityCommandMsgData payload,
@@ -73,7 +72,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="cancellationTokenWrapper">The <see cref="CancellationTokenWrapper"/> for the session.</param>
     /// <param name="commandCancellationToken">The <see cref="CancellationToken"/> for when commands should be aborted.</param>
-    /// <remarks>You must emit power on/off events accordingly.</remarks>
     protected abstract ValueTask<EntityCommandResult> OnClimateTargetTemperatureCommandAsync(
         System.Net.WebSockets.WebSocket socket,
         ClimateEntityCommandMsgData payload,
@@ -614,9 +612,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
 file static class Constants
 {
-    internal static readonly ValidationError ValidationErrorUnknownCommand = new ValidationError
+    internal static readonly ValidationError ValidationErrorUnknownCommand = new()
     {
         Code = "INV_ARGUMENT",
-        Message =  "Unknown command"
+        Message = "Unknown command"
     };
 }

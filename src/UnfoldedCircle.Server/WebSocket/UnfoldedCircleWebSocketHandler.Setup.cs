@@ -169,6 +169,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 EntityType.Remote => SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateRemoteStateChangedResponsePayload(new RemoteStateChangedEventMessageDataAttributes { State = RemoteState.Unavailable }, x.EntityId),
                     wsId, cancellationToken),
+                EntityType.Climate => SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateClimateStateChangedResponsePayload(new ClimateStateChangedEventMessageDataAttributes { State = ClimateState.Unavailable }, x.EntityId),
+                    wsId, cancellationToken),
                 _ => Task.CompletedTask
             };
         });
