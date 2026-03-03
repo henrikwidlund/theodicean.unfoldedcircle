@@ -290,10 +290,19 @@ public static class ResponsePayloadHelpers
         return CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Sensor,
             typeof(TValue) switch
             {
+                var t when t == typeof(sbyte) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesSByte,
+                var t when t == typeof(byte) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesByte,
+                var t when t == typeof(short) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesInt16,
+                var t when t == typeof(ushort) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesUInt16,
                 var t when t == typeof(int) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesInt32,
-                var t when t == typeof(string) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesString,
+                var t when t == typeof(uint) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesUInt32,
+                var t when t == typeof(nint) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesIntPtr,
+                var t when t == typeof(long) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesInt64,
+                var t when t == typeof(ulong) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesUInt64,
                 var t when t == typeof(decimal) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesDecimal,
                 var t when t == typeof(double) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesDouble,
+                var t when t == typeof(float) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesSingle,
+                var t when t == typeof(string) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesString,
                 _ => throw new NotSupportedException($"The type '{typeof(TValue)}' is not supported for sensor state changed event message data attributes.")
             }, suffix);
     }
