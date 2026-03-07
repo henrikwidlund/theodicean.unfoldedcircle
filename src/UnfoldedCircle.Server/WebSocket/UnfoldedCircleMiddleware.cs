@@ -4,8 +4,10 @@ using System.Net.WebSockets;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 using UnfoldedCircle.Server.Configuration;
+using UnfoldedCircle.Server.DependencyInjection;
 
 namespace UnfoldedCircle.Server.WebSocket;
 
@@ -13,7 +15,8 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
     UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem> unfoldedCircleWebSocketHandler,
     IHostApplicationLifetime applicationLifetime,
     ILoggerFactory loggerFactory,
-    ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> logger) : IMiddleware
+    ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> logger,
+    IOptions<UnfoldedCircleOptions> options) : IMiddleware
     where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>
     where TMediaPlayerCommandId : struct, Enum
     where TConfigurationItem : UnfoldedCircleConfigurationItem
@@ -22,6 +25,7 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
     private readonly IHostApplicationLifetime _applicationLifetime = applicationLifetime;
     private readonly ILoggerFactory _loggerFactory = loggerFactory;
     private readonly ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> _logger = logger;
+    private readonly IOptions<UnfoldedCircleOptions> _options = options;
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
@@ -34,9 +38,13 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
 
                 _logger.WebSocketNewConnection(wsId);
 
-                await using var cancellationTokenWrapper = new CancellationTokenWrapper(wsId, socket, _loggerFactory.CreateLogger<CancellationTokenWrapper>(), _applicationLifetime.ApplicationStopping, context.RequestAborted);
-                cancellationTokenWrapper.RegisterEventProcessor((webSocket, coreWsId, subscribedEntityIds, cancellationToken) =>
-                    _unfoldedCircleWebSocketHandler.HandleEventUpdatesAsync(webSocket, coreWsId, subscribedEntityIds, cancellationToken));
+                await using var cancellationTokenWrapper = new CancellationTokenWrapper(wsId,
+                    socket,
+                    _loggerFactory.CreateLogger<CancellationTokenWrapper>(),
+                    _unfoldedCircleWebSocketHandler.HandleEventUpdatesAsync,
+                    _options,
+                    _applicationLifetime.ApplicationStopping,
+                    context.RequestAborted);
                 await cancellationTokenWrapper.StartEventProcessingAsync();
                 var result = await _unfoldedCircleWebSocketHandler.HandleWebSocketAsync(socket, wsId, cancellationTokenWrapper);
                 await socket.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, context.RequestAborted);

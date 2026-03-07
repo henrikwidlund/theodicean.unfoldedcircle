@@ -73,43 +73,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         return socket.SendAsync(buffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken);
     }
 
-    /// <summary>
-    /// Marks the <paramref name="wsId"/> to receive events from the integration.
-    /// </summary>
-    /// <param name="wsId">ID of the websocket.</param>
-    // ReSharper disable once MemberCanBePrivate.Global
-    protected static void AddSocketToEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap[wsId] = true;
-
-    /// <summary>
-    /// Checks if the <paramref name="wsId"/> is subscribed to receive events.
-    /// </summary>
-    /// <param name="wsId">ID of the websocket.</param>
-    // ReSharper disable once UnusedMember.Global
-    protected static bool IsSocketSubscribedToEvents(string wsId)
-        => SessionHolder.SubscribeEventsMap.TryGetValue(wsId, out var isSubscribed) && isSubscribed;
-
-    /// <summary>
-    /// Tries to add the <paramref name="wsId"/> to broadcasting events.
-    /// </summary>
-    /// <param name="wsId">ID of the websocket.</param>
-    // ReSharper disable once UnusedMember.Global
-    protected bool TryAddSocketBroadcastingEvents(string wsId) => SessionHolder.SocketBroadcastingEvents.TryAdd(wsId, 1);
-
-    /// <summary>
-    /// Removes the <paramref name="wsId"/> from broadcasting events.
-    /// </summary>
-    /// <param name="wsId">ID of the websocket.</param>
-    // ReSharper disable once UnusedMember.Global
-    // ReSharper disable once MemberCanBePrivate.Global
-    protected bool TryRemoveSocketBroadcastingEvents(string wsId) => SessionHolder.SocketBroadcastingEvents.TryRemove(wsId, out _);
-
-    /// <summary>
-    /// Removes the <paramref name="wsId"/> from the list of event receivers.
-    /// </summary>
-    /// <param name="wsId"></param>
-    // ReSharper disable once UnusedMember.Global
-    protected static void RemoveSocketFromEventReceivers(string wsId) => SessionHolder.SubscribeEventsMap.TryRemove(wsId, out _);
-
     internal async Task<WebSocketReceiveResult> HandleWebSocketAsync(
         System.Net.WebSockets.WebSocket socket,
         string wsId,

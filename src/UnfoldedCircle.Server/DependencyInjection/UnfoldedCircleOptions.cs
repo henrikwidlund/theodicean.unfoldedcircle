@@ -43,6 +43,12 @@ public class UnfoldedCircleOptions
     }
 
     /// <summary>
+    /// The delay before starting to broadcast events after receiving a subscription request.
+    /// </summary>
+    /// <remarks>Defaults to 5s.</remarks>
+    public TimeSpan DelayBeforeStartEventBroadcasting { get; set; } = TimeSpan.FromSeconds(5);
+
+    /// <summary>
     /// The maximum wait time for a received message to be handled before being cancelled.
     /// </summary>
     /// <remarks>Default is 9.5 seconds.</remarks>
