@@ -12,7 +12,7 @@ public record UnfoldedCircleConfiguration<TEntity> where TEntity : UnfoldedCircl
     public required List<TEntity> Entities { get; init; }
 
     /// <summary>
-    /// The maximum wait time for a received message to be handled before being cancelled.
+    /// The maximum wait time for a received message to be handled before being canceled.
     /// Must not exceed 10 seconds as that is the timeout Core uses for responses.
     /// </summary>
     public double? MaxMessageHandlingWaitTimeInSeconds { get; init; }

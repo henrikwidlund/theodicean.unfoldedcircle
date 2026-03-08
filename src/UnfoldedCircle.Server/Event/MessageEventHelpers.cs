@@ -29,57 +29,29 @@ public static class MessageEventHelpers
     /// <param name="rawValue">Raw value provided if the event can't be matched to a known value.</param>
     public static MessageEvent GetMessageEvent(in JsonElement jsonElement, out string? rawValue)
     {
-        rawValue = null;
-        if (jsonElement.ValueEquals(GetDriverVersion))
-            return MessageEvent.GetDriverVersion;
+        var messageEvent = jsonElement switch
+        {
+            _ when jsonElement.ValueEquals(GetDriverVersion) => MessageEvent.GetDriverVersion,
+            _ when jsonElement.ValueEquals(GetDriverMetaData) => MessageEvent.GetDriverMetaData,
+            _ when jsonElement.ValueEquals(Connect) => MessageEvent.Connect,
+            _ when jsonElement.ValueEquals(Disconnect) => MessageEvent.Disconnect,
+            _ when jsonElement.ValueEquals(GetDeviceState) => MessageEvent.GetDeviceState,
+            _ when jsonElement.ValueEquals(GetAvailableEntities) => MessageEvent.GetAvailableEntities,
+            _ when jsonElement.ValueEquals(SubscribeEvents) => MessageEvent.SubscribeEvents,
+            _ when jsonElement.ValueEquals(UnsubscribeEvents) => MessageEvent.UnsubscribeEvents,
+            _ when jsonElement.ValueEquals(GetEntityStates) => MessageEvent.GetEntityStates,
+            _ when jsonElement.ValueEquals(SetupDriver) => MessageEvent.SetupDriver,
+            _ when jsonElement.ValueEquals(SetupDriverUserData) => MessageEvent.SetupDriverUserData,
+            _ when jsonElement.ValueEquals(AbortDriverSetup) => MessageEvent.AbortDriverSetup,
+            _ when jsonElement.ValueEquals(EntityCommand) => MessageEvent.EntityCommand,
+            _ when jsonElement.ValueEquals(EnterStandby) => MessageEvent.EnterStandby,
+            _ when jsonElement.ValueEquals(ExitStandby) => MessageEvent.ExitStandby,
+            _ when jsonElement.ValueEquals(SupportedEntityTypes) => MessageEvent.SupportedEntityTypes,
+            _ => MessageEvent.Other
+        };
 
-        if (jsonElement.ValueEquals(GetDriverMetaData))
-            return MessageEvent.GetDriverMetaData;
-
-        if (jsonElement.ValueEquals(Connect))
-            return MessageEvent.Connect;
-        
-        if (jsonElement.ValueEquals(Disconnect))
-            return MessageEvent.Disconnect;
-
-        if (jsonElement.ValueEquals(GetDeviceState))
-            return MessageEvent.GetDeviceState;
-
-        if (jsonElement.ValueEquals(GetAvailableEntities))
-            return MessageEvent.GetAvailableEntities;
-
-        if (jsonElement.ValueEquals(SubscribeEvents))
-            return MessageEvent.SubscribeEvents;
-        
-        if (jsonElement.ValueEquals(UnsubscribeEvents))
-            return MessageEvent.UnsubscribeEvents;
-
-        if (jsonElement.ValueEquals(GetEntityStates))
-            return MessageEvent.GetEntityStates;
-
-        if (jsonElement.ValueEquals(SetupDriver))
-            return MessageEvent.SetupDriver;
-
-        if (jsonElement.ValueEquals(SetupDriverUserData))
-            return MessageEvent.SetupDriverUserData;
-
-        if (jsonElement.ValueEquals(AbortDriverSetup))
-            return MessageEvent.AbortDriverSetup;
-
-        if (jsonElement.ValueEquals(EntityCommand))
-            return MessageEvent.EntityCommand;
-
-        if (jsonElement.ValueEquals(EnterStandby))
-            return MessageEvent.EnterStandby;
-
-        if (jsonElement.ValueEquals(ExitStandby))
-            return MessageEvent.ExitStandby;
-
-        if (jsonElement.ValueEquals(SupportedEntityTypes))
-            return MessageEvent.SupportedEntityTypes;
-
-        rawValue = jsonElement.GetString();
-        return MessageEvent.Other;
+        rawValue = messageEvent == MessageEvent.Other ? jsonElement.GetString() : null;
+        return messageEvent;
     }
 }
 

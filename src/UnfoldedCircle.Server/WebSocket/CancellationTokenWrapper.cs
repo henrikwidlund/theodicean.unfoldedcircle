@@ -1,6 +1,9 @@
 using System.Diagnostics.CodeAnalysis;
 
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
+
+using UnfoldedCircle.Server.DependencyInjection;
 
 namespace UnfoldedCircle.Server.WebSocket;
 
@@ -10,22 +13,31 @@ namespace UnfoldedCircle.Server.WebSocket;
 /// <param name="wsId">ID of the websocket.</param>
 /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> to send to.</param>
 /// <param name="logger">The logger.</param>
+/// <param name="eventProcessor">The event processor to use for processing events.</param>
+/// <param name="options">Options for customizing the behavior of this class.</param>
 /// <param name="applicationStopping">The <see cref="CancellationToken"/> used by the application to signal that the application is stopping.</param>
 /// <param name="requestAborted">The <see cref="CancellationToken"/> used by the application to signal that the current request is being aborted.</param>
 public sealed class CancellationTokenWrapper(
     string wsId,
     System.Net.WebSockets.WebSocket socket,
     ILogger<CancellationTokenWrapper> logger,
+    Func<System.Net.WebSockets.WebSocket, string, SubscribedEntitiesHolder, CancellationToken, Task> eventProcessor,
+    IOptions<UnfoldedCircleOptions> options,
     in CancellationToken applicationStopping,
     in CancellationToken requestAborted) : IDisposable, IAsyncDisposable
 {
+    private readonly string _wsId = wsId;
+    private readonly System.Net.WebSockets.WebSocket _socket = socket;
+    private readonly ILogger _logger = logger;
+    private readonly Func<System.Net.WebSockets.WebSocket, string, SubscribedEntitiesHolder, CancellationToken, Task> _eventProcessor = eventProcessor;
+    private readonly IOptions<UnfoldedCircleOptions> _options = options;
+
     private readonly SubscribedEntitiesHolder _subscribedEntities = new();
 
     /// <summary>
     /// Adds an entity to the list of subscribed entities connected to this <see cref="CancellationTokenWrapper"/>.
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
-    /// <returns><see langowrd="true"/> if added, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     // ReSharper disable once UnusedMember.Global
     public void AddSubscribedEntity(string entityId)
@@ -35,7 +47,6 @@ public sealed class CancellationTokenWrapper(
     /// Removes an entity from the list of subscribed entities connected to this <see cref="CancellationTokenWrapper"/>.
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
-    /// <returns><see langowrd="true"/> if removed, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     // ReSharper disable once UnusedMember.Global
     public void RemoveSubscribedEntity(string entityId)
@@ -47,9 +58,6 @@ public sealed class CancellationTokenWrapper(
     // ReSharper disable once UnusedMember.Global
     public void RemoveAllSubscribedEntities() => _subscribedEntities.Clear();
 
-    private readonly string _wsId = wsId;
-    private readonly System.Net.WebSockets.WebSocket _socket = socket;
-
     /// <summary>
     /// Gets the <see cref="CancellationToken"/> that is used by the application to signal that the application is stopping.
     /// </summary>
@@ -60,11 +68,11 @@ public sealed class CancellationTokenWrapper(
     /// </summary>
     public readonly CancellationToken RequestAborted = requestAborted;
 
-    private readonly ILogger _logger = logger;
+    private TimeSpan SemaphoreTimeout => _options.Value.DelayBeforeStartEventBroadcasting + TimeSpan.FromSeconds(1);
     private CancellationTokenSource? _broadcastCancellationTokenSource;
 
     [MemberNotNull(nameof(_broadcastCancellationTokenSource))]
-    private void EnsureNonCancelledBroadcastCancellationTokenSourceCore()
+    private void EnsureNonCanceledBroadcastCancellationTokenSource()
     {
         if (_broadcastCancellationTokenSource is { IsCancellationRequested: false })
             return;
@@ -74,18 +82,9 @@ public sealed class CancellationTokenWrapper(
         _broadcastCancellationTokenSource.Token.Register(static callback =>
         {
             (ILogger innerLogger, SubscribedEntitiesHolder innerSubscribedEntities) = ((ILogger, SubscribedEntitiesHolder))callback!;
-            innerLogger.BroadcastCancelled(innerSubscribedEntities.SubscribedEntities.Keys);
+            innerLogger.BroadcastCanceled(innerSubscribedEntities.SubscribedEntities.Keys);
         }, (_logger, _subscribedEntities));
     }
-
-    private Func<System.Net.WebSockets.WebSocket, string, SubscribedEntitiesHolder, CancellationToken, Task>? _eventProcessor;
-
-    /// <summary>
-    /// Registers the event processor.
-    /// </summary>
-    /// <param name="eventProcessor">The event processor.</param>
-    public void RegisterEventProcessor(Func<System.Net.WebSockets.WebSocket, string, SubscribedEntitiesHolder, CancellationToken, Task> eventProcessor)
-        => _eventProcessor ??= eventProcessor;
 
     private readonly SemaphoreSlim _semaphoreSlim = new(1, 1);
     private Task? _broadcastTask;
@@ -95,16 +94,10 @@ public sealed class CancellationTokenWrapper(
     /// </summary>
     public async ValueTask StartEventProcessingAsync()
     {
-        if (await _semaphoreSlim.WaitAsync(TimeSpan.FromSeconds(1), RequestAborted))
+        if (await _semaphoreSlim.WaitAsync(SemaphoreTimeout, RequestAborted))
         {
             try
             {
-                if (_eventProcessor == null)
-                {
-                    _logger.EventProcessorNotRegistered(_wsId);
-                    return;
-                }
-
                 if (_broadcastTask is { Status: TaskStatus.Running })
                 {
                     _logger.EventProcessingAlreadyRunning(_wsId);
@@ -120,8 +113,10 @@ public sealed class CancellationTokenWrapper(
                     await (_broadcastCancellationTokenSource?.CancelAsync() ?? Task.CompletedTask);
                 }
 
-                EnsureNonCancelledBroadcastCancellationTokenSourceCore();
-                _broadcastTask = _eventProcessor.Invoke(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource.Token);
+                EnsureNonCanceledBroadcastCancellationTokenSource();
+                // Insert small delay to avoid starting the event processor before all entities are subscribed to
+                await Task.Delay(_options.Value.DelayBeforeStartEventBroadcasting, _broadcastCancellationTokenSource.Token);
+                _broadcastTask = _eventProcessor(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource.Token);
                 return;
             }
             catch (Exception ex)
@@ -143,7 +138,7 @@ public sealed class CancellationTokenWrapper(
     /// </summary>
     public async ValueTask StopEventProcessingAsync()
     {
-        if (await _semaphoreSlim.WaitAsync(TimeSpan.FromSeconds(1), RequestAborted))
+        if (await _semaphoreSlim.WaitAsync(SemaphoreTimeout, RequestAborted))
         {
             try
             {
