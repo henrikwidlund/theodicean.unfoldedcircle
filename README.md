@@ -13,13 +13,13 @@ ASP.NET SDK for hosting integration drivers for the [Unfolded Circle Remotes](ht
 - Configuration handling
 - Event broadcasting
 - Multiple entities in the same instance
-- Media Player and Remote entity support
+- Climate Media Player, Remote, Select and Sensor entity support
 - Strongly typed models
 - NativeAOT and trimming friendly
-- Can be used for installation on the remote or on a server
+- Can be used for applications installed on a remote or on a server
 
 ## Limitations
-- Only supports Media Player and Remote entities (I do not have any other devices to test with)
+- Button, Switch, Cover, Light, IR-Emitter and Voice Assistant are not yet supported
 
 ## Requirements
 - dotnet 10 SDK
