@@ -9,9 +9,9 @@ namespace UnfoldedCircle.Server.Logging;
 
 internal static partial class UnfoldedCircleLogger
 {
-    [LoggerMessage(EventId = 1, EventName = nameof(BroadcastCancelled), Level = LogLevel.Information,
-        Message = "Broadcast cancelled for {@Entities}")]
-    public static partial void BroadcastCancelled(this ILogger logger, IEnumerable<string> entities);
+    [LoggerMessage(EventId = 1, EventName = nameof(BroadcastCanceled), Level = LogLevel.Information,
+        Message = "Broadcast canceled for {@Entities}")]
+    public static partial void BroadcastCanceled(this ILogger logger, IEnumerable<string> entities);
 
     [LoggerMessage(EventId = 2, EventName = nameof(WebSocketNewConnection), Level = LogLevel.Debug,
         Message = "[{WSId}] WS: New connection")]
@@ -136,10 +136,6 @@ internal static partial class UnfoldedCircleLogger
 
     public static void UnhandledExceptionDuringEvent(this ILogger logger, string wsId, Exception exception) =>
         UnhandledExceptionDuringEventAction(logger, wsId, exception);
-
-    [LoggerMessage(EventId = 32, EventName = nameof(EventProcessorNotRegistered), Level = LogLevel.Information,
-        Message = "[{WSId}] WS: Event processor not registered.")]
-    public static partial void EventProcessorNotRegistered(this ILogger logger, string wsId);
 
     private static readonly Action<ILogger, string, Exception> UnhandledExceptionDuringStartEventAction = LoggerMessage.Define<string>(
         LogLevel.Error,

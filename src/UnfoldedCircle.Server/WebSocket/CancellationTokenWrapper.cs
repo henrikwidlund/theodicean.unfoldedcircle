@@ -70,11 +70,11 @@ public sealed class CancellationTokenWrapper(
     /// </summary>
     public readonly CancellationToken RequestAborted = requestAborted;
 
-    private TimeSpan SemaphoreTimeout => TimeSpan.FromSeconds(_options.Value.DelayBeforeStartEventBroadcasting.TotalSeconds + 1);
+    private TimeSpan SemaphoreTimeout => _options.Value.DelayBeforeStartEventBroadcasting + TimeSpan.FromSeconds(1);
     private CancellationTokenSource? _broadcastCancellationTokenSource;
 
     [MemberNotNull(nameof(_broadcastCancellationTokenSource))]
-    private void EnsureNonCancelledBroadcastCancellationTokenSource()
+    private void EnsureNonCanceledBroadcastCancellationTokenSource()
     {
         if (_broadcastCancellationTokenSource is { IsCancellationRequested: false })
             return;
@@ -84,7 +84,7 @@ public sealed class CancellationTokenWrapper(
         _broadcastCancellationTokenSource.Token.Register(static callback =>
         {
             (ILogger innerLogger, SubscribedEntitiesHolder innerSubscribedEntities) = ((ILogger, SubscribedEntitiesHolder))callback!;
-            innerLogger.BroadcastCancelled(innerSubscribedEntities.SubscribedEntities.Keys);
+            innerLogger.BroadcastCanceled(innerSubscribedEntities.SubscribedEntities.Keys);
         }, (_logger, _subscribedEntities));
     }
 
@@ -115,7 +115,7 @@ public sealed class CancellationTokenWrapper(
                     await (_broadcastCancellationTokenSource?.CancelAsync() ?? Task.CompletedTask);
                 }
 
-                EnsureNonCancelledBroadcastCancellationTokenSource();
+                EnsureNonCanceledBroadcastCancellationTokenSource();
                 // Insert small delay to avoid starting the event processor before all entities are subscribed to
                 await Task.Delay(_options.Value.DelayBeforeStartEventBroadcasting, _broadcastCancellationTokenSource.Token);
                 _broadcastTask = _eventProcessor(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource.Token);

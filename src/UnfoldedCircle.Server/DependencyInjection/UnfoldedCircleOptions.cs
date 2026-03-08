@@ -46,10 +46,20 @@ public class UnfoldedCircleOptions
     /// The delay before starting to broadcast events after receiving a subscription request.
     /// </summary>
     /// <remarks>Defaults to 5s.</remarks>
-    public TimeSpan DelayBeforeStartEventBroadcasting { get; set; } = TimeSpan.FromSeconds(5);
+    public TimeSpan DelayBeforeStartEventBroadcasting
+    {
+        get;
+        // ReSharper disable once PropertyCanBeMadeInitOnly.Global, UnusedMember.Global
+        set
+        {
+            if (value <= TimeSpan.Zero)
+                throw new InvalidOperationException("Value must be greater than zero.");
+            field = value;
+        }
+    } = TimeSpan.FromSeconds(5);
 
     /// <summary>
-    /// The maximum wait time for a received message to be handled before being cancelled.
+    /// The maximum wait time for a received message to be handled before being canceled.
     /// </summary>
     /// <remarks>Default is 9.5 seconds.</remarks>
     // ReSharper disable once PropertyCanBeMadeInitOnly.Global
