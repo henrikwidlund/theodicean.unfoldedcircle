@@ -19,9 +19,9 @@ public static class ValueExtensions
     /// <param name="defaultValue">The value returned if the key is not found, is null, empty or only contains whitespaces.</param>
     /// <typeparam name="TKey"></typeparam>
     // ReSharper disable once UnusedMember.Global
-    public static string GetValueOrDefault<TKey>(this IReadOnlyDictionary<TKey, string> dictionary, TKey key, string defaultValue)
+    public static string GetStringValueOrDefault<TKey>(this IReadOnlyDictionary<TKey, string> dictionary, TKey key, string defaultValue)
     {
-        var value = CollectionExtensions.GetValueOrDefault(dictionary, key, defaultValue);
+        var value = dictionary.GetValueOrDefault(key, defaultValue);
         return string.IsNullOrWhiteSpace(value) ? defaultValue : value;
     }
 

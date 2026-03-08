@@ -43,7 +43,7 @@ public class UnfoldedCircleOptions
     }
 
     /// <summary>
-    /// The delay before starting to broadcast events after receiving a subscription request.
+    /// The delay before starting to broadcast events after event broadcasting is initiated
     /// </summary>
     /// <remarks>Defaults to 5s.</remarks>
     public TimeSpan DelayBeforeStartEventBroadcasting
