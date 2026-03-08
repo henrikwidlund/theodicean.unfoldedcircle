@@ -8,7 +8,7 @@
           "name": "QDNETC",
           "organization": "JetBrains, Inc",
           "fullName": "Qodana Community for .NET",
-          "version": "2025.3.253.29346.333.50",
+          "version": "2025.3.253.31033.95.71",
           "semanticVersion": "253.0.20260112.114700",
           "informationUri": "http://www.jetbrains.com/resharper/features/command-line.html",
           "rules": [
@@ -75218,8 +75218,8 @@
       "versionControlProvenance": [
         {
           "repositoryUri": "https://github.com/henrikwidlund/theodicean.unfoldedcircle.git",
-          "revisionId": "8cdc7a9e203417d0e32b07b4a8b65c2fa320f875",
-          "branch": "feature/simplify_events",
+          "revisionId": "d78b823b289688e1d18933318e8f9201da18f582",
+          "branch": "main",
           "properties": {
             "repoUrl": "https://github.com/henrikwidlund/theodicean.unfoldedcircle.git",
             "lastAuthorName": "Henrik Widlund",
@@ -75232,21 +75232,7 @@
       "artifacts": [
         {
           "location": {
-            "uri": "src/UnfoldedCircle.Server/DependencyInjection/UnfoldedCircleOptions.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/UnfoldedCircle.Server/Logging/UnfoldedCircleLogger.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/UnfoldedCircle.Server/WebSocket/CancellationTokenWrapper.cs",
+            "uri": "src/UnfoldedCircle.Server/Extensions/ValueExtensions.cs",
             "uriBaseId": "solutionDir"
           },
           "hashes": {}
@@ -75267,21 +75253,14 @@
         },
         {
           "location": {
+            "uri": "src/UnfoldedCircle.Server/WebSocket/CancellationTokenWrapper.cs",
+            "uriBaseId": "solutionDir"
+          },
+          "hashes": {}
+        },
+        {
+          "location": {
             "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleMiddleware.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.Request.cs",
-            "uriBaseId": "solutionDir"
-          },
-          "hashes": {}
-        },
-        {
-          "location": {
-            "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
             "uriBaseId": "solutionDir"
           },
           "hashes": {}
@@ -75302,7 +75281,7 @@
                 "artifactLocation": {
                   "uri": "src/UnfoldedCircle.Server/Dns/MDnsBackgroundService.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 4
+                  "index": 2
                 },
                 "region": {
                   "startLine": 20,
@@ -75355,7 +75334,7 @@
                 "artifactLocation": {
                   "uri": "src/UnfoldedCircle.Server/Dns/MDnsBackgroundService.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 4
+                  "index": 2
                 },
                 "region": {
                   "startLine": 21,
@@ -75408,25 +75387,25 @@
                 "artifactLocation": {
                   "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleMiddleware.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 5
+                  "index": 4
                 },
                 "region": {
-                  "startLine": 21,
+                  "startLine": 24,
                   "startColumn": 5,
-                  "endLine": 21,
+                  "endLine": 24,
                   "endColumn": 161,
-                  "charOffset": 940,
+                  "charOffset": 1070,
                   "charLength": 156,
                   "snippet": {
                     "text": "private readonly UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem> _unfoldedCircleWebSocketHandler = unfoldedCircleWebSocketHandler;"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 20,
+                  "startLine": 23,
                   "startColumn": 1,
-                  "endLine": 22,
+                  "endLine": 25,
                   "endColumn": 90,
-                  "charOffset": 934,
+                  "charOffset": 1064,
                   "charLength": 252,
                   "snippet": {
                     "text": "{\n    private readonly UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem> _unfoldedCircleWebSocketHandler = unfoldedCircleWebSocketHandler;\n    private readonly IHostApplicationLifetime _applicationLifetime = applicationLifetime;"
@@ -75461,25 +75440,25 @@
                 "artifactLocation": {
                   "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleMiddleware.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 5
+                  "index": 4
                 },
                 "region": {
-                  "startLine": 22,
+                  "startLine": 25,
                   "startColumn": 5,
-                  "endLine": 22,
+                  "endLine": 25,
                   "endColumn": 90,
-                  "charOffset": 1101,
+                  "charOffset": 1231,
                   "charLength": 85,
                   "snippet": {
                     "text": "private readonly IHostApplicationLifetime _applicationLifetime = applicationLifetime;"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 21,
+                  "startLine": 24,
                   "startColumn": 1,
-                  "endLine": 23,
+                  "endLine": 26,
                   "endColumn": 68,
-                  "charOffset": 936,
+                  "charOffset": 1066,
                   "charLength": 318,
                   "snippet": {
                     "text": "    private readonly UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem> _unfoldedCircleWebSocketHandler = unfoldedCircleWebSocketHandler;\n    private readonly IHostApplicationLifetime _applicationLifetime = applicationLifetime;\n    private readonly ILoggerFactory _loggerFactory = loggerFactory;"
@@ -75514,25 +75493,25 @@
                 "artifactLocation": {
                   "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleMiddleware.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 5
+                  "index": 4
                 },
                 "region": {
-                  "startLine": 23,
+                  "startLine": 26,
                   "startColumn": 5,
-                  "endLine": 23,
+                  "endLine": 26,
                   "endColumn": 68,
-                  "charOffset": 1191,
+                  "charOffset": 1321,
                   "charLength": 63,
                   "snippet": {
                     "text": "private readonly ILoggerFactory _loggerFactory = loggerFactory;"
                   }
                 },
                 "contextRegion": {
-                  "startLine": 22,
+                  "startLine": 25,
                   "startColumn": 1,
-                  "endLine": 24,
+                  "endLine": 27,
                   "endColumn": 149,
-                  "charOffset": 1097,
+                  "charOffset": 1227,
                   "charLength": 306,
                   "snippet": {
                     "text": "    private readonly IHostApplicationLifetime _applicationLifetime = applicationLifetime;\n    private readonly ILoggerFactory _loggerFactory = loggerFactory;\n    private readonly ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> _logger = logger;"
@@ -75565,168 +75544,9 @@
             {
               "physicalLocation": {
                 "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleMiddleware.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 5
-                },
-                "region": {
-                  "startLine": 24,
-                  "startColumn": 5,
-                  "endLine": 24,
-                  "endColumn": 149,
-                  "charOffset": 1259,
-                  "charLength": 144,
-                  "snippet": {
-                    "text": "private readonly ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> _logger = logger;"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 23,
-                  "startColumn": 1,
-                  "endLine": 25,
-                  "endColumn": 1,
-                  "charOffset": 1187,
-                  "charLength": 217,
-                  "snippet": {
-                    "text": "    private readonly ILoggerFactory _loggerFactory = loggerFactory;\n    private readonly ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> _logger = logger;\n"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "9B2BEDAA74D72F64A754CCA979577EDDF090D2E9E894FE333C3904D755CBC0AE"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "UnusedMember.Global",
-          "ruleIndex": 2799,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Enum member 'Disconnected' is never used"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.Request.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 6
-                },
-                "region": {
-                  "startLine": 42,
-                  "startColumn": 9,
-                  "endLine": 42,
-                  "endColumn": 21,
-                  "charOffset": 1691,
-                  "charLength": 12,
-                  "snippet": {
-                    "text": "Disconnected"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 41,
-                  "startColumn": 1,
-                  "endLine": 43,
-                  "endColumn": 1,
-                  "charOffset": 1660,
-                  "charLength": 45,
-                  "snippet": {
-                    "text": "        /// </summary>\n        Disconnected,\n"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "70600DC74E0891662C244EA78B3109D17DD96A53BAA46CF618943A99F48C330D"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "UnusedMember.Global",
-          "ruleIndex": 2799,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Enum member 'Error' is never used"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.Request.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 6
-                },
-                "region": {
-                  "startLine": 47,
-                  "startColumn": 9,
-                  "endLine": 47,
-                  "endColumn": 14,
-                  "charOffset": 1812,
-                  "charLength": 5,
-                  "snippet": {
-                    "text": "Error"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 46,
-                  "startColumn": 1,
-                  "endLine": 48,
-                  "endColumn": 6,
-                  "charOffset": 1781,
-                  "charLength": 42,
-                  "snippet": {
-                    "text": "        /// </summary>\n        Error\n    }"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "C8653D575B37B60522E4B6AC289A6E6F4163526421E671FBE46E2EC38B443ED0"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "ReplaceWithPrimaryConstructorParameter",
-          "ruleIndex": 2650,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Replace with primary constructor parameter"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
                   "uri": "src/UnfoldedCircle.Server/Configuration/ConfigurationService.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 3
+                  "index": 1
                 },
                 "region": {
                   "startLine": 22,
@@ -75766,165 +75586,6 @@
           }
         },
         {
-          "ruleId": "UnusedMethodReturnValue.Global",
-          "ruleIndex": 2805,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Method 'TryRemoveSocketBroadcastingEvents' return value is never used"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleWebSocketHandler.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 7
-                },
-                "region": {
-                  "startLine": 104,
-                  "startColumn": 15,
-                  "endLine": 104,
-                  "endColumn": 19,
-                  "charOffset": 4737,
-                  "charLength": 4,
-                  "snippet": {
-                    "text": "bool"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 103,
-                  "startColumn": 1,
-                  "endLine": 105,
-                  "endColumn": 1,
-                  "charOffset": 4667,
-                  "charLength": 188,
-                  "snippet": {
-                    "text": "    // ReSharper disable once MemberCanBePrivate.Global\n    protected bool TryRemoveSocketBroadcastingEvents(string wsId) => SessionHolder.SocketBroadcastingEvents.TryRemove(wsId, out _);\n"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "C8AC275C18AA3208D1CCDB0356BD40F57043B30D1DF6B1798DB52BA145608D60"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "ReplaceWithPrimaryConstructorParameter",
-          "ruleIndex": 2650,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Replace with primary constructor parameter"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/CancellationTokenWrapper.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 2
-                },
-                "region": {
-                  "startLine": 50,
-                  "startColumn": 5,
-                  "endLine": 50,
-                  "endColumn": 42,
-                  "charOffset": 2368,
-                  "charLength": 37,
-                  "snippet": {
-                    "text": "private readonly string _wsId = wsId;"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 49,
-                  "startColumn": 1,
-                  "endLine": 51,
-                  "endColumn": 71,
-                  "charOffset": 2363,
-                  "charLength": 113,
-                  "snippet": {
-                    "text": "\n    private readonly string _wsId = wsId;\n    private readonly System.Net.WebSockets.WebSocket _socket = socket;"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "CA9F00E9BFEBBA5F2E9C3AFEAAF605E53B5A2D80F54CF9C9F066AF5478426DAC"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
-          "ruleId": "ReplaceWithPrimaryConstructorParameter",
-          "ruleIndex": 2650,
-          "kind": "fail",
-          "level": "note",
-          "message": {
-            "text": "Replace with primary constructor parameter"
-          },
-          "locations": [
-            {
-              "physicalLocation": {
-                "artifactLocation": {
-                  "uri": "src/UnfoldedCircle.Server/WebSocket/CancellationTokenWrapper.cs",
-                  "uriBaseId": "solutionDir",
-                  "index": 2
-                },
-                "region": {
-                  "startLine": 51,
-                  "startColumn": 5,
-                  "endLine": 51,
-                  "endColumn": 71,
-                  "charOffset": 2410,
-                  "charLength": 66,
-                  "snippet": {
-                    "text": "private readonly System.Net.WebSockets.WebSocket _socket = socket;"
-                  }
-                },
-                "contextRegion": {
-                  "startLine": 50,
-                  "startColumn": 1,
-                  "endLine": 52,
-                  "endColumn": 1,
-                  "charOffset": 2364,
-                  "charLength": 113,
-                  "snippet": {
-                    "text": "    private readonly string _wsId = wsId;\n    private readonly System.Net.WebSockets.WebSocket _socket = socket;\n"
-                  }
-                }
-              }
-            }
-          ],
-          "partialFingerprints": {
-            "equalIndicator/v1": "CE091DB47621316CED4B51B3B8853648FD0B084CD27FA995500C942682524079"
-          },
-          "baselineState": "unchanged",
-          "properties": {
-            "qodanaSeverity": "Moderate",
-            "tags": [
-              "C#",
-              ".NET 10.0"
-            ]
-          }
-        },
-        {
           "ruleId": "ReplaceWithPrimaryConstructorParameter",
           "ruleIndex": 2650,
           "kind": "fail",
@@ -75938,7 +75599,7 @@
                 "artifactLocation": {
                   "uri": "src/UnfoldedCircle.Server/Dns/MDnsBackgroundService.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 4
+                  "index": 2
                 },
                 "region": {
                   "startLine": 22,
@@ -75991,7 +75652,7 @@
                 "artifactLocation": {
                   "uri": "src/UnfoldedCircle.Server/Dns/MDnsBackgroundService.cs",
                   "uriBaseId": "solutionDir",
-                  "index": 4
+                  "index": 2
                 },
                 "region": {
                   "startLine": 23,
@@ -76021,6 +75682,376 @@
           "partialFingerprints": {
             "equalIndicator/v1": "77925057BFB2412EB0C93EE351551F6B207EB1974B4ECE1A057C55C5884B86B9"
           },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "ConvertToExtensionBlock",
+          "ruleIndex": 384,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Convert to extension block"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/Extensions/ValueExtensions.cs",
+                  "uriBaseId": "solutionDir"
+                },
+                "region": {
+                  "startLine": 253,
+                  "startColumn": 30,
+                  "endLine": 253,
+                  "endColumn": 57,
+                  "charOffset": 13443,
+                  "charLength": 27,
+                  "snippet": {
+                    "text": "GetEntityTypeFromIdentifier"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 252,
+                  "startColumn": 1,
+                  "endLine": 254,
+                  "endColumn": 26,
+                  "charOffset": 13395,
+                  "charLength": 143,
+                  "snippet": {
+                    "text": "    /// </returns>\n    public static EntityType GetEntityTypeFromIdentifier(this in ReadOnlySpan<char> identifier) =>\n        identifier switch"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "6F203DD9451DB49F1070CE187C486E9FD487F7CA278A60DF816028EE8228B1E7"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "ReplaceWithPrimaryConstructorParameter",
+          "ruleIndex": 2650,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Replace with primary constructor parameter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/CancellationTokenWrapper.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 29,
+                  "startColumn": 5,
+                  "endLine": 29,
+                  "endColumn": 42,
+                  "charOffset": 1413,
+                  "charLength": 37,
+                  "snippet": {
+                    "text": "private readonly string _wsId = wsId;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 28,
+                  "startColumn": 1,
+                  "endLine": 30,
+                  "endColumn": 71,
+                  "charOffset": 1407,
+                  "charLength": 114,
+                  "snippet": {
+                    "text": "{\n    private readonly string _wsId = wsId;\n    private readonly System.Net.WebSockets.WebSocket _socket = socket;"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "7CBB497D65CD887D62B4D6CE273E1C55397338212BFA4F9C6272DB23ACD269F3"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "ReplaceWithPrimaryConstructorParameter",
+          "ruleIndex": 2650,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Replace with primary constructor parameter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/CancellationTokenWrapper.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 30,
+                  "startColumn": 5,
+                  "endLine": 30,
+                  "endColumn": 71,
+                  "charOffset": 1455,
+                  "charLength": 66,
+                  "snippet": {
+                    "text": "private readonly System.Net.WebSockets.WebSocket _socket = socket;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 29,
+                  "startColumn": 1,
+                  "endLine": 31,
+                  "endColumn": 47,
+                  "charOffset": 1409,
+                  "charLength": 159,
+                  "snippet": {
+                    "text": "    private readonly string _wsId = wsId;\n    private readonly System.Net.WebSockets.WebSocket _socket = socket;\n    private readonly ILogger _logger = logger;"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "BD132A18A7A9EC6D4BC3504C952CC9669DF16479325022559B525C051ED9E618"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "ReplaceWithPrimaryConstructorParameter",
+          "ruleIndex": 2650,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Replace with primary constructor parameter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/CancellationTokenWrapper.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 32,
+                  "startColumn": 5,
+                  "endLine": 32,
+                  "endColumn": 152,
+                  "charOffset": 1573,
+                  "charLength": 147,
+                  "snippet": {
+                    "text": "private readonly Func<System.Net.WebSockets.WebSocket, string, SubscribedEntitiesHolder, CancellationToken, Task> _eventProcessor = eventProcessor;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 31,
+                  "startColumn": 1,
+                  "endLine": 33,
+                  "endColumn": 73,
+                  "charOffset": 1522,
+                  "charLength": 271,
+                  "snippet": {
+                    "text": "    private readonly ILogger _logger = logger;\n    private readonly Func<System.Net.WebSockets.WebSocket, string, SubscribedEntitiesHolder, CancellationToken, Task> _eventProcessor = eventProcessor;\n    private readonly IOptions<UnfoldedCircleOptions> _options = options;"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "C9E3395E9446751B6DCC71D40E8B9A86CCC406E51E8E3BFFBFF10A4B8A9797AA"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "ReplaceWithPrimaryConstructorParameter",
+          "ruleIndex": 2650,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Replace with primary constructor parameter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/CancellationTokenWrapper.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 3
+                },
+                "region": {
+                  "startLine": 33,
+                  "startColumn": 5,
+                  "endLine": 33,
+                  "endColumn": 73,
+                  "charOffset": 1725,
+                  "charLength": 68,
+                  "snippet": {
+                    "text": "private readonly IOptions<UnfoldedCircleOptions> _options = options;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 32,
+                  "startColumn": 1,
+                  "endLine": 34,
+                  "endColumn": 1,
+                  "charOffset": 1569,
+                  "charLength": 225,
+                  "snippet": {
+                    "text": "    private readonly Func<System.Net.WebSockets.WebSocket, string, SubscribedEntitiesHolder, CancellationToken, Task> _eventProcessor = eventProcessor;\n    private readonly IOptions<UnfoldedCircleOptions> _options = options;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "E9487E796DE6AD84177485C9D678EB9266020544D197A61AFE20E02C58E56F49"
+          },
+          "baselineState": "new",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "ReplaceWithPrimaryConstructorParameter",
+          "ruleIndex": 2650,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Replace with primary constructor parameter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleMiddleware.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 27,
+                  "startColumn": 5,
+                  "endLine": 27,
+                  "endColumn": 149,
+                  "charOffset": 1389,
+                  "charLength": 144,
+                  "snippet": {
+                    "text": "private readonly ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> _logger = logger;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 26,
+                  "startColumn": 1,
+                  "endLine": 28,
+                  "endColumn": 73,
+                  "charOffset": 1317,
+                  "charLength": 289,
+                  "snippet": {
+                    "text": "    private readonly ILoggerFactory _loggerFactory = loggerFactory;\n    private readonly ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> _logger = logger;\n    private readonly IOptions<UnfoldedCircleOptions> _options = options;"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "4D07623067BFD0398860ECE62148BC8E9E3A4CB23FC33F3DD95BFD1749B4A8CB"
+          },
+          "baselineState": "unchanged",
+          "properties": {
+            "qodanaSeverity": "Moderate",
+            "tags": [
+              "C#",
+              ".NET 10.0"
+            ]
+          }
+        },
+        {
+          "ruleId": "ReplaceWithPrimaryConstructorParameter",
+          "ruleIndex": 2650,
+          "kind": "fail",
+          "level": "note",
+          "message": {
+            "text": "Replace with primary constructor parameter"
+          },
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/UnfoldedCircle.Server/WebSocket/UnfoldedCircleMiddleware.cs",
+                  "uriBaseId": "solutionDir",
+                  "index": 4
+                },
+                "region": {
+                  "startLine": 28,
+                  "startColumn": 5,
+                  "endLine": 28,
+                  "endColumn": 73,
+                  "charOffset": 1538,
+                  "charLength": 68,
+                  "snippet": {
+                    "text": "private readonly IOptions<UnfoldedCircleOptions> _options = options;"
+                  }
+                },
+                "contextRegion": {
+                  "startLine": 27,
+                  "startColumn": 1,
+                  "endLine": 29,
+                  "endColumn": 1,
+                  "charOffset": 1385,
+                  "charLength": 222,
+                  "snippet": {
+                    "text": "    private readonly ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> _logger = logger;\n    private readonly IOptions<UnfoldedCircleOptions> _options = options;\n"
+                  }
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "equalIndicator/v1": "77067C4E0A78580FAA4B1A34ADDF3D6B01A899A9FB3056D20E47F7676E4D5F68"
+          },
           "baselineState": "new",
           "properties": {
             "qodanaSeverity": "Moderate",
@@ -76032,10 +76063,10 @@
         }
       ],
       "automationDetails": {
-        "id": "QDNETC/qodana/2026-01-26",
-        "guid": "ac268626-2bf2-4146-8225-b5666518cb8b",
+        "id": "QDNETC/qodana/2026-03-08",
+        "guid": "0728da9c-7a18-4e59-aafc-d5c453093821",
         "properties": {
-          "jobUrl": "https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/runs/21366022299"
+          "jobUrl": "https://github.com/henrikwidlund/theodicean.unfoldedcircle/actions/runs/22818990351"
         }
       },
       "newlineSequences": [
