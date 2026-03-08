@@ -38,7 +38,6 @@ public sealed class CancellationTokenWrapper(
     /// Adds an entity to the list of subscribed entities connected to this <see cref="CancellationTokenWrapper"/>.
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
-    /// <returns><see langowrd="true"/> if added, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     // ReSharper disable once UnusedMember.Global
     public void AddSubscribedEntity(string entityId)
@@ -48,7 +47,6 @@ public sealed class CancellationTokenWrapper(
     /// Removes an entity from the list of subscribed entities connected to this <see cref="CancellationTokenWrapper"/>.
     /// </summary>
     /// <param name="entityId">The entity_id.</param>
-    /// <returns><see langowrd="true"/> if removed, otherwise <see langord="false"/>.</returns>
     // ReSharper disable once UnusedMethodReturnValue.Global
     // ReSharper disable once UnusedMember.Global
     public void RemoveSubscribedEntity(string entityId)
