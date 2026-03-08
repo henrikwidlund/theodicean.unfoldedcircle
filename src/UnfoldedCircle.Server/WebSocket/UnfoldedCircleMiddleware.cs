@@ -45,7 +45,6 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
                     _options,
                     _applicationLifetime.ApplicationStopping,
                     context.RequestAborted);
-                await cancellationTokenWrapper.StartEventProcessingAsync();
                 var result = await _unfoldedCircleWebSocketHandler.HandleWebSocketAsync(socket, wsId, cancellationTokenWrapper);
                 await socket.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, context.RequestAborted);
 

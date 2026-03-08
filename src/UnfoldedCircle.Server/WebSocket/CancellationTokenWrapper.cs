@@ -70,6 +70,7 @@ public sealed class CancellationTokenWrapper(
     /// </summary>
     public readonly CancellationToken RequestAborted = requestAborted;
 
+    private TimeSpan SemaphoreTimeout => TimeSpan.FromSeconds(_options.Value.DelayBeforeStartEventBroadcasting.TotalSeconds + 1);
     private CancellationTokenSource? _broadcastCancellationTokenSource;
 
     [MemberNotNull(nameof(_broadcastCancellationTokenSource))]
@@ -95,7 +96,7 @@ public sealed class CancellationTokenWrapper(
     /// </summary>
     public async ValueTask StartEventProcessingAsync()
     {
-        if (await _semaphoreSlim.WaitAsync(TimeSpan.FromSeconds(1), RequestAborted))
+        if (await _semaphoreSlim.WaitAsync(SemaphoreTimeout, RequestAborted))
         {
             try
             {
@@ -139,7 +140,7 @@ public sealed class CancellationTokenWrapper(
     /// </summary>
     public async ValueTask StopEventProcessingAsync()
     {
-        if (await _semaphoreSlim.WaitAsync(TimeSpan.FromSeconds(1), RequestAborted))
+        if (await _semaphoreSlim.WaitAsync(SemaphoreTimeout, RequestAborted))
         {
             try
             {
