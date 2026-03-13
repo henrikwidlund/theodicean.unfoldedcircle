@@ -45,7 +45,7 @@ public class UnfoldedCircleOptions
     /// <summary>
     /// The delay before starting to broadcast events after event broadcasting is initiated
     /// </summary>
-    /// <remarks>Defaults to 5s.</remarks>
+    /// <remarks>Defaults to 1s.</remarks>
     public TimeSpan DelayBeforeStartEventBroadcasting
     {
         get;
@@ -56,7 +56,7 @@ public class UnfoldedCircleOptions
                 throw new InvalidOperationException("Value must be greater than zero.");
             field = value;
         }
-    } = TimeSpan.FromSeconds(5);
+    } = TimeSpan.FromSeconds(1);
 
     /// <summary>
     /// The maximum wait time for a received message to be handled before being canceled.
