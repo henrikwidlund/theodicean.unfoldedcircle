@@ -79,22 +79,31 @@ public static class UnfoldedCircleRegistrationExtensions
             if (configureOptions is not null)
                 builder.Services.PostConfigure(configureOptions);
 
+            var listenPort = builder.Configuration.GetOrDefault("UC_INTEGRATION_HTTP_PORT", unfoldedCircleOptions.ListeningPort);
+            var listenInterface = builder.Configuration["UC_INTEGRATION_INTERFACE"];
             builder.WebHost.ConfigureKestrel(options =>
             {
-                options.ListenAnyIP(builder.Configuration.GetOrDefault("UC_INTEGRATION_HTTP_PORT", unfoldedCircleOptions.ListeningPort));
+                if (!string.IsNullOrEmpty(listenInterface))
+                    options.Listen(System.Net.IPAddress.Parse(listenInterface), listenPort);
+                else
+                    options.ListenAnyIP(listenPort);
+
                 options.AddServerHeader = false;
             });
 
             builder.Services.TryAddEnumerable(ServiceDescriptor.Singleton<ConsoleFormatter, CustomSystemdConsoleFormatter>());
 
             if (OperatingSystem.IsLinux())
+            {
                 builder.Logging.AddConsole(static options =>
                 {
                     options.FormatterName = "CustomSystemd";
                 });
+            }
 
             builder.Services.AddSingleton<IConfigurationService<TConfigurationItem>, TConfigurationService>();
-            builder.Services.AddHostedService<MDnsBackgroundService<TConfigurationItem>>();
+            if (!builder.Configuration.GetOrDefault("UC_DISABLE_MDNS_PUBLISH", false))
+                builder.Services.AddHostedService<MDnsBackgroundService<TConfigurationItem>>();
 
             builder.Services.AddSingleton<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>, TUnfoldedCircleWebSocketHandler>();
             builder.Services.AddSingleton<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>>();
