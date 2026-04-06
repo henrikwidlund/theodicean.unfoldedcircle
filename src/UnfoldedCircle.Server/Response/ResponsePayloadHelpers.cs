@@ -253,13 +253,13 @@ public static class ResponsePayloadHelpers
     /// <summary>
     /// Creates an event payload for when a media player entity's state has changed.
     /// </summary>
-    /// <param name="attributes">The attributes for the entity.</param>
+    /// <param name="attributesBase">The attributes for the entity.</param>
     /// <param name="entityId">The entity_id.</param>
     public static byte[] CreateMediaPlayerStateChangedResponsePayload(
-        MediaPlayerStateChangedEventMessageDataAttributes attributes,
+        MediaPlayerStateChangedEventMessageDataAttributesBase attributesBase,
         string entityId) =>
-        CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.MediaPlayer,
-            UnfoldedCircleJsonSerializerContext.Default.StateChangedEventMediaPlayerStateChangedEventMessageDataAttributes,
+        CreateEntityStateChangedResponsePayload(attributesBase, entityId, EntityType.MediaPlayer,
+            UnfoldedCircleJsonSerializerContext.Default.MediaPlayerStateChangedEventMessageDataAttributesBase,
             null);
 
     /// <summary>

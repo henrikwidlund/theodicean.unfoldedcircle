@@ -164,7 +164,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             return x.EntityType switch
             {
                 EntityType.MediaPlayer => SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateMediaPlayerStateChangedResponsePayload(new MediaPlayerStateChangedEventMessageDataAttributes { State = State.Unavailable }, x.EntityId),
+                    ResponsePayloadHelpers.CreateMediaPlayerStateChangedResponsePayload(new DeltaMediaPlayerStateChangedEventMessageDataAttributes { State = State.Unavailable }, x.EntityId),
                     wsId, cancellationToken),
                 EntityType.Remote => SendMessageAsync(socket,
                     ResponsePayloadHelpers.CreateRemoteStateChangedResponsePayload(new RemoteStateChangedEventMessageDataAttributes { State = RemoteState.Unavailable }, x.EntityId),

@@ -431,7 +431,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 {
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateMediaPlayerStateChangedResponsePayload(
-                            new MediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
+                            new DeltaMediaPlayerStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? State.On : State.Off },
                             entity.EntityId.GetIdentifier(EntityType.MediaPlayer)),
                         wsId,
                         commandCancellationToken);
