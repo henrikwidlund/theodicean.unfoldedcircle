@@ -262,8 +262,8 @@ public static class ResponsePayloadHelpers
         return CreateEntityStateChangedResponsePayload(attributesBase, entityId, EntityType.MediaPlayer,
             typeof(TMediaPlayerStateChangedEventMessageDataAttributes) switch
             {
-                var t when t == typeof(MediaPlayerStateChangedEventMessageDataAttributes) => UnfoldedCircleJsonSerializerContext.Default.MediaPlayerStateChangedEventMessageDataAttributes,
-                var t when t == typeof(DeltaMediaPlayerStateChangedEventMessageDataAttributes) => UnfoldedCircleJsonSerializerContext.Default.DeltaMediaPlayerStateChangedEventMessageDataAttributes,
+                var t when t == typeof(MediaPlayerStateChangedEventMessageDataAttributes) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventMediaPlayerStateChangedEventMessageDataAttributes,
+                var t when t == typeof(DeltaMediaPlayerStateChangedEventMessageDataAttributes) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventDeltaMediaPlayerStateChangedEventMessageDataAttributes,
                 _ => throw new NotSupportedException($"The type '{typeof(TMediaPlayerStateChangedEventMessageDataAttributes)}' is not supported for media player state changed event message data attributes.")
             }, null);
     }

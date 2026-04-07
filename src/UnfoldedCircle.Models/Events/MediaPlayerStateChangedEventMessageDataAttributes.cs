@@ -4,8 +4,6 @@ using UnfoldedCircle.Models.Shared;
 
 namespace UnfoldedCircle.Models.Events;
 
-[JsonDerivedType(typeof(MediaPlayerStateChangedEventMessageDataAttributes))]
-[JsonDerivedType(typeof(DeltaMediaPlayerStateChangedEventMessageDataAttributes))]
 public abstract record MediaPlayerStateChangedEventMessageDataAttributesBase : StateChangedEventMessageDataAttributes
 {
     public abstract State? State { get; init; }
