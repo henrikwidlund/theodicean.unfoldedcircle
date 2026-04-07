@@ -255,12 +255,18 @@ public static class ResponsePayloadHelpers
     /// </summary>
     /// <param name="attributesBase">The attributes for the entity.</param>
     /// <param name="entityId">The entity_id.</param>
-    public static byte[] CreateMediaPlayerStateChangedResponsePayload(
-        MediaPlayerStateChangedEventMessageDataAttributesBase attributesBase,
-        string entityId) =>
-        CreateEntityStateChangedResponsePayload(attributesBase, entityId, EntityType.MediaPlayer,
-            UnfoldedCircleJsonSerializerContext.Default.MediaPlayerStateChangedEventMessageDataAttributesBase,
-            null);
+    public static byte[] CreateMediaPlayerStateChangedResponsePayload<TMediaPlayerStateChangedEventMessageDataAttributes>(
+        TMediaPlayerStateChangedEventMessageDataAttributes attributesBase,
+        string entityId) where TMediaPlayerStateChangedEventMessageDataAttributes : MediaPlayerStateChangedEventMessageDataAttributesBase
+    {
+        return CreateEntityStateChangedResponsePayload(attributesBase, entityId, EntityType.MediaPlayer,
+            typeof(TMediaPlayerStateChangedEventMessageDataAttributes) switch
+            {
+                var t when t == typeof(MediaPlayerStateChangedEventMessageDataAttributes) => UnfoldedCircleJsonSerializerContext.Default.MediaPlayerStateChangedEventMessageDataAttributes,
+                var t when t == typeof(DeltaMediaPlayerStateChangedEventMessageDataAttributes) => UnfoldedCircleJsonSerializerContext.Default.DeltaMediaPlayerStateChangedEventMessageDataAttributes,
+                _ => throw new NotSupportedException($"The type '{typeof(TMediaPlayerStateChangedEventMessageDataAttributes)}' is not supported for media player state changed event message data attributes.")
+            }, null);
+    }
 
     /// <summary>
     /// Creates an event payload for when a remote entity's state has changed.
