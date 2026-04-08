@@ -141,9 +141,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 await _configurationService.UpdateConfigurationAsync(configuration, cancellationToken);
                 return SetupDriverUserDataResult.Finalized;
             case ActionBackup:
-                var bs6Settings = await GetBase64BackupDataAsync(cancellationToken);
+                var base64BackupData = await GetBase64BackupDataAsync(cancellationToken);
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateBackupSettingsPage(bs6Settings)),
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateBackupSettingsPage(base64BackupData)),
                     wsId,
                     cancellationToken);
                 // Return Handled so the backup page remains open for user interaction
