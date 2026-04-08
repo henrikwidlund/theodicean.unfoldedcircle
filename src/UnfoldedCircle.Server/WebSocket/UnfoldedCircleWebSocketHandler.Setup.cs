@@ -90,6 +90,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     private const string ActionConfigure = "configure";
     private const string ActionDelete = "delete";
     private const string ActionReset = "reset";
+    private const string ActionBackup = "backup";
+    private const string ActionRestore = "restore";
+    private const string RestoreFromBackup = "restore_from_backup";
+    private const string RestoreData = "restore_data";
 
     /// <summary>
     /// Called when a <c>set_driver_user_data</c> request is received during reconfiguration step.
@@ -136,6 +140,19 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 configuration.Entities.Clear();
                 await _configurationService.UpdateConfigurationAsync(configuration, cancellationToken);
                 return SetupDriverUserDataResult.Finalized;
+            case ActionBackup:
+                var bs6Settings = await GetBase64BackupDataAsync(cancellationToken);
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateBackupSettingsPage(bs6Settings)),
+                    wsId,
+                    cancellationToken);
+                return SetupDriverUserDataResult.Finalized;
+            case ActionRestore:
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateRestoreSettingsPage()),
+                    wsId,
+                    cancellationToken);
+                return SetupDriverUserDataResult.Handled;
             default:
                 return SetupDriverUserDataResult.Error;
         }
@@ -268,6 +285,14 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                 new SettingTypeDropdownItem
                                 {
                                     Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Reset and reconfigure" }, Value = ActionReset
+                                },
+                                new SettingTypeDropdownItem
+                                {
+                                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Backup" }, Value = ActionBackup
+                                },
+                                new SettingTypeDropdownItem
+                                {
+                                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore" }, Value = ActionRestore
                                 }
                             ],
                             Value = ActionConfigure
@@ -286,6 +311,14 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     }
 
     /// <summary>
+    /// Creates a base64 encoded backup of the current configuration to be sent to the user.
+    /// This will be used when user selects backup option during reconfiguration.
+    /// </summary>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    /// <returns></returns>
+    protected abstract ValueTask<string> GetBase64BackupDataAsync(CancellationToken cancellationToken);
+
+    /// <summary>
     /// Creates a new entity settings page for adding a new entity.
     /// </summary>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
@@ -297,6 +330,48 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="configurationItem">The configuration tied to the entity.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
     protected abstract ValueTask<SettingsPage> CreateReconfigureEntitySettingsPageAsync(TConfigurationItem configurationItem, CancellationToken cancellationToken);
+
+    private static SettingsPage CreateBackupSettingsPage(string base64BackupData) =>
+        new()
+        {
+            Title = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Backup" },
+            Settings =
+            [
+                new Setting
+                {
+                    Id = "backup_data",
+                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Backup Contents" },
+                    Field = new SettingTypeTextArea { TextArea = new SettingTypeTextAreaInner { Value = base64BackupData } }
+                }
+            ]
+        };
+
+    private static SettingsPage CreateRestoreSettingsPage() =>
+        new()
+        {
+            Title = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore" },
+            Settings =
+            [
+                new Setting
+                {
+                    Id = RestoreFromBackup,
+                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore From Backup" },
+                    Field = new SettingTypeCheckbox
+                    {
+                        Checkbox = new SettingTypeCheckboxInner
+                        {
+                            Value = true
+                        }
+                    }
+                },
+                new Setting
+                {
+                    Id = RestoreData,
+                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore Contents" },
+                    Field = new SettingTypeTextArea { TextArea = new SettingTypeTextAreaInner() }
+                }
+            ]
+        };
 
     private async Task FinishSetupAsync(System.Net.WebSockets.WebSocket socket,
         string wsId,
@@ -330,6 +405,15 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         string wsId,
         TConfigurationItem configurationItem,
         CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Handle restore operation from a Base64 encoded backup.
+    /// It is up to the implementor to decode the backup data, restore the configuration and save necessary data.
+    /// </summary>
+    /// <param name="wsId">ID of the websocket.</param>
+    /// <param name="base64RestoreData">Base64 encoded backup data provided by the user.</param>
+    /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
+    protected abstract ValueTask<SetupDriverUserDataResult> HandleRestoreFromBackupAsync(string wsId, string base64RestoreData, CancellationToken cancellationToken);
 
     /// <summary>
     /// Called when a <c>set_driver_user_data</c> request is received during new entity step.
@@ -455,6 +539,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     }
                     return;
                 default:
+                    // Handle in default since API users can trigger restore without going through the UI flow
+                    if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper))
+                        return;
+
                     _logger.NoValidSetupStepFound(wsId, step);
 
                     await SendMessageAsync(socket,
@@ -483,6 +571,23 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 wsId,
                 cancellationTokenWrapper.RequestAborted);
         }
+    }
+
+    private async ValueTask<bool> HandleRestoreResultAsync(System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
+    {
+        if (payload.MsgData.InputValues is not null &&
+            payload.MsgData.InputValues.TryGetValue(RestoreFromBackup, out var restoreFromBackupValue) &&
+            restoreFromBackupValue.Equals("true", StringComparison.OrdinalIgnoreCase) &&
+            payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) &&
+            !string.IsNullOrEmpty(restoreData))
+        {
+            var restoreResult = await HandleRestoreFromBackupAsync(restoreData, wsId, cancellationTokenWrapper.RequestAborted);
+            SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
+            await FinishSetupAsync(socket, wsId, restoreResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
+            return true;
+        }
+
+        return false;
     }
 }
 
