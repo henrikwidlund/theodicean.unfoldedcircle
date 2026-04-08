@@ -581,7 +581,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) &&
             !string.IsNullOrEmpty(restoreData))
         {
-            var restoreResult = await HandleRestoreFromBackupAsync(restoreData, wsId, cancellationTokenWrapper.RequestAborted);
+            var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
             SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
             await FinishSetupAsync(socket, wsId, restoreResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
             return true;
