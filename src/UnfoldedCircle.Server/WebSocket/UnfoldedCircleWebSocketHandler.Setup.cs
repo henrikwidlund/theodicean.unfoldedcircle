@@ -603,8 +603,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             !string.IsNullOrEmpty(restoreData))
         {
             var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
-            SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
-            await FinishSetupAsync(socket, wsId, restoreResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
+            if (restoreResult != SetupDriverUserDataResult.Handled)
+            {
+                SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
+                await FinishSetupAsync(socket, wsId, restoreResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
+            }
             return true;
         }
 
