@@ -316,7 +316,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// This will be used when user selects backup option during reconfiguration.
     /// </summary>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    /// <returns></returns>
     protected abstract ValueTask<string> GetBase64BackupDataAsync(CancellationToken cancellationToken);
 
     /// <summary>
