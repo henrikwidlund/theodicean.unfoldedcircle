@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Collections.Frozen;
 using System.Net.WebSockets;
 using System.Text;
@@ -76,6 +75,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     internal async Task<WebSocketReceiveResult> HandleWebSocketAsync(
         System.Net.WebSockets.WebSocket socket,
         MemoryStream memoryStream,
+        byte[] buffer,
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper)
     {
@@ -83,22 +83,23 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             ResponsePayloadHelpers.CreateAuthResponsePayload(),
             wsId,
             cancellationTokenWrapper.RequestAborted);
-        
-        var buffer = ArrayPool<byte>.Shared.Rent(1024 * 4);
+
         WebSocketReceiveResult result;
 
         do
         {
             memoryStream.Position = 0;
+            var length = 0;
             do
             {
-                result = await socket.ReceiveAsync(buffer, CancellationToken.None);
+                result = await socket.ReceiveAsync(buffer, cancellationTokenWrapper.RequestAborted);
+                length += result.Count;
                 if (result.Count > 0)
                     await memoryStream.WriteAsync(buffer.AsMemory(0, result.Count), cancellationTokenWrapper.RequestAborted);
             } while (result is { EndOfMessage: false, CloseStatus: null } && !cancellationTokenWrapper.RequestAborted.IsCancellationRequested);
 
             if (_logger.IsEnabled(LogLevel.Trace))
-                _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(memoryStream.GetBuffer(), 0, (int)memoryStream.Length));
+                _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(memoryStream.GetBuffer(), 0, length));
 
             if (memoryStream.Length == 0)
             {
@@ -108,7 +109,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
             try
             {
-                using var jsonDocument = JsonDocument.Parse(memoryStream.GetBuffer().AsMemory(0, (int)memoryStream.Length));
+                using var jsonDocument = JsonDocument.Parse(memoryStream.GetBuffer().AsMemory(0, length));
                 if (!jsonDocument.RootElement.TryGetProperty("msg", out var msg))
                 {
                     _logger.MissingMessageProperty(wsId);

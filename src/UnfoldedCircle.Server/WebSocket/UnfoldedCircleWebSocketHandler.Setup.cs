@@ -76,6 +76,23 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     }
 
     /// <summary>
+    /// Result of a restore operation from backup.
+    /// </summary>
+    protected enum RestoreResult : sbyte
+    {
+        /// <summary>
+        /// Operation succeeded
+        /// </summary>
+        Success,
+
+        /// <summary>
+        /// Operation failed
+        /// </summary>
+        // ReSharper disable once UnusedMember.Global
+        Failure
+    }
+
+    /// <summary>
     /// Called when a <c>set_driver_user_data</c> request is received with confirm data.
     /// </summary>
     /// <param name="socket">The <see cref="System.Net.WebSockets.WebSocket"/> to send events on.</param>
@@ -414,7 +431,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="base64RestoreData">Base64 encoded backup data provided by the user.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    protected abstract ValueTask<SetupDriverUserDataResult> HandleRestoreFromBackupAsync(string wsId, string base64RestoreData, CancellationToken cancellationToken);
+    protected abstract ValueTask<RestoreResult> HandleRestoreFromBackupAsync(string wsId, string base64RestoreData, CancellationToken cancellationToken);
 
     /// <summary>
     /// Called when a <c>set_driver_user_data</c> request is received during new entity step.
@@ -433,8 +450,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             if (!SessionHolder.NextSetupSteps.TryGetValue(wsId, out var step))
             {
-                // Support out-of-band restore: if this is a restore request, handle it even if no setup step exists
-                if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper))
+                // Support out-of-band restore: if this is a restore request, handle it even if no setup step exists.
+                // Method does not use Finalized
+                if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper) == SetupDriverUserDataResult.Handled)
                     return;
 
                 _logger.NoSetupStepFound(wsId);
@@ -544,8 +562,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     }
                     return;
                 case SetupStep.RestoreEntity:
-                    if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper))
+                    // method does not use Finalized
+                    if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper) == SetupDriverUserDataResult.Handled)
                         return;
+
                     // If restore fails or is not triggered, treat as error
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -595,8 +615,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
     }
 
-    private async ValueTask<bool> HandleRestoreResultAsync(System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
+    private async ValueTask<SetupDriverUserDataResult> HandleRestoreResultAsync(System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
     {
+        // never respond with finalized in this method. We either handle it or it is error.
         if (payload.MsgData.InputValues is not null &&
             payload.MsgData.InputValues.TryGetValue(RestoreFromBackup, out var restoreFromBackupValue) &&
             restoreFromBackupValue.Equals("true", StringComparison.OrdinalIgnoreCase) &&
@@ -604,15 +625,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             !string.IsNullOrEmpty(restoreData))
         {
             var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
-            if (restoreResult != SetupDriverUserDataResult.Handled)
-            {
-                SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
-                await FinishSetupAsync(socket, wsId, restoreResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
-            }
-            return true;
+            SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
+            await FinishSetupAsync(socket, wsId, restoreResult == RestoreResult.Success, payload, cancellationTokenWrapper.RequestAborted);
+            return SetupDriverUserDataResult.Handled;
         }
 
-        return false;
+        return SetupDriverUserDataResult.Error;
     }
 }
 
