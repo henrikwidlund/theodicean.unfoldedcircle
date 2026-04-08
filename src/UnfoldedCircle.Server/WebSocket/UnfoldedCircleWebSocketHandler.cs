@@ -86,10 +86,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
         WebSocketReceiveResult result;
 
+        // ReSharper disable once TooWideLocalVariableScope
+        int length;
         do
         {
+            length = 0;
             memoryStream.Position = 0;
-            var length = 0;
             do
             {
                 result = await socket.ReceiveAsync(buffer, cancellationTokenWrapper.RequestAborted);
