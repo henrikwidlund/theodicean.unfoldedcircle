@@ -153,6 +153,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateRestoreSettingsPage()),
                     wsId,
                     cancellationToken);
+                SessionHolder.NextSetupSteps[wsId] = SetupStep.RestoreEntity;
                 return SetupDriverUserDataResult.Handled;
             default:
                 return SetupDriverUserDataResult.Error;
@@ -538,6 +539,20 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         await FinishSetupAsync(socket, wsId, driverUserDataResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
                     }
                     return;
+                case SetupStep.RestoreEntity:
+                    if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper))
+                        return;
+                    // If restore fails or is not triggered, treat as error
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                            new ValidationError
+                            {
+                                Code = "RESTORE_FAILED",
+                                Message = "Restore failed or invalid restore data. Please try again."
+                            }),
+                        wsId,
+                        cancellationTokenWrapper.RequestAborted);
+                    return;
                 default:
                     // Handle in default since API users can trigger restore without going through the UI flow
                     if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper))
@@ -606,5 +621,10 @@ internal enum SetupStep : sbyte
     /// <summary>
     /// Next step is to save the reconfigured configured entity.
     /// </summary>
-    SaveReconfiguredEntity
+    SaveReconfiguredEntity,
+
+    /// <summary>
+    /// Next step is to restore an entity from backup.
+    /// </summary>
+    RestoreEntity
 }
