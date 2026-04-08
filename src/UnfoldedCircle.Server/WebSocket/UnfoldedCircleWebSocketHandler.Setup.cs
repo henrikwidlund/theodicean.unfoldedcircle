@@ -433,6 +433,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             if (!SessionHolder.NextSetupSteps.TryGetValue(wsId, out var step))
             {
+                // Support out-of-band restore: if this is a restore request, handle it even if no setup step exists
+                if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper))
+                    return;
+
                 _logger.NoSetupStepFound(wsId);
 
                 await SendMessageAsync(socket,
@@ -560,9 +564,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
                     return;
                 default:
-                    // Handle in default since API users can trigger restore without going through the UI flow
-                    if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper))
-                        return;
 
                     _logger.NoValidSetupStepFound(wsId, step);
 
