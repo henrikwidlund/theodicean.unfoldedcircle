@@ -146,7 +146,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateBackupSettingsPage(base64BackupData)),
                     wsId,
                     cancellationToken);
-                // Return Handled so the backup page remains open for user interaction
+                SessionHolder.NextSetupSteps[wsId] = SetupStep.BackupEntity;
                 return SetupDriverUserDataResult.Handled;
             case ActionRestore:
                 await SendMessageAsync(socket,
@@ -553,6 +553,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         wsId,
                         cancellationTokenWrapper.RequestAborted);
                     return;
+                case SetupStep.BackupEntity:
+                    // If the user submits from the backup page, finalize the setup flow
+                    SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
+                    SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
+                    await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
+                    return;
                 default:
                     // Handle in default since API users can trigger restore without going through the UI flow
                     if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper))
@@ -622,6 +628,11 @@ internal enum SetupStep : sbyte
     /// Next step is to save the reconfigured configured entity.
     /// </summary>
     SaveReconfiguredEntity,
+
+    /// <summary>
+    /// Next step is to show the backup page.
+    /// </summary>
+    BackupEntity,
 
     /// <summary>
     /// Next step is to restore an entity from backup.
