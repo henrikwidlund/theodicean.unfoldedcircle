@@ -45,7 +45,8 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
                     _options,
                     _applicationLifetime.ApplicationStopping,
                     context.RequestAborted);
-                var result = await _unfoldedCircleWebSocketHandler.HandleWebSocketAsync(socket, wsId, cancellationTokenWrapper);
+                using var memoryStream = new MemoryStream();
+                var result = await _unfoldedCircleWebSocketHandler.HandleWebSocketAsync(socket, memoryStream, wsId, cancellationTokenWrapper);
                 await socket.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, context.RequestAborted);
 
                 _logger.WebSocketConnectionClosed(wsId);

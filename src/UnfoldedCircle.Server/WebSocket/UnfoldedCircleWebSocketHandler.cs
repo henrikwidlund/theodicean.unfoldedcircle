@@ -75,6 +75,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
     internal async Task<WebSocketReceiveResult> HandleWebSocketAsync(
         System.Net.WebSockets.WebSocket socket,
+        MemoryStream memoryStream,
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper)
     {
@@ -85,14 +86,21 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         
         var buffer = ArrayPool<byte>.Shared.Rent(1024 * 4);
         WebSocketReceiveResult result;
-        
+
         do
         {
-            result = await socket.ReceiveAsync(buffer, CancellationToken.None);
-            if (_logger.IsEnabled(LogLevel.Trace))
-                _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(buffer, 0, result.Count));
+            memoryStream.Position = 0;
+            do
+            {
+                result = await socket.ReceiveAsync(buffer, CancellationToken.None);
+                if (result.Count > 0)
+                    await memoryStream.WriteAsync(buffer.AsMemory(0, result.Count), cancellationTokenWrapper.RequestAborted);
+            } while (result is { EndOfMessage: false, CloseStatus: null } && !cancellationTokenWrapper.RequestAborted.IsCancellationRequested);
 
-            if (result.Count == 0)
+            if (_logger.IsEnabled(LogLevel.Trace))
+                _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(memoryStream.GetBuffer(), 0, (int)memoryStream.Length));
+
+            if (memoryStream.Length == 0)
             {
                 _logger.NotJson(wsId);
                 continue;
@@ -100,7 +108,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
             try
             {
-                using var jsonDocument = JsonDocument.Parse(buffer.AsMemory(0, result.Count));
+                using var jsonDocument = JsonDocument.Parse(memoryStream.GetBuffer().AsMemory(0, (int)memoryStream.Length));
                 if (!jsonDocument.RootElement.TryGetProperty("msg", out var msg))
                 {
                     _logger.MissingMessageProperty(wsId);
