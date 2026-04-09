@@ -101,7 +101,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         /// <summary>
         /// Operation failed
         /// </summary>
-        // ReSharper disable once UnusedMember.Global
         Failure,
 
         /// <summary>
