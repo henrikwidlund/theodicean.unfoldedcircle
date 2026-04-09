@@ -323,11 +323,48 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         return ValueTask.FromResult(settingsPage);
     }
 
-    private ValueTask<SettingsPage> CreateNewEntitySettingsPageCoreAsync(string wsId, CancellationToken cancellationToken)
+    private async ValueTask<SettingsPage> CreateNewEntitySettingsPageCoreAsync(string wsId, CancellationToken cancellationToken)
     {
         SessionHolder.NextSetupSteps[wsId] = SetupStep.NewEntity;
-        return CreateNewEntitySettingsPageAsync(cancellationToken);
+        var settingsPage = await CreateNewEntitySettingsPageAsync(cancellationToken);
+        var hasRestoreFromBackup = settingsPage.Settings.Any(static x => x.Id.Equals(RestoreFromBackup, StringComparison.OrdinalIgnoreCase));
+        var hasRestoreData = settingsPage.Settings.Any(static x => x.Id.Equals(RestoreData, StringComparison.OrdinalIgnoreCase));
+        if (hasRestoreFromBackup && hasRestoreData)
+        {
+            return settingsPage;
+        }
+
+        var settingsItems = settingsPage.Settings.ToList();
+        if (!hasRestoreFromBackup)
+            settingsItems.Add(CreateRestoreFromBackupItem());
+
+        if (!hasRestoreData)
+            settingsItems.Add(CreateRestoreDataItem());
+
+        return settingsPage with { Settings = settingsItems.ToArray() };
     }
+
+    private static Setting CreateRestoreFromBackupItem() =>
+        new()
+        {
+            Id = RestoreFromBackup,
+            Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore From Backup" },
+            Field = new SettingTypeCheckbox
+            {
+                Checkbox = new SettingTypeCheckboxInner
+                {
+                    Value = true
+                }
+            }
+        };
+
+    private static Setting CreateRestoreDataItem() =>
+        new()
+        {
+            Id = RestoreData,
+            Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore Contents" },
+            Field = new SettingTypeTextArea { TextArea = new SettingTypeTextAreaInner() }
+        };
 
     /// <summary>
     /// Creates a base64 encoded backup of the current configuration to be sent to the user.
@@ -370,24 +407,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             Title = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore" },
             Settings =
             [
-                new Setting
-                {
-                    Id = RestoreFromBackup,
-                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore From Backup" },
-                    Field = new SettingTypeCheckbox
-                    {
-                        Checkbox = new SettingTypeCheckboxInner
-                        {
-                            Value = true
-                        }
-                    }
-                },
-                new Setting
-                {
-                    Id = RestoreData,
-                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore Contents" },
-                    Field = new SettingTypeTextArea { TextArea = new SettingTypeTextAreaInner() }
-                }
+                CreateRestoreFromBackupItem(),
+                CreateRestoreDataItem()
             ]
         };
 
