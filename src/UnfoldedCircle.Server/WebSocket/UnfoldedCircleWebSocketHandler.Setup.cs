@@ -102,7 +102,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         /// Operation failed
         /// </summary>
         // ReSharper disable once UnusedMember.Global
-        Failure
+        Failure,
+
+        /// <summary>
+        /// Operation not applicable.
+        /// </summary>
+        NotApplicable
     }
 
     /// <summary>
@@ -137,7 +142,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         await SendMessageAsync(socket, ResponsePayloadHelpers.CreateCommonResponsePayload(payload), wsId, cancellationToken);
         var action = payload.MsgData.InputValues![ActionKey];
         var entityId = payload.MsgData.InputValues[ChoiceKey];
-        if (!action.Equals(ActionBackup, StringComparison.OrdinalIgnoreCase) && !action.Equals(ActionAdd, StringComparison.OrdinalIgnoreCase))
+        if (!action.Equals(ActionBackup, StringComparison.OrdinalIgnoreCase) &&
+            !action.Equals(ActionAdd, StringComparison.OrdinalIgnoreCase) &&
+            !action.Equals(ActionRestore, StringComparison.OrdinalIgnoreCase))
             SessionHolder.ReconfigureEntityMap[wsId] = entityId;
 
         UnfoldedCircleConfiguration<TConfigurationItem> configuration;
@@ -353,7 +360,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 Checkbox = new SettingTypeCheckboxInner
                 {
-                    Value = true
+                    Value = false
                 }
             }
         };
@@ -472,11 +479,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             if (!SessionHolder.NextSetupSteps.TryGetValue(wsId, out var step))
             {
                 // Support out-of-band restore: if this is a restore request, handle it even if no setup step exists.
-                // Method does not use Finalized
-                var restoreResult = await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper);
-                if (restoreResult == SetupDriverUserDataResult.Handled)
+                var restoreResult = await HandleRestoreResultAsync(socket, wsId, payload, fieldPresenceRequired: false, cancellationTokenWrapper);
+                if (restoreResult == RestoreResult.Success)
                     return;
-                if (restoreResult == SetupDriverUserDataResult.Error)
+                if (restoreResult != RestoreResult.NotApplicable)
                 {
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
@@ -539,8 +545,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             switch (step)
             {
                 case SetupStep.InitialRestoreFromBackup:
-                    var restoreResultRestoreStep = await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper);
-                    if (restoreResultRestoreStep == SetupDriverUserDataResult.Handled)
+                    var restoreResultRestoreStep = await HandleRestoreResultAsync(socket, wsId, payload, fieldPresenceRequired: true, cancellationTokenWrapper);
+                    if (restoreResultRestoreStep == RestoreResult.Success)
                         return;
                     // If restore failed or not triggered because of missing data, show error or proceed to new entity
                     if (payload.MsgData.InputValues is not null &&
@@ -626,7 +632,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     return;
                 case SetupStep.ReconfigureRestoreFromBackup:
                     // method does not use Finalized
-                    if (await HandleRestoreResultAsync(socket, wsId, payload, cancellationTokenWrapper) == SetupDriverUserDataResult.Handled)
+                    if (await HandleRestoreResultAsync(socket, wsId, payload, fieldPresenceRequired: true, cancellationTokenWrapper) == RestoreResult.Success)
                         return;
 
                     // If restore fails or is not triggered, treat as error
@@ -678,10 +684,14 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
     }
 
-    private async ValueTask<SetupDriverUserDataResult> HandleRestoreResultAsync(
-        System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
+    private async ValueTask<RestoreResult> HandleRestoreResultAsync(
+        System.Net.WebSockets.WebSocket socket,
+        string wsId,
+        SetDriverUserDataMsg payload,
+        bool fieldPresenceRequired,
+        CancellationTokenWrapper cancellationTokenWrapper)
     {
-        // never respond with finalized in this method. We either handle it or it is error.
+        // if we have the fields, then they must have valid data, regardless of fieldPresenceRequired
         if (payload.MsgData.InputValues is not null &&
             payload.MsgData.InputValues.TryGetValue(RestoreFromBackup, out var restoreFromBackupValue) &&
             string.Equals(restoreFromBackupValue, "true", StringComparison.OrdinalIgnoreCase) &&
@@ -690,14 +700,14 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
             if (restoreResult != RestoreResult.Success)
-                return SetupDriverUserDataResult.Error;
+                return RestoreResult.Failure;
 
             SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
             await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
-            return SetupDriverUserDataResult.Handled;
+            return RestoreResult.Success;
         }
 
-        return SetupDriverUserDataResult.Error;
+        return fieldPresenceRequired ? RestoreResult.Failure : RestoreResult.NotApplicable;
     }
 }
 
