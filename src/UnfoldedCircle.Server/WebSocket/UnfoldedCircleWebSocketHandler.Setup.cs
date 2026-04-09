@@ -124,7 +124,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         await SendMessageAsync(socket, ResponsePayloadHelpers.CreateCommonResponsePayload(payload), wsId, cancellationToken);
         var action = payload.MsgData.InputValues![ActionKey];
         var entityId = payload.MsgData.InputValues[ChoiceKey];
-        SessionHolder.ReconfigureEntityMap[wsId] = entityId;
+        if (!action.Equals(ActionBackup, StringComparison.OrdinalIgnoreCase) && !action.Equals(ActionAdd, StringComparison.OrdinalIgnoreCase))
+            SessionHolder.ReconfigureEntityMap[wsId] = entityId;
+
         UnfoldedCircleConfiguration<TConfigurationItem> configuration;
         TConfigurationItem entity;
         switch (action)
@@ -636,7 +638,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
     }
 
-    private async ValueTask<SetupDriverUserDataResult> HandleRestoreResultAsync(System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
+    private async ValueTask<SetupDriverUserDataResult> HandleRestoreResultAsync(
+        System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
     {
         // never respond with finalized in this method. We either handle it or it is error.
         if (payload.MsgData.InputValues is not null &&
@@ -646,8 +649,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             !string.IsNullOrEmpty(restoreData))
         {
             var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
+            if (restoreResult != RestoreResult.Success)
+                return SetupDriverUserDataResult.Error;
+
             SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
-            await FinishSetupAsync(socket, wsId, restoreResult == RestoreResult.Success, payload, cancellationTokenWrapper.RequestAborted);
+            await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
             return SetupDriverUserDataResult.Handled;
         }
 
