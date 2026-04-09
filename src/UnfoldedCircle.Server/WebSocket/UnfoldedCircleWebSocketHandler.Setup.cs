@@ -27,7 +27,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = CreateRestoreSettingsPage() });
             }
             // Otherwise, go to new entity page
-            SessionHolder.NextSetupSteps[wsId] = SetupStep.NewEntity;
             return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken) });
         }
         else
