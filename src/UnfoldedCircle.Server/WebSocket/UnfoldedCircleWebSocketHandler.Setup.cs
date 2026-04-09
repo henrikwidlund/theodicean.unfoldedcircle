@@ -187,7 +187,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 return SetupDriverUserDataResult.Handled;
             case ActionRestore:
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateRestoreSettingsPage()),
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateReconfigureRestoreSettingsPage()),
                     wsId,
                     cancellationToken);
                 SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureRestoreFromBackup;
@@ -417,6 +417,21 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             ]
         };
 
+    private static SettingsPage CreateReconfigureRestoreSettingsPage() =>
+        new()
+        {
+            Title = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore Required" },
+            Settings =
+            [
+                new Setting
+                {
+                    Id = RestoreData,
+                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore Contents (required)" },
+                    Field = new SettingTypeTextArea { TextArea = new SettingTypeTextAreaInner() }
+                }
+            ]
+        };
+
     private async Task FinishSetupAsync(System.Net.WebSockets.WebSocket socket,
         string wsId,
         bool isSuccess,
@@ -629,11 +644,19 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     }
                     return;
                 case SetupStep.ReconfigureRestoreFromBackup:
-                    // method does not use Finalized
-                    if (await HandleRestoreResultAsync(socket, wsId, payload, fieldPresenceRequired: true, cancellationTokenWrapper) == RestoreResult.Success)
-                        return;
-
-                    // If restore fails or is not triggered, treat as error
+                    if (payload.MsgData.InputValues is not null &&
+                        payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) &&
+                        !string.IsNullOrEmpty(restoreData))
+                    {
+                        var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
+                        if (restoreResult == RestoreResult.Success)
+                        {
+                            SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
+                            await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
+                            return;
+                        }
+                    }
+                    // Always show error if missing/invalid
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                             new ValidationError
@@ -690,22 +713,19 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         CancellationTokenWrapper cancellationTokenWrapper)
     {
         // if we have the fields, then they must have valid data, regardless of fieldPresenceRequired
-        if (payload.MsgData.InputValues is not null &&
-            payload.MsgData.InputValues.TryGetValue(RestoreFromBackup, out var restoreFromBackupValue) &&
-            string.Equals(restoreFromBackupValue, "true", StringComparison.OrdinalIgnoreCase) &&
-            payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) &&
-            !string.IsNullOrEmpty(restoreData))
-        {
-            var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
-            if (restoreResult != RestoreResult.Success)
-                return RestoreResult.Failure;
+        if (payload.MsgData.InputValues is null || !payload.MsgData.InputValues.TryGetValue(RestoreFromBackup, out var restoreFromBackupValue))
+            return fieldPresenceRequired ? RestoreResult.Failure : RestoreResult.NotApplicable;
+        if (!string.Equals(restoreFromBackupValue, "true", StringComparison.OrdinalIgnoreCase))
+            return fieldPresenceRequired ? RestoreResult.Failure : RestoreResult.NotApplicable;
+        if (!payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) || string.IsNullOrEmpty(restoreData))
+            return RestoreResult.Failure;
 
-            SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
-            await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
-            return RestoreResult.Success;
-        }
-
-        return fieldPresenceRequired ? RestoreResult.Failure : RestoreResult.NotApplicable;
+        var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
+        if (restoreResult != RestoreResult.Success)
+            return RestoreResult.Failure;
+        SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
+        await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
+        return RestoreResult.Success;
     }
 }
 
