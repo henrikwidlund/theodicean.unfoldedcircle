@@ -102,7 +102,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected abstract ValueTask<SetupDriverUserDataResult> OnSetupDriverUserDataConfirmAsync(System.Net.WebSockets.WebSocket socket, SetDriverUserDataMsg payload, string wsId, CancellationToken cancellationToken);
 
     private const string ActionKey = "action";
-    private const string DeviceKey = "device";
+    private const string ChoiceKey = "choice";
     private const string ActionAdd = "add";
     private const string ActionConfigure = "configure";
     private const string ActionDelete = "delete";
@@ -123,7 +123,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         await SendMessageAsync(socket, ResponsePayloadHelpers.CreateCommonResponsePayload(payload), wsId, cancellationToken);
         var action = payload.MsgData.InputValues![ActionKey];
-        var entityId = payload.MsgData.InputValues[DeviceKey];
+        var entityId = payload.MsgData.InputValues[ChoiceKey];
         SessionHolder.ReconfigureEntityMap[wsId] = entityId;
         UnfoldedCircleConfiguration<TConfigurationItem> configuration;
         TConfigurationItem entity;
@@ -259,13 +259,13 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
         var settingsPage = new SettingsPage
         {
-            Title = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Choose action" },
+            Title = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Choose Action" },
             Settings =
             [
                 new Setting
                 {
-                    Id = DeviceKey,
-                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Configured devices" },
+                    Id = ChoiceKey,
+                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Configured Devices" },
                     Field = new SettingTypeDropdown
                     {
                         Dropdown = new SettingTypeDropdownInner
