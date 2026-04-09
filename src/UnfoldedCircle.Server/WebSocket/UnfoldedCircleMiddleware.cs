@@ -53,6 +53,10 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
                     var result = await _unfoldedCircleWebSocketHandler.HandleWebSocketAsync(socket, memoryStream, buffer, wsId, cancellationTokenWrapper);
                     await socket.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, context.RequestAborted);
                 }
+                catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+                {
+                    // Normal client disconnect
+                }
                 finally
                 {
                     ArrayPool<byte>.Shared.Return(buffer);

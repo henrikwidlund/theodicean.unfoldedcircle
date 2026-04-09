@@ -92,10 +92,20 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             length = 0;
             memoryStream.Position = 0;
+            const int maxSize = 1024 * 1024 * 4;
             do
             {
                 result = await socket.ReceiveAsync(buffer, cancellationTokenWrapper.RequestAborted);
                 length += result.Count;
+                if (length > maxSize)
+                {
+                    _logger.MessageTooLarge(wsId);
+                    return new WebSocketReceiveResult(0,
+                        WebSocketMessageType.Text,
+                        endOfMessage: true,
+                        closeStatus: WebSocketCloseStatus.MessageTooBig,
+                        closeStatusDescription: "Message too big");
+                }
                 if (result.Count > 0)
                     await memoryStream.WriteAsync(buffer.AsMemory(0, result.Count), cancellationTokenWrapper.RequestAborted);
             } while (result is { EndOfMessage: false, CloseStatus: null } && !cancellationTokenWrapper.RequestAborted.IsCancellationRequested);
@@ -103,7 +113,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             if (_logger.IsEnabled(LogLevel.Trace))
                 _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(memoryStream.GetBuffer(), 0, length));
 
-            if (memoryStream.Length == 0)
+            if (length == 0)
             {
                 _logger.NotJson(wsId);
                 continue;

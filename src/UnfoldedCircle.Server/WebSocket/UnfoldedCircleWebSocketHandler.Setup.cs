@@ -620,7 +620,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         // never respond with finalized in this method. We either handle it or it is error.
         if (payload.MsgData.InputValues is not null &&
             payload.MsgData.InputValues.TryGetValue(RestoreFromBackup, out var restoreFromBackupValue) &&
-            restoreFromBackupValue.Equals("true", StringComparison.OrdinalIgnoreCase) &&
+            string.Equals(restoreFromBackupValue, "true", StringComparison.OrdinalIgnoreCase) &&
             payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) &&
             !string.IsNullOrEmpty(restoreData))
         {

@@ -180,4 +180,8 @@ internal static partial class UnfoldedCircleLogger
 
     public static void SelectEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams> msgData, Exception exception) =>
         SelectEntityCommandHandlingExceptionAction(logger, wsId, msgData, exception);
+
+    [LoggerMessage(EventId = 40, EventName = nameof(MessageTooLarge), Level = LogLevel.Warning,
+        Message = "[{WSId}] WS: Received message is too large to process.")]
+    public static partial void MessageTooLarge(this ILogger logger, string wsId);
 }
