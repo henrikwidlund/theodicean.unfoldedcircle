@@ -8,6 +8,16 @@ namespace UnfoldedCircle.Server.WebSocket;
 
 public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>
 {
+    private const string RestoreFailedValidationErrorCode = "RESTORE_FAILED";
+    private const string RestoreFailedValidationErrorMessage = "Restore failed or invalid restore data. Please try again.";
+
+    private static ValidationError CreateRestoreFailedValidationError() =>
+        new()
+        {
+            Code = RestoreFailedValidationErrorCode,
+            Message = RestoreFailedValidationErrorMessage
+        };
+
     /// <summary>
     /// Called when a <c>setup_driver</c> request is received.
     /// </summary>
@@ -518,15 +528,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     return;
                 if (restoreResult != RestoreResult.NotApplicable)
                 {
-                    await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                            new ValidationError
-                            {
-                                Code = "RESTORE_FAILED",
-                                Message = "Restore failed or invalid restore data. Please try again."
-                            }),
-                        wsId,
-                        cancellationTokenWrapper.RequestAborted);
+                    await SendRestoreFailedValidationErrorAsync(socket, wsId, payload, cancellationTokenWrapper.RequestAborted);
                     return;
                 }
 
@@ -588,14 +590,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         string.Equals(restoreFromBackupValueRestoreStep, "true", StringComparison.OrdinalIgnoreCase))
                     {
                         await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                                new ValidationError
-                                {
-                                    Code = "RESTORE_FAILED",
-                                    Message = "Restore failed or invalid restore data. Please try again."
-                                }),
-                        wsId,
-                        cancellationTokenWrapper.RequestAborted);
+                            ResponsePayloadHelpers.CreateValidationErrorResponsePayload(
+                                payload,
+                                CreateRestoreFailedValidationError()),
+                            wsId,
+                            cancellationTokenWrapper.RequestAborted);
                         return;
                     }
 
@@ -723,6 +722,23 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
     }
 
+    private Task SendRestoreFailedValidationErrorAsync(
+        System.Net.WebSockets.WebSocket socket,
+        string wsId,
+        SetDriverUserDataMsg payload,
+        CancellationToken cancellationToken)
+    {
+        return SendMessageAsync(socket,
+            ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                new ValidationError
+                {
+                    Code = "RESTORE_FAILED",
+                    Message = "Restore failed or invalid restore data. Please try again."
+                }),
+            wsId,
+            cancellationToken);
+    }
+
     private async ValueTask<RestoreResult> HandleRestoreResultAsync(
         System.Net.WebSockets.WebSocket socket,
         string wsId,
@@ -730,11 +746,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         bool fieldPresenceRequired,
         CancellationTokenWrapper cancellationTokenWrapper)
     {
-        // if we have the fields, then they must have valid data, regardless of fieldPresenceRequired
         if (payload.MsgData.InputValues is null || !payload.MsgData.InputValues.TryGetValue(RestoreFromBackup, out var restoreFromBackupValue))
             return fieldPresenceRequired ? RestoreResult.Failure : RestoreResult.NotApplicable;
+
         if (!string.Equals(restoreFromBackupValue, "true", StringComparison.OrdinalIgnoreCase))
-            return fieldPresenceRequired ? RestoreResult.Failure : RestoreResult.NotApplicable;
+            return RestoreResult.NotApplicable;
+
         if (!payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) || string.IsNullOrEmpty(restoreData))
             return RestoreResult.Failure;
 
