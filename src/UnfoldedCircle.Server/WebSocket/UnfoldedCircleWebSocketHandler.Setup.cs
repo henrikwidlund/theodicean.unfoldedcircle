@@ -470,6 +470,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         CancellationToken cancellationToken)
     {
         SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
+        SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
         await Task.WhenAll(
             SendMessageAsync(socket,
                 ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
