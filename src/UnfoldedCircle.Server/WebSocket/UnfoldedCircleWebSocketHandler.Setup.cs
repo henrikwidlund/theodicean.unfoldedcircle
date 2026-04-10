@@ -17,31 +17,17 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <returns>Returns the found entity with its connection state, or null if not found.</returns>
     protected virtual async ValueTask<OnSetupResult?> OnSetupDriverAsync(SetupDriverMsg payload, string wsId, CancellationToken cancellationToken)
     {
-        if (payload.MsgData.Reconfigure is not true)
-        {
-            var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
-            if (configuration.Entities.Count == 0)
-            {
-                // Show initial restore step first if no entities
-                SessionHolder.NextSetupSteps[wsId] = SetupStep.InitialRestoreFromBackup;
-                return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = CreateRestoreSettingsPage() });
-            }
-            // Otherwise, go to new entity page
-            return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken) });
-        }
-        else
-        {
-            var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
-            if (configuration.Entities.Count == 0)
-            {
-                SessionHolder.NextSetupSteps[wsId] = SetupStep.InitialRestoreFromBackup;
-                return new OnSetupResult(SetupDriverResult.UserInputRequired,
-                    new RequireUserAction
-                    {
-                        Input = CreateRestoreSettingsPage()
-                    });
-            }
+        var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
 
+        if (configuration.Entities.Count == 0)
+        {
+            // Show initial restore step first if no entities
+            SessionHolder.NextSetupSteps[wsId] = SetupStep.InitialRestoreFromBackup;
+            return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = CreateRestoreSettingsPage() });
+        }
+
+        if (payload.MsgData.Reconfigure is true)
+        {
             SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
             return new OnSetupResult(SetupDriverResult.UserInputRequired,
                 new RequireUserAction
@@ -49,6 +35,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     Input = await CreateReconfigurePageAsync(wsId, configuration, cancellationToken)
                 });
         }
+
+        // Otherwise, go to new entity page
+        return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken) });
     }
 
     /// <summary>
@@ -152,12 +141,27 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected virtual async ValueTask<SetupDriverUserDataResult> HandleReconfigureSetup(System.Net.WebSockets.WebSocket socket, SetDriverUserDataMsg payload, string wsId, CancellationToken cancellationToken)
     {
         await SendMessageAsync(socket, ResponsePayloadHelpers.CreateCommonResponsePayload(payload), wsId, cancellationToken);
-        var action = payload.MsgData.InputValues![ActionKey];
-        var entityId = payload.MsgData.InputValues[EntityIdKey];
-        if (!action.Equals(ActionBackup, StringComparison.OrdinalIgnoreCase) &&
+
+        var inputValues = payload.MsgData.InputValues;
+        if (inputValues is null ||
+            !inputValues.TryGetValue(ActionKey, out var action) ||
+            string.IsNullOrWhiteSpace(action))
+            return SetupDriverUserDataResult.Error;
+
+        string? entityId = null;
+        var requiresEntityId =
+            !action.Equals(ActionBackup, StringComparison.OrdinalIgnoreCase) &&
             !action.Equals(ActionAdd, StringComparison.OrdinalIgnoreCase) &&
-            !action.Equals(ActionRestore, StringComparison.OrdinalIgnoreCase))
+            !action.Equals(ActionRestore, StringComparison.OrdinalIgnoreCase) &&
+            !action.Equals(ActionReset, StringComparison.OrdinalIgnoreCase);
+
+        if (requiresEntityId)
+        {
+            if (!inputValues.TryGetValue(EntityIdKey, out entityId) || string.IsNullOrWhiteSpace(entityId))
+                return SetupDriverUserDataResult.Error;
+
             SessionHolder.ReconfigureEntityMap[wsId] = entityId;
+        }
 
         UnfoldedCircleConfiguration<TConfigurationItem> configuration;
         TConfigurationItem entity;
@@ -170,6 +174,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     cancellationToken);
                 return SetupDriverUserDataResult.Handled;
             case ActionConfigure:
+                if (string.IsNullOrWhiteSpace(entityId))
+                    return SetupDriverUserDataResult.Error;
+
                 configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
                 entity = configuration.Entities.Single(x => x.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase));
                 await SendMessageAsync(socket,
@@ -179,6 +186,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 SessionHolder.NextSetupSteps[wsId] = SetupStep.SaveReconfiguredEntity;
                 return SetupDriverUserDataResult.Handled;
             case ActionDelete:
+                if (string.IsNullOrWhiteSpace(entityId))
+                    return SetupDriverUserDataResult.Error;
+
                 configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
                 entity = configuration.Entities.Single(x => x.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase));
                 configuration.Entities.Remove(entity);
