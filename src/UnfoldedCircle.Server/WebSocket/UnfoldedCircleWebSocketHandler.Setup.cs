@@ -694,15 +694,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
                     _logger.NoValidSetupStepFound(wsId, step);
 
-                    await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                            new ValidationError
-                            {
-                                Code = "INVALID_SETUP_STEP",
-                                Message = "Invalid setup step. Please start the setup process again."
-                            }),
-                        wsId,
-                        cancellationTokenWrapper.RequestAborted);
+                    await SendValidationErrorResponse(socket, wsId, payload, cancellationTokenWrapper);
                     return;
             }
         }
@@ -710,16 +702,21 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             _logger.ErrorDuringSetupProcess(wsId, e);
 
-            await SendMessageAsync(socket,
-                ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                    new ValidationError
-                    {
-                        Code = "INVALID_SETUP_STEP",
-                        Message = "Invalid setup step. Please start the setup process again."
-                    }),
-                wsId,
-                cancellationTokenWrapper.RequestAborted);
+            await SendValidationErrorResponse(socket, wsId, payload, cancellationTokenWrapper);
         }
+    }
+
+    private Task SendValidationErrorResponse(System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
+    {
+        return SendMessageAsync(socket,
+            ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                new ValidationError
+                {
+                    Code = "INVALID_SETUP_STEP",
+                    Message = "Invalid setup step. Please start the setup process again."
+                }),
+            wsId,
+            cancellationTokenWrapper.RequestAborted);
     }
 
     private Task SendRestoreFailedValidationErrorAsync(
