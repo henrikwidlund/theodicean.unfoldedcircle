@@ -1,4 +1,3 @@
-using System.Buffers;
 using System.Collections.Frozen;
 using System.Net.WebSockets;
 using System.Text;
@@ -75,6 +74,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
     internal async Task<WebSocketReceiveResult> HandleWebSocketAsync(
         System.Net.WebSockets.WebSocket socket,
+        MemoryStream memoryStream,
+        byte[] buffer,
         string wsId,
         CancellationTokenWrapper cancellationTokenWrapper)
     {
@@ -82,17 +83,42 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             ResponsePayloadHelpers.CreateAuthResponsePayload(),
             wsId,
             cancellationTokenWrapper.RequestAborted);
-        
-        var buffer = ArrayPool<byte>.Shared.Rent(1024 * 4);
+
         WebSocketReceiveResult result;
-        
+
+        // ReSharper disable once TooWideLocalVariableScope
+        int length;
         do
         {
-            result = await socket.ReceiveAsync(buffer, CancellationToken.None);
-            if (_logger.IsEnabled(LogLevel.Trace))
-                _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(buffer, 0, result.Count));
+            length = 0;
+            memoryStream.Position = 0;
+            const int maxSize = 1024 * 1024 * 4;
+            do
+            {
+                result = await socket.ReceiveAsync(buffer, cancellationTokenWrapper.RequestAborted);
+                length += result.Count;
+                if (length > maxSize)
+                {
+                    _logger.MessageTooLarge(wsId);
+                    return new WebSocketReceiveResult(0,
+                        WebSocketMessageType.Text,
+                        endOfMessage: true,
+                        closeStatus: WebSocketCloseStatus.MessageTooBig,
+                        closeStatusDescription: "Message too big");
+                }
+                if (result.Count > 0)
+                    await memoryStream.WriteAsync(buffer.AsMemory(0, result.Count), cancellationTokenWrapper.RequestAborted);
+            } while (result is { EndOfMessage: false, CloseStatus: null } && !cancellationTokenWrapper.RequestAborted.IsCancellationRequested);
 
-            if (result.Count == 0)
+            if (_logger.IsEnabled(LogLevel.Trace))
+            {
+                var logSpan = memoryStream.GetBuffer().AsSpan()[..length];
+                if (logSpan.Length > 1000)
+                    logSpan = logSpan[..1000];
+                _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(logSpan));
+            }
+
+            if (length == 0)
             {
                 _logger.NotJson(wsId);
                 continue;
@@ -100,7 +126,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
             try
             {
-                using var jsonDocument = JsonDocument.Parse(buffer.AsMemory(0, result.Count));
+                using var jsonDocument = JsonDocument.Parse(memoryStream.GetBuffer().AsMemory(0, length));
                 if (!jsonDocument.RootElement.TryGetProperty("msg", out var msg))
                 {
                     _logger.MissingMessageProperty(wsId);

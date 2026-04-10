@@ -1,3 +1,4 @@
+using System.Buffers;
 using System.Globalization;
 using System.Net.WebSockets;
 
@@ -45,8 +46,21 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
                     _options,
                     _applicationLifetime.ApplicationStopping,
                     context.RequestAborted);
-                var result = await _unfoldedCircleWebSocketHandler.HandleWebSocketAsync(socket, wsId, cancellationTokenWrapper);
-                await socket.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, context.RequestAborted);
+                using var memoryStream = new MemoryStream();
+                var buffer = ArrayPool<byte>.Shared.Rent(1024 * 4);
+                try
+                {
+                    var result = await _unfoldedCircleWebSocketHandler.HandleWebSocketAsync(socket, memoryStream, buffer, wsId, cancellationTokenWrapper);
+                    await socket.CloseAsync(result.CloseStatus ?? WebSocketCloseStatus.NormalClosure, result.CloseStatusDescription, context.RequestAborted);
+                }
+                catch (OperationCanceledException) when (context.RequestAborted.IsCancellationRequested)
+                {
+                    // Normal client disconnect
+                }
+                finally
+                {
+                    ArrayPool<byte>.Shared.Return(buffer, clearArray: true);
+                }
 
                 _logger.WebSocketConnectionClosed(wsId);
             }
