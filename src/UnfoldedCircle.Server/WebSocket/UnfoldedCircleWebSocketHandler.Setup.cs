@@ -771,7 +771,7 @@ internal enum SetupStep : sbyte
     ReconfigureEntity,
 
     /// <summary>
-    /// Next step is to save the reconfigured configured entity.
+    /// Next step is to save the reconfigured entity.
     /// </summary>
     SaveReconfiguredEntity,
 
