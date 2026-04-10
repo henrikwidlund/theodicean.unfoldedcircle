@@ -159,10 +159,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             return SetupDriverUserDataResult.Error;
 
         string? entityId = null;
-        if (!action.Equals(ActionBackup, StringComparison.OrdinalIgnoreCase) &&
-            !action.Equals(ActionAdd, StringComparison.OrdinalIgnoreCase) &&
-            !action.Equals(ActionRestore, StringComparison.OrdinalIgnoreCase) &&
-            !action.Equals(ActionReset, StringComparison.OrdinalIgnoreCase))
+        if (!action.Equals(ActionBackup, StringComparison.Ordinal) &&
+            !action.Equals(ActionAdd, StringComparison.Ordinal) &&
+            !action.Equals(ActionRestore, StringComparison.Ordinal) &&
+            !action.Equals(ActionReset, StringComparison.Ordinal))
         {
             if (!inputValues.TryGetValue(EntityIdKey, out entityId) || string.IsNullOrWhiteSpace(entityId))
                 return SetupDriverUserDataResult.Error;
