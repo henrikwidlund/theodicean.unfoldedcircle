@@ -31,9 +31,23 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
         else
         {
-            SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
             var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
-            return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateReconfigurePageAsync(wsId, configuration, cancellationToken) });
+            if (configuration.Entities.Count == 0)
+            {
+                SessionHolder.NextSetupSteps[wsId] = SetupStep.InitialRestoreFromBackup;
+                return new OnSetupResult(SetupDriverResult.UserInputRequired,
+                    new RequireUserAction
+                    {
+                        Input = CreateRestoreSettingsPage()
+                    });
+            }
+
+            SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
+            return new OnSetupResult(SetupDriverResult.UserInputRequired,
+                new RequireUserAction
+                {
+                    Input = await CreateReconfigurePageAsync(wsId, configuration, cancellationToken)
+                });
         }
     }
 
