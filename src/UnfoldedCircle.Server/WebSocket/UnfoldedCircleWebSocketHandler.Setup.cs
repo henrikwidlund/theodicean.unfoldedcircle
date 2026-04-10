@@ -677,11 +677,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     // Always show error if missing/invalid
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                            new ValidationError
-                            {
-                                Code = "RESTORE_FAILED",
-                                Message = "Restore failed or invalid restore data. Please try again."
-                            }),
+                            CreateRestoreFailedValidationError()),
                         wsId,
                         cancellationTokenWrapper.RequestAborted);
                     return;
@@ -727,11 +723,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         return SendMessageAsync(socket,
             ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                new ValidationError
-                {
-                    Code = "RESTORE_FAILED",
-                    Message = "Restore failed or invalid restore data. Please try again."
-                }),
+                CreateRestoreFailedValidationError()),
             wsId,
             cancellationToken);
     }
