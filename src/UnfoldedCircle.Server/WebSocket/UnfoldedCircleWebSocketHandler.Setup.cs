@@ -664,7 +664,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 case SetupStep.ReconfigureRestoreFromBackup:
                     if (payload.MsgData.InputValues is not null &&
                         payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) &&
-                        !string.IsNullOrEmpty(restoreData))
+                        !string.IsNullOrWhiteSpace(restoreData))
                     {
                         var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
                         if (restoreResult == RestoreResult.Success)
@@ -741,7 +741,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         if (!string.Equals(restoreFromBackupValue, "true", StringComparison.OrdinalIgnoreCase))
             return RestoreResult.NotApplicable;
 
-        if (!payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) || string.IsNullOrEmpty(restoreData))
+        if (!payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) || string.IsNullOrWhiteSpace(restoreData))
             return RestoreResult.Failure;
 
         var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
