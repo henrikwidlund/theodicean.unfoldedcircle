@@ -118,7 +118,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected abstract ValueTask<SetupDriverUserDataResult> OnSetupDriverUserDataConfirmAsync(System.Net.WebSockets.WebSocket socket, SetDriverUserDataMsg payload, string wsId, CancellationToken cancellationToken);
 
     private const string ActionKey = "action";
-    private const string ChoiceKey = "choice";
+    private const string EntityIdKey = "choice";
     private const string ActionAdd = "add";
     private const string ActionConfigure = "configure";
     private const string ActionDelete = "delete";
@@ -139,7 +139,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         await SendMessageAsync(socket, ResponsePayloadHelpers.CreateCommonResponsePayload(payload), wsId, cancellationToken);
         var action = payload.MsgData.InputValues![ActionKey];
-        var entityId = payload.MsgData.InputValues[ChoiceKey];
+        var entityId = payload.MsgData.InputValues[EntityIdKey];
         if (!action.Equals(ActionBackup, StringComparison.OrdinalIgnoreCase) &&
             !action.Equals(ActionAdd, StringComparison.OrdinalIgnoreCase) &&
             !action.Equals(ActionRestore, StringComparison.OrdinalIgnoreCase))
@@ -284,7 +284,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             [
                 new Setting
                 {
-                    Id = ChoiceKey,
+                    Id = EntityIdKey,
                     Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Configured Devices" },
                     Field = new SettingTypeDropdown
                     {
@@ -578,8 +578,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         return;
                     }
 
-                    // If not a restore, or user skipped, go to new entity page
-                    SessionHolder.NextSetupSteps[wsId] = SetupStep.NewEntity;
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationTokenWrapper.RequestAborted)),
                         wsId,
@@ -670,7 +668,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 case SetupStep.BackupEntity:
                     // If the user submits from the backup page, finalize the setup flow
                     SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
-                    SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
                     await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
                     return;
                 default:

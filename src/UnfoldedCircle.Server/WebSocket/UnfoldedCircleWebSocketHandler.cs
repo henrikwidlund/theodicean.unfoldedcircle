@@ -111,7 +111,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             } while (result is { EndOfMessage: false, CloseStatus: null } && !cancellationTokenWrapper.RequestAborted.IsCancellationRequested);
 
             if (_logger.IsEnabled(LogLevel.Trace))
-                _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(memoryStream.GetBuffer(), 0, length));
+            {
+                var logSpan = memoryStream.GetBuffer().AsSpan()[..length];
+                if (logSpan.Length > 1000)
+                    logSpan = logSpan[..1000];
+                _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(logSpan));
+            }
 
             if (length == 0)
             {
