@@ -113,12 +113,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         /// <summary>
         /// Operation failed
         /// </summary>
-        Failure,
-
-        /// <summary>
-        /// Operation not applicable.
-        /// </summary>
-        NotApplicable
+        // ReSharper disable once UnusedMember.Global
+        Failure
     }
 
     /// <summary>
@@ -676,17 +672,26 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         payload.MsgData.InputValues.TryGetValue(RestoreFromBackup, out var restoreFlag) &&
                         string.Equals(restoreFlag, "true", StringComparison.OrdinalIgnoreCase))
                     {
-                        var driverMetaData = await _configurationService.GetDriverMetadataAsync(cancellationTokenWrapper.RequestAborted);
+                        var driverMetadata = await _configurationService.GetDriverMetadataAsync(cancellationTokenWrapper.RequestAborted);
                         SessionHolder.NextSetupSteps[wsId] = SetupStep.RestoreFromBackupData;
                         await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateReconfigureRestoreSettingsPage(driverMetaData.Name)),
+                            ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateReconfigureRestoreSettingsPage(driverMetadata.Name)),
                             wsId,
                             cancellationTokenWrapper.RequestAborted);
                         return;
                     }
-                    // If restore was not chosen, return to action/choice page
-                    SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
+                    // If restore was not chosen, continue with the appropriate reconfiguration flow.
                     var currentConfig = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
+                    if (currentConfig.Entities.Count == 0)
+                    {
+                        await SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationTokenWrapper.RequestAborted)),
+                            wsId,
+                            cancellationTokenWrapper.RequestAborted);
+                        return;
+                    }
+
+                    SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(await CreateReconfigurePageAsync(wsId, currentConfig, cancellationTokenWrapper.RequestAborted)),
                         wsId,
@@ -744,15 +749,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 }),
             wsId,
             cancellationTokenWrapper.RequestAborted);
-    }
-
-    private static SettingsPage CreateReconfigureRestoreFromBackupFlagPage()
-    {
-        return new SettingsPage
-        {
-            Title = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore Configuration" },
-            Settings = [ CreateRestoreFromBackupItem() ]
-        };
     }
 }
 
