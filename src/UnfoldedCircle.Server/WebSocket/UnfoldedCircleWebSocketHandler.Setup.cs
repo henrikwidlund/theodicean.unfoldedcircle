@@ -32,28 +32,17 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         if (configuration.Entities.Count == 0)
         {
             // Show initial restore step first if no entities
-            SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureRestoreFromBackup;
+            SessionHolder.NextSetupSteps[wsId] = SetupStep.RestoreFromBackup;
             return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = CreateRestoreSettingsPage() });
         }
 
         if (payload.MsgData.Reconfigure is true)
         {
-            // If there are entities, show the reconfigure page; otherwise, show restore flag page
-            if (configuration.Entities.Count > 0)
-            {
-                SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
-                return new OnSetupResult(SetupDriverResult.UserInputRequired,
-                    new RequireUserAction
-                    {
-                        Input = await CreateReconfigurePageAsync(wsId, configuration, cancellationToken)
-                    });
-            }
-
-            SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureRestoreFromBackup;
+            SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
             return new OnSetupResult(SetupDriverResult.UserInputRequired,
                 new RequireUserAction
                 {
-                    Input = CreateReconfigureRestoreFromBackupFlagPage()
+                    Input = await CreateReconfigurePageAsync(wsId, configuration, cancellationToken)
                 });
         }
 
@@ -234,7 +223,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateReconfigureRestoreSettingsPage(driverMetadata.Name)),
                     wsId,
                     cancellationToken);
-                SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureRestoreFromBackupData;
+                SessionHolder.NextSetupSteps[wsId] = SetupStep.RestoreFromBackupData;
                 return SetupDriverUserDataResult.Handled;
             default:
                 return SetupDriverUserDataResult.Error;
@@ -468,7 +457,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 {
                     Id = "info",
                     Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Integration Upgrade" },
-                    Field =new SettingTypeLabel
+                    Field = new SettingTypeLabel
                     {
                         Label = new SettingTypeLabelItem
                         {
@@ -496,7 +485,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 {
                     Id = "info",
                     Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Restore Configuration" },
-                    Field =new SettingTypeLabel
+                    Field = new SettingTypeLabel
                     {
                         Label = new SettingTypeLabelItem
                         {
@@ -682,13 +671,13 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         await FinishSetupAsync(socket, wsId, driverUserDataResult == SetupDriverUserDataResult.Finalized, payload, cancellationTokenWrapper.RequestAborted);
                     }
                     return;
-                case SetupStep.ReconfigureRestoreFromBackup:
+                case SetupStep.RestoreFromBackup:
                     if (payload.MsgData.InputValues is not null &&
                         payload.MsgData.InputValues.TryGetValue(RestoreFromBackup, out var restoreFlag) &&
                         string.Equals(restoreFlag, "true", StringComparison.OrdinalIgnoreCase))
                     {
                         var driverMetaData = await _configurationService.GetDriverMetadataAsync(cancellationTokenWrapper.RequestAborted);
-                        SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureRestoreFromBackupData;
+                        SessionHolder.NextSetupSteps[wsId] = SetupStep.RestoreFromBackupData;
                         await SendMessageAsync(socket,
                             ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateReconfigureRestoreSettingsPage(driverMetaData.Name)),
                             wsId,
@@ -704,7 +693,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         cancellationTokenWrapper.RequestAborted);
                     return;
 
-                case SetupStep.ReconfigureRestoreFromBackupData:
+                case SetupStep.RestoreFromBackupData:
                     if (payload.MsgData.InputValues is not null &&
                         payload.MsgData.InputValues.TryGetValue(RestoreData, out var restoreData) &&
                         !string.IsNullOrWhiteSpace(restoreData))
@@ -790,12 +779,12 @@ internal enum SetupStep : sbyte
     BackupEntity,
 
     /// <summary>
-    /// Next step is to restore from backup when entities already exist (reconfigure flow).
+    /// Next step is to restore from backup in either the initial setup flow or the reconfigure flow.
     /// </summary>
-    ReconfigureRestoreFromBackup,
+    RestoreFromBackup,
 
     /// <summary>
-    /// Next step is to input restore data after choosing restore in reconfigure flow.
+    /// Next step is to input restore data after choosing restore in either the initial setup flow or the reconfigure flow.
     /// </summary>
-    ReconfigureRestoreFromBackupData
+    RestoreFromBackupData
 }
