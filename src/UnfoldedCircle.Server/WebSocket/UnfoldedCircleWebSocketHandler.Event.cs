@@ -102,6 +102,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<AbortDriverSetupEvent>(MessageEvent.AbortDriverSetup)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.AbortDriverSetupEvent)!;
                 await OnAbortDriverSetupAsync(payload, wsId, cancellationToken);
+                SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
                 if (SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out var entityId))
                 {
                     await RemoveConfigurationAsync(wsId, new RemoveInstruction(DeviceId: null, EntityIds: null, entityId), cancellationTokenWrapper.ApplicationStopping);
