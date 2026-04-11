@@ -706,7 +706,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         var restoreResult = await HandleRestoreFromBackupAsync(wsId, restoreData, cancellationTokenWrapper.RequestAborted);
                         if (restoreResult == RestoreResult.Success)
                         {
-                            SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
                             await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
                             return;
                         }
@@ -720,7 +719,6 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     return;
                 case SetupStep.BackupEntity:
                     // If the user submits from the backup page, finalize the setup flow
-                    SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
                     await FinishSetupAsync(socket, wsId, isSuccess: true, payload, cancellationTokenWrapper.RequestAborted);
                     return;
                 default:
