@@ -773,12 +773,12 @@ internal enum SetupStep : sbyte
     BackupEntity,
 
     /// <summary>
-    /// Next step is to restore from backup in either the initial setup flow or the reconfigure flow.
+    /// Next step is to restore from backup in the initial setup flow.
     /// </summary>
     RestoreFromBackup,
 
     /// <summary>
-    /// Next step is to input restore data after choosing restore in either the initial setup flow or the reconfigure flow.
+    /// Next step is to input restore data after choosing restore in the initial setup flow, or directly in the reconfigure flow.
     /// </summary>
     RestoreFromBackupData
 }
