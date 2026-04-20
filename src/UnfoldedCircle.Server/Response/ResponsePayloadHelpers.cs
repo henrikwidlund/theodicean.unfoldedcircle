@@ -73,7 +73,7 @@ public static class ResponsePayloadHelpers
     /// </summary>
     /// <param name="deviceState">The device state.</param>
     /// <param name="deviceId">The device_id the state is for (optional).</param>
-    public static byte[] CreateDeviceStateResponsePayload(
+    public static byte[] CreateDeviceStatePayload(
         in DeviceState deviceState,
         string? deviceId) =>
         JsonSerializer.SerializeToUtf8Bytes(new DeviceStateEventMsg
@@ -143,7 +143,7 @@ public static class ResponsePayloadHelpers
     /// Creates an event payload used when setting up the driver.
     /// </summary>
     /// <param name="userAction">Instruction for the next setup step.</param>
-    public static byte[] CreateDeviceSetupChangeResponsePayload(
+    public static byte[] CreateDeviceSetupChangePayload(
         RequireUserAction userAction) =>
         JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
         {
@@ -163,7 +163,7 @@ public static class ResponsePayloadHelpers
     /// Creates an event payload used when setting up the driver.
     /// </summary>
     /// <param name="isSuccess">Whether the setup process succeeded or not.</param>
-    public static byte[] CreateDeviceSetupChangeResponsePayload(
+    public static byte[] CreateDeviceSetupChangePayload(
         in bool isSuccess) =>
         JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
         {
@@ -200,10 +200,10 @@ public static class ResponsePayloadHelpers
     /// Creates an event payload used when setting up the driver, requesting user input via a settings page.
     /// </summary>
     /// <param name="settingsPage">The <see cref="SettingsPage"/> that will be rendered on the remote.</param>
-    public static byte[] CreateDeviceSetupChangeUserInputResponsePayload(SettingsPage settingsPage) =>
+    public static byte[] CreateDeviceSetupChangeUserInputPayload(SettingsPage settingsPage) =>
         JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
         {
-            Kind = "event",
+            Kind = EventKind,
             Msg = DriverSetupChange,
             Cat = Device,
             TimeStamp = DateTime.UtcNow,
@@ -259,7 +259,7 @@ public static class ResponsePayloadHelpers
         TMediaPlayerStateChangedEventMessageDataAttributes attributesBase,
         string entityId) where TMediaPlayerStateChangedEventMessageDataAttributes : MediaPlayerStateChangedEventMessageDataAttributesBase
     {
-        return CreateEntityStateChangedResponsePayload(attributesBase, entityId, EntityType.MediaPlayer,
+        return CreateEntityStateChangedPayload(attributesBase, entityId, EntityType.MediaPlayer,
             typeof(TMediaPlayerStateChangedEventMessageDataAttributes) switch
             {
                 var t when t == typeof(MediaPlayerStateChangedEventMessageDataAttributes) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventMediaPlayerStateChangedEventMessageDataAttributes,
@@ -276,7 +276,7 @@ public static class ResponsePayloadHelpers
     public static byte[] CreateRemoteStateChangedResponsePayload(
         RemoteStateChangedEventMessageDataAttributes attributes,
         string entityId) =>
-        CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Remote,
+        CreateEntityStateChangedPayload(attributes, entityId, EntityType.Remote,
             UnfoldedCircleJsonSerializerContext.Default.StateChangedEventRemoteStateChangedEventMessageDataAttributes,
             null);
 
@@ -288,12 +288,12 @@ public static class ResponsePayloadHelpers
     /// <param name="suffix">
     /// Optional suffix to add to the identifier.
     /// </param>
-    public static byte[] CreateSensorStateChangedResponsePayload<TValue>(
+    public static byte[] CreateSensorStateChangedPayload<TValue>(
         SensorStateChangedEventMessageDataAttributes<TValue> attributes,
         string entityId,
         string? suffix)
     {
-        return CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Sensor,
+        return CreateEntityStateChangedPayload(attributes, entityId, EntityType.Sensor,
             typeof(TValue) switch
             {
                 var t when t == typeof(sbyte) => UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSensorStateChangedEventMessageDataAttributesSByte,
@@ -318,10 +318,10 @@ public static class ResponsePayloadHelpers
     /// </summary>
     /// <param name="attributes">The attributes for the entity.</param>
     /// <param name="entityId">The entity_id.</param>
-    public static byte[] CreateClimateStateChangedResponsePayload(
+    public static byte[] CreateClimateStateChangedPayload(
         ClimateStateChangedEventMessageDataAttributes attributes,
         string entityId) =>
-        CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Climate,
+        CreateEntityStateChangedPayload(attributes, entityId, EntityType.Climate,
             UnfoldedCircleJsonSerializerContext.Default.StateChangedEventClimateStateChangedEventMessageDataAttributes,
             null);
 
@@ -333,15 +333,15 @@ public static class ResponsePayloadHelpers
     /// <param name="suffix">
     /// Optional suffix to add to the identifier.
     /// </param>
-    public static byte[] CreateSelectStateChangedResponsePayload(
+    public static byte[] CreateSelectStateChangedPayload(
         SelectStateChangedEventMessageDataAttributes attributes,
         string entityId,
         string? suffix) =>
-        CreateEntityStateChangedResponsePayload(attributes, entityId, EntityType.Select,
+        CreateEntityStateChangedPayload(attributes, entityId, EntityType.Select,
             UnfoldedCircleJsonSerializerContext.Default.StateChangedEventSelectStateChangedEventMessageDataAttributes,
             suffix);
 
-    private static byte[] CreateEntityStateChangedResponsePayload<TAttributes>(
+    private static byte[] CreateEntityStateChangedPayload<TAttributes>(
         TAttributes attributes,
         string entityId,
         in EntityType entityType,
