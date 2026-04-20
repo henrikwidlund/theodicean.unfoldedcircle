@@ -172,7 +172,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             case ActionAdd:
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken)),
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputPayload(await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken)),
                     wsId,
                     cancellationToken);
                 return SetupDriverUserDataResult.Handled;
@@ -183,7 +183,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
                 entity = configuration.Entities.Single(x => x.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase));
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(await CreateReconfigureEntitySettingsPageAsync(entity, cancellationToken)),
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputPayload(await CreateReconfigureEntitySettingsPageAsync(entity, cancellationToken)),
                     wsId,
                     cancellationToken);
                 SessionHolder.NextSetupSteps[wsId] = SetupStep.SaveReconfiguredEntity;
@@ -208,7 +208,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var driverMetadata = await _configurationService.GetDriverMetadataAsync(cancellationToken);
                 var jsonBackupData = await GetJsonBackupDataAsync(cancellationToken);
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateBackupSettingsPage(driverMetadata.Name, jsonBackupData)),
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputPayload(CreateBackupSettingsPage(driverMetadata.Name, jsonBackupData)),
                     wsId,
                     cancellationToken);
                 SessionHolder.NextSetupSteps[wsId] = SetupStep.BackupEntity;
@@ -216,7 +216,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             case ActionRestore:
                 driverMetadata = await _configurationService.GetDriverMetadataAsync(cancellationToken);
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateReconfigureRestoreSettingsPage(driverMetadata.Name)),
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputPayload(CreateReconfigureRestoreSettingsPage(driverMetadata.Name)),
                     wsId,
                     cancellationToken);
                 SessionHolder.NextSetupSteps[wsId] = SetupStep.RestoreFromBackupData;
@@ -233,7 +233,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             if (x.EntityType == EntityType.Sensor && SessionHolder.SensorTypesMap.TryGetValue(x.EntityId, out var sensorSuffixes))
             {
                 return Task.WhenAll(sensorSuffixes.Select(suffix => SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateSensorStateChangedResponsePayload(
+                    ResponsePayloadHelpers.CreateSensorStateChangedPayload(
                         new SensorStateChangedEventMessageDataAttributes<string> { State = SensorState.Unavailable, Value = null }, x.EntityId,
                         suffix), wsId, cancellationToken)));
             }
@@ -241,7 +241,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             if (x.EntityType == EntityType.Select && SessionHolder.SelectTypesMap.TryGetValue(x.EntityId, out var selectSuffixes))
             {
                 return Task.WhenAll(selectSuffixes.Select(suffix => SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateSelectStateChangedResponsePayload(
+                    ResponsePayloadHelpers.CreateSelectStateChangedPayload(
                         new SelectStateChangedEventMessageDataAttributes { State = SelectState.Unavailable }, x.EntityId,
                         suffix), wsId, cancellationToken)));
             }
@@ -255,7 +255,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     ResponsePayloadHelpers.CreateRemoteStateChangedResponsePayload(new RemoteStateChangedEventMessageDataAttributes { State = RemoteState.Unavailable }, x.EntityId),
                     wsId, cancellationToken),
                 EntityType.Climate => SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateClimateStateChangedResponsePayload(new ClimateStateChangedEventMessageDataAttributes { State = ClimateState.Unavailable }, x.EntityId),
+                    ResponsePayloadHelpers.CreateClimateStateChangedPayload(new ClimateStateChangedEventMessageDataAttributes { State = ClimateState.Unavailable }, x.EntityId),
                     wsId, cancellationToken),
                 _ => Task.CompletedTask
             };
@@ -517,7 +517,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             cancellationToken);
 
         await SendMessageAsync(socket,
-            ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(false),
+            ResponsePayloadHelpers.CreateDeviceSetupChangePayload(false),
             wsId,
             cancellationToken);
     }
@@ -536,7 +536,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             cancellationToken);
 
         await SendMessageAsync(socket,
-            ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(isSuccess),
+            ResponsePayloadHelpers.CreateDeviceSetupChangePayload(isSuccess),
             wsId,
             cancellationToken);
     }
@@ -685,7 +685,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         var driverMetadata = await _configurationService.GetDriverMetadataAsync(cancellationTokenWrapper.RequestAborted);
                         SessionHolder.NextSetupSteps[wsId] = SetupStep.RestoreFromBackupData;
                         await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(CreateReconfigureRestoreSettingsPage(driverMetadata.Name)),
+                            ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputPayload(CreateReconfigureRestoreSettingsPage(driverMetadata.Name)),
                             wsId,
                             cancellationTokenWrapper.RequestAborted);
                         return;
@@ -695,7 +695,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     if (currentConfig.Entities.Count == 0)
                     {
                         await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationTokenWrapper.RequestAborted)),
+                            ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputPayload(await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationTokenWrapper.RequestAborted)),
                             wsId,
                             cancellationTokenWrapper.RequestAborted);
                         return;
@@ -703,7 +703,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
                     SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
                     await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputResponsePayload(await CreateReconfigurePageAsync(wsId, currentConfig, cancellationTokenWrapper.RequestAborted)),
+                        ResponsePayloadHelpers.CreateDeviceSetupChangeUserInputPayload(await CreateReconfigurePageAsync(wsId, currentConfig, cancellationTokenWrapper.RequestAborted)),
                         wsId,
                         cancellationTokenWrapper.RequestAborted);
                     return;

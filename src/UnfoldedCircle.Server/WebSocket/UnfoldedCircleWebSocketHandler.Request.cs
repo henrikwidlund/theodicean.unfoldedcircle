@@ -138,7 +138,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<GetDeviceStateMsg>(MessageEvent.GetDeviceState)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.GetDeviceStateMsg)!;
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceStateResponsePayload(
+                    ResponsePayloadHelpers.CreateDeviceStatePayload(
                         await OnGetDeviceStateAsync(payload, wsId, cancellationToken),
                         payload.MsgData.DeviceId
                     ),
@@ -215,39 +215,41 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SetupDriverMsg>(MessageEvent.SetupDriver)
                                                        ?? UnfoldedCircleJsonSerializerContext.Default.SetupDriverMsg)!;
-                var setupResult = await OnSetupDriverAsync(payload, wsId, cancellationTokenWrapper.ApplicationStopping);
+                var setupResult = await OnSetupDriverAsync(payload, wsId, cancellationToken);
                 if (setupResult is null)
                 {
                     _logger.DriverSetupFailed(wsId, payload.MsgData);
 
-                    await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                            new ValidationError
-                            {
-                                Code = "ENTITY_NOT_FOUND",
-                                Message = "Entity not found."
-                            }),
-                        wsId,
-                        cancellationToken);
+                    await FinishSetupAsync(socket, wsId, payload, new ValidationError
+                    {
+                        Code = "ENTITY_NOT_FOUND",
+                        Message = "Entity not found."
+                    }, cancellationToken);
                     return;
                 }
 
                 if (setupResult.SetupDriverResult == SetupDriverResult.UserInputRequired)
                 {
                     if (setupResult.NextSetupStep is null)
-                        _logger.UserInputNoNextStep(wsId, payload.MsgData);
-                    else
                     {
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                            wsId,
-                            cancellationToken);
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.NextSetupStep),
-                            wsId,
-                            cancellationToken);
+                        _logger.UserInputNoNextStep(wsId, payload.MsgData);
+                        await FinishSetupAsync(socket, wsId, payload, new ValidationError
+                        {
+                            Code = "INVALID_SETUP_STATE",
+                            Message = "User input required but no next setup step provided."
+                        }, cancellationToken);
                         return;
                     }
+
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                        wsId,
+                        cancellationToken);
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.NextSetupStep),
+                        wsId,
+                        cancellationToken);
+                    return;
                 }
 
                 await SendMessageAsync(socket,
@@ -255,10 +257,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     wsId,
                     cancellationToken);
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized),
+                    ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized),
                     wsId,
                     cancellationToken);
-                if (setupResult.SetupDriverResult != SetupDriverResult.Error)
+                if (setupResult.SetupDriverResult == SetupDriverResult.Finalized)
                 {
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
