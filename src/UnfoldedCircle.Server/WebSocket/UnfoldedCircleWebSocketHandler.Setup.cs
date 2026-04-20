@@ -509,16 +509,14 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
         SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
-        await Task.WhenAll(
-            SendMessageAsync(socket,
-                ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                wsId,
-                cancellationToken),
-            SendMessageAsync(socket,
-                ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(isSuccess),
-                wsId,
-                cancellationToken)
-        );
+        await SendMessageAsync(socket,
+            ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+            wsId,
+            cancellationToken);
+        await SendMessageAsync(socket,
+            ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(isSuccess),
+            wsId,
+            cancellationToken);
     }
 
     /// <summary>
@@ -572,6 +570,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         }),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
+                await FinishSetupAsync(socket, wsId, isSuccess: false, payload, cancellationTokenWrapper.RequestAborted);
                 return;
             }
 
@@ -588,6 +587,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         }),
                     wsId,
                     cancellationTokenWrapper.RequestAborted);
+                await FinishSetupAsync(socket, wsId, isSuccess: false, payload, cancellationTokenWrapper.RequestAborted);
                 return;
             }
 
@@ -640,6 +640,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                 }),
                             wsId,
                             cancellationTokenWrapper.RequestAborted);
+                        await FinishSetupAsync(socket, wsId, false, payload, cancellationTokenWrapper.RequestAborted);
+
                         return;
                     }
                     var configuration = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
@@ -657,8 +659,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                                 }),
                             wsId,
                             cancellationTokenWrapper.RequestAborted);
+                        await FinishSetupAsync(socket, wsId, false, payload, cancellationTokenWrapper.RequestAborted);
                         return;
                     }
+
                     var driverUserDataResult = await HandleEntityReconfigured(socket, payload, wsId, configurationItem, cancellationTokenWrapper.RequestAborted);
                     if (driverUserDataResult != SetupDriverUserDataResult.Handled)
                     {
@@ -716,6 +720,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                             CreateRestoreFailedValidationError()),
                         wsId,
                         cancellationTokenWrapper.RequestAborted);
+
+                    await FinishSetupAsync(socket, wsId, isSuccess: false, payload, cancellationTokenWrapper.RequestAborted);
                     return;
                 case SetupStep.BackupEntity:
                     // If the user submits from the backup page, finalize the setup flow
@@ -736,9 +742,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
     }
 
-    private Task SendValidationErrorResponse(System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
+    private async Task SendValidationErrorResponse(System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
     {
-        return SendMessageAsync(socket,
+        await SendMessageAsync(socket,
             ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
                 new ValidationError
                 {
@@ -747,6 +753,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 }),
             wsId,
             cancellationTokenWrapper.RequestAborted);
+        await FinishSetupAsync(socket, wsId, isSuccess: false, payload, cancellationTokenWrapper.RequestAborted);
     }
 }
 

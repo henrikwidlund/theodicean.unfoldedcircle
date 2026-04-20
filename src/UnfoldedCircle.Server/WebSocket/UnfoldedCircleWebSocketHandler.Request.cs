@@ -238,36 +238,35 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         _logger.UserInputNoNextStep(wsId, payload.MsgData);
                     else
                     {
-                        await Task.WhenAll(SendMessageAsync(socket,
-                                ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                                wsId,
-                                cancellationToken),
-                            SendMessageAsync(socket,
-                                ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.NextSetupStep),
-                                wsId,
-                                cancellationToken));
+                        await SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                            wsId,
+                            cancellationToken);
+                        await SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.NextSetupStep),
+                            wsId,
+                            cancellationToken);
                         return;
                     }
                 }
 
-                await Task.WhenAll(
-                    SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                        wsId,
-                        cancellationToken),
-                    SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized),
-                        wsId,
-                        cancellationToken),
-                    setupResult.SetupDriverResult == SetupDriverResult.Error
-                        ? Task.CompletedTask
-                        : SendMessageAsync(socket,
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                    wsId,
+                    cancellationToken);
+                await SendMessageAsync(socket,
+                    ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized),
+                    wsId,
+                    cancellationToken);
+                    if (setupResult.SetupDriverResult != SetupDriverResult.Error)
+                    {
+                        await SendMessageAsync(socket,
                             ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
                             wsId,
-                            cancellationToken)
-                );
-                
-                return;
+                            cancellationToken);
+                    }
+
+                    return;
             }
             case MessageEvent.SetupDriverUserData:
             {
