@@ -720,14 +720,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                             return;
                         }
                     }
-                    // Always show error if missing/invalid restore data
-                    await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                            CreateRestoreFailedValidationError()),
-                        wsId,
-                        cancellationTokenWrapper.RequestAborted);
 
-                    await FinishSetupAsync(socket, wsId, isSuccess: false, payload, cancellationTokenWrapper.RequestAborted);
+                    await FinishSetupAsync(socket, wsId, payload, CreateRestoreFailedValidationError(), cancellationTokenWrapper.RequestAborted);
                     return;
                 case SetupStep.BackupEntity:
                     // If the user submits from the backup page, finalize the setup flow
