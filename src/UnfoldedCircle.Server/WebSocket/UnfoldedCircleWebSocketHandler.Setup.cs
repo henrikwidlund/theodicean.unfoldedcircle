@@ -509,10 +509,14 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
         SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
-        await SendMessageAsync(socket,
-            ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-            wsId,
-            cancellationToken);
+        if (isSuccess)
+        {
+            await SendMessageAsync(socket,
+                ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                wsId,
+                cancellationToken);
+        }
+
         await SendMessageAsync(socket,
             ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(isSuccess),
             wsId,
