@@ -503,19 +503,37 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
     private async Task FinishSetupAsync(System.Net.WebSockets.WebSocket socket,
         string wsId,
+        CommonReq payload,
+        ValidationError validationError,
+        CancellationToken cancellationToken)
+    {
+        SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
+        SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
+
+        await SendMessageAsync(socket,
+            ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
+                validationError),
+            wsId,
+            cancellationToken);
+
+        await SendMessageAsync(socket,
+            ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(false),
+            wsId,
+            cancellationToken);
+    }
+
+    private async Task FinishSetupAsync(System.Net.WebSockets.WebSocket socket,
+        string wsId,
         bool isSuccess,
         CommonReq payload,
         CancellationToken cancellationToken)
     {
         SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
         SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
-        if (isSuccess)
-        {
-            await SendMessageAsync(socket,
-                ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                wsId,
-                cancellationToken);
-        }
+        await SendMessageAsync(socket,
+            ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+            wsId,
+            cancellationToken);
 
         await SendMessageAsync(socket,
             ResponsePayloadHelpers.CreateDeviceSetupChangeResponsePayload(isSuccess),
@@ -565,16 +583,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 _logger.NoSetupStepFound(wsId);
 
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                        new ValidationError
-                        {
-                            Code = "SETUP_STEP_NOT_FOUND",
-                            Message = "Could not find setup step. Please start the setup process again."
-                        }),
-                    wsId,
-                    cancellationTokenWrapper.RequestAborted);
-                await FinishSetupAsync(socket, wsId, isSuccess: false, payload, cancellationTokenWrapper.RequestAborted);
+                await FinishSetupAsync(socket, wsId, payload, new ValidationError
+                {
+                    Code = "SETUP_STEP_NOT_FOUND",
+                    Message = "Could not find setup step. Please start the setup process again."
+                }, cancellationTokenWrapper.RequestAborted);
+
                 return;
             }
 
@@ -582,16 +596,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             {
                 _logger.NoConfirmOrInputValuesFound(wsId);
 
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                        new ValidationError
-                        {
-                            Code = "INVALID_ARGUMENT",
-                            Message = "confirm or input_values is required for this step."
-                        }),
-                    wsId,
-                    cancellationTokenWrapper.RequestAborted);
-                await FinishSetupAsync(socket, wsId, isSuccess: false, payload, cancellationTokenWrapper.RequestAborted);
+                await FinishSetupAsync(socket, wsId, payload,
+                    new ValidationError
+                    {
+                        Code = "INVALID_ARGUMENT",
+                        Message = "confirm or input_values is required for this step."
+                    }, cancellationTokenWrapper.RequestAborted);
                 return;
             }
 
@@ -635,16 +645,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     {
                         _logger.NoEntityIdFoundSaveReconfigure(wsId);
 
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                                new ValidationError
-                                {
-                                    Code = "ENTITY_NOT_FOUND",
-                                    Message = "Could not find entity to reconfigure. Please start the setup process again."
-                                }),
-                            wsId,
-                            cancellationTokenWrapper.RequestAborted);
-                        await FinishSetupAsync(socket, wsId, false, payload, cancellationTokenWrapper.RequestAborted);
+                        await FinishSetupAsync(socket, wsId, payload,
+                            new ValidationError
+                            {
+                                Code = "ENTITY_NOT_FOUND",
+                                Message = "Could not find entity to reconfigure. Please start the setup process again."
+                            }, cancellationTokenWrapper.RequestAborted);
 
                         return;
                     }
@@ -654,16 +660,12 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     {
                         _logger.EntityWithIdNotFound(wsId, entityId);
 
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                                new ValidationError
-                                {
-                                    Code = "SETUP_STEP_NOT_FOUND",
-                                    Message = "Could not find setup step. Please start the setup process again."
-                                }),
-                            wsId,
-                            cancellationTokenWrapper.RequestAborted);
-                        await FinishSetupAsync(socket, wsId, false, payload, cancellationTokenWrapper.RequestAborted);
+                        await FinishSetupAsync(socket, wsId, payload,
+                            new ValidationError
+                            {
+                                Code = "SETUP_STEP_NOT_FOUND",
+                                Message = "Could not find setup step. Please start the setup process again."
+                            }, cancellationTokenWrapper.RequestAborted);
                         return;
                     }
 
@@ -748,16 +750,11 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
     private async Task SendValidationErrorResponse(System.Net.WebSockets.WebSocket socket, string wsId, SetDriverUserDataMsg payload, CancellationTokenWrapper cancellationTokenWrapper)
     {
-        await SendMessageAsync(socket,
-            ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload,
-                new ValidationError
-                {
-                    Code = "INVALID_SETUP_STEP",
-                    Message = "Invalid setup step. Please start the setup process again."
-                }),
-            wsId,
-            cancellationTokenWrapper.RequestAborted);
-        await FinishSetupAsync(socket, wsId, isSuccess: false, payload, cancellationTokenWrapper.RequestAborted);
+        await FinishSetupAsync(socket, wsId, payload, new ValidationError
+        {
+            Code = "INVALID_SETUP_STEP",
+            Message = "Invalid setup step. Please start the setup process again."
+        }, cancellationTokenWrapper.RequestAborted);
     }
 }
 
