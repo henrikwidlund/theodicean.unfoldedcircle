@@ -149,7 +149,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 var configuration = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
                 var isSetupMessage = messageEvent is MessageEvent.SetupDriver or MessageEvent.SetupDriverUserData;
                 var maxMessageHandlingWaitTimeInSeconds = configuration.MaxMessageHandlingWaitTimeInSeconds ?? _options.Value.MaxMessageHandlingWaitTimeInSeconds;
-                using var cancellationTokenSource = new CancellationTokenSource(isSetupMessage ? TimeSpan.MaxValue : TimeSpan.FromSeconds(maxMessageHandlingWaitTimeInSeconds));
+                using var cancellationTokenSource = new CancellationTokenSource(isSetupMessage ? Timeout.InfiniteTimeSpan : TimeSpan.FromSeconds(maxMessageHandlingWaitTimeInSeconds));
                 using var linkedCancellationToken = CancellationTokenSource.CreateLinkedTokenSource(
                     cancellationTokenWrapper.ApplicationStopping,
                     cancellationTokenWrapper.RequestAborted,
