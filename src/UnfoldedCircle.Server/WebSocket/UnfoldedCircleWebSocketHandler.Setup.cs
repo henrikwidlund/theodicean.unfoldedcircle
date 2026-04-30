@@ -681,6 +681,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     }
                     return;
                 case SetupStep.RestoreFromBackup:
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                        wsId,
+                        cancellationTokenWrapper.RequestAborted);
                     if (payload.MsgData.InputValues is not null &&
                         payload.MsgData.InputValues.TryGetValue(RestoreFromBackup, out var restoreFlag) &&
                         string.Equals(restoreFlag, "true", StringComparison.OrdinalIgnoreCase))
