@@ -61,7 +61,15 @@ public class UnfoldedCircleOptions
     /// <summary>
     /// The maximum wait time for a received message to be handled before being canceled.
     /// </summary>
-    /// <remarks>Default is 9.5 seconds.</remarks>
+    /// <remarks>
+    /// Default is 9.5 seconds. The remote terminates the request if no response is received within 10 seconds,
+    /// so this value is set just below that threshold to ensure the handler is canceled and an error response
+    /// can still be sent before the remote times out. Setup messages (<c>setup_driver</c> and
+    /// <c>set_driver_user_data</c>) bypass this limit entirely because the remote uses a separate setup-flow
+    /// timer for those. For handlers that may genuinely exceed this duration (e.g. long IR repeat sequences),
+    /// the recommended pattern is to acknowledge the request early before performing the slow work, as done
+    /// in the entity command repeat/sequence paths.
+    /// </remarks>
     // ReSharper disable once PropertyCanBeMadeInitOnly.Global
     public double MaxMessageHandlingWaitTimeInSeconds { get; set; } = 9.5;
 

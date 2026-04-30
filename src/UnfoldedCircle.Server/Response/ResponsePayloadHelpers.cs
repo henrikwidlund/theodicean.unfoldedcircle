@@ -163,8 +163,10 @@ public static class ResponsePayloadHelpers
     /// Creates an event payload used when setting up the driver.
     /// </summary>
     /// <param name="isSuccess">Whether the setup process succeeded or not.</param>
+    /// <param name="error">Failure reason. Ignored when <paramref name="isSuccess"/> is <see langword="true"/>.</param>
     public static byte[] CreateDeviceSetupChangePayload(
-        in bool isSuccess) =>
+        in bool isSuccess,
+        in DriverSetupChangeError error = DriverSetupChangeError.Other) =>
         JsonSerializer.SerializeToUtf8Bytes(new DriverSetupChangeEvent
         {
             Kind = EventKind,
@@ -175,7 +177,7 @@ public static class ResponsePayloadHelpers
             {
                 State = isSuccess ? DriverSetupChangeState.Ok : DriverSetupChangeState.Error,
                 EventType = DriverSetupChangeEventType.Stop,
-                Error = isSuccess ? null : DriverSetupChangeError.NotFound
+                Error = isSuccess ? null : error
             }
         }, UnfoldedCircleJsonSerializerContext.Default.DriverSetupChangeEvent);
 

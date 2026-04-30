@@ -147,6 +147,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     return;
                 }
             default:
+                _logger.UnhandledMessageEvent(wsId, messageEvent);
                 return;
         }
     }

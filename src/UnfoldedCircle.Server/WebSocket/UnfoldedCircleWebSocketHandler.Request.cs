@@ -1,3 +1,4 @@
+using UnfoldedCircle.Models.Events;
 using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Models.Sync;
 using UnfoldedCircle.Server.Event;
@@ -224,7 +225,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     {
                         Code = "ENTITY_NOT_FOUND",
                         Message = "Entity not found."
-                    }, cancellationToken);
+                    }, cancellationToken, DriverSetupChangeError.NotFound);
                     return;
                 }
 
@@ -246,6 +247,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         wsId,
                         cancellationToken);
                     await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateDeviceSetupChangeResponseSetupPayload(),
+                        wsId,
+                        cancellationToken);
+                    await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.NextSetupStep),
                         wsId,
                         cancellationToken);
@@ -257,7 +262,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     wsId,
                     cancellationToken);
                 await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized),
+                    ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized, setupResult.Error),
                     wsId,
                     cancellationToken);
                 if (setupResult.SetupDriverResult == SetupDriverResult.Finalized)
@@ -308,6 +313,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 return;
             }
             default:
+                _logger.UnhandledMessageEvent(wsId, messageEvent);
                 return;
         }
     }

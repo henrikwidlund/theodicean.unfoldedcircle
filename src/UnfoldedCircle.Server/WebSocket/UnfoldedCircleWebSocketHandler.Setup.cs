@@ -55,8 +55,9 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// </summary>
     /// <param name="SetupDriverResult">Result of the current setup step.</param>
     /// <param name="NextSetupStep">Information about the next setup step. Must be sent if <paramref name="SetupDriverResult"/> is set to <see cref="SetupDriverResult.UserInputRequired"/>.</param>
+    /// <param name="Error">Failure reason. Used when <paramref name="SetupDriverResult"/> is <see cref="SetupDriverResult.Error"/>.</param>
     // ReSharper disable once ClassNeverInstantiated.Global
-    protected sealed record OnSetupResult(in SetupDriverResult SetupDriverResult, RequireUserAction? NextSetupStep = null);
+    protected sealed record OnSetupResult(in SetupDriverResult SetupDriverResult, RequireUserAction? NextSetupStep = null, DriverSetupChangeError Error = DriverSetupChangeError.Other);
 
     /// <summary>
     /// Setup driver result.
@@ -505,7 +506,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         string wsId,
         CommonReq payload,
         ValidationError validationError,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        DriverSetupChangeError error = DriverSetupChangeError.Other)
     {
         SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
         SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
@@ -517,7 +519,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             cancellationToken);
 
         await SendMessageAsync(socket,
-            ResponsePayloadHelpers.CreateDeviceSetupChangePayload(false),
+            ResponsePayloadHelpers.CreateDeviceSetupChangePayload(false, error),
             wsId,
             cancellationToken);
     }
@@ -526,7 +528,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         string wsId,
         bool isSuccess,
         CommonReq payload,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        DriverSetupChangeError error = DriverSetupChangeError.Other)
     {
         SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
         SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
@@ -536,7 +539,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             cancellationToken);
 
         await SendMessageAsync(socket,
-            ResponsePayloadHelpers.CreateDeviceSetupChangePayload(isSuccess),
+            ResponsePayloadHelpers.CreateDeviceSetupChangePayload(isSuccess, error),
             wsId,
             cancellationToken);
     }

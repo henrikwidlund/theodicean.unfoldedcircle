@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using UnfoldedCircle.Models.Shared;
 using UnfoldedCircle.Models.Sync;
 using UnfoldedCircle.Server.Configuration;
+using UnfoldedCircle.Server.Event;
 using UnfoldedCircle.Server.WebSocket;
 
 namespace UnfoldedCircle.Server.Logging;
@@ -184,4 +185,8 @@ internal static partial class UnfoldedCircleLogger
     [LoggerMessage(EventId = 40, EventName = nameof(MessageTooLarge), Level = LogLevel.Warning,
         Message = "[{WSId}] WS: Received message is too large to process.")]
     public static partial void MessageTooLarge(this ILogger logger, string wsId);
+
+    [LoggerMessage(EventId = 41, EventName = nameof(UnhandledMessageEvent), Level = LogLevel.Warning,
+        Message = "[{WSId}] WS: Unhandled message event '{MessageEvent}'.")]
+    public static partial void UnhandledMessageEvent(this ILogger logger, string wsId, MessageEvent messageEvent);
 }
