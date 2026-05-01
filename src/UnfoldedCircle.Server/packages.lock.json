@@ -1,0 +1,36 @@
+{
+  "version": 1,
+  "dependencies": {
+    "net10.0": {
+      "Meziantou.Analyzer": {
+        "type": "Direct",
+        "requested": "[3.0.58, )",
+        "resolved": "3.0.58",
+        "contentHash": "EWprZh8ONB5W4T5lajB9H3/ThznWgEVbb8sWkIZe2ZOCRPPzAdLxkFfM8z57SosJtUYGxPXvxlqGmClxw8mA9g=="
+      },
+      "Microsoft.NET.ILLink.Tasks": {
+        "type": "Direct",
+        "requested": "[10.0.7, )",
+        "resolved": "10.0.7",
+        "contentHash": "AA/yhzFHNtQZXLdqjzujPy25G8EWwGWsAnxOE2zYSBoT/8QHP6ketN3CToD3DFreO653ipUwnKHo22B8AlBMCw=="
+      },
+      "Theodicean.Makaretu.Dns.Multicast": {
+        "type": "Direct",
+        "requested": "[0.0.7, )",
+        "resolved": "0.0.7",
+        "contentHash": "susuSW5fJOA/SRMD9o0+pO+ESzU8fR/nkAPr8fbK/hPobD4Lbh+ORDQz+EuL/HQcVaMzXlx9W5PBcsVQjU+HFQ==",
+        "dependencies": {
+          "Theodicean.Makaretu.Dns": "0.0.7"
+        }
+      },
+      "Theodicean.Makaretu.Dns": {
+        "type": "Transitive",
+        "resolved": "0.0.7",
+        "contentHash": "IVB161e+Z9xceNFEGdolhzaZC123tusJpFseL6QeT4hdqdhtRFedUeOeg2WZgpysLapccrKEE857q8RYT/lLJQ=="
+      },
+      "Theodicean.UnfoldedCircle.Models": {
+        "type": "Project"
+      }
+    }
+  }
+}

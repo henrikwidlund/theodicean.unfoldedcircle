@@ -83,7 +83,7 @@ public class UnfoldedCircleOptions
         if (!string.IsNullOrEmpty(envPort))
         {
             var span = envPort.AsSpan();
-            span = span.Slice(span.LastIndexOf(':') + 1).Trim('/');
+            span = span[(span.LastIndexOf(':') + 1)..].Trim('/');
             if (ushort.TryParse(span, NumberFormatInfo.InvariantInfo, out port))
                 return port;
         }

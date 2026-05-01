@@ -38,11 +38,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="Meziantou.Analyzer" Version="3.0.46">
+      <PackageReference Include="Meziantou.Analyzer" Version="3.0.58">
         <PrivateAssets>all</PrivateAssets>
         <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       </PackageReference>
-      <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.6" />
+      <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.7" />
     </ItemGroup>
 
 </Project>
