@@ -25,6 +25,7 @@
         <RepositoryUrl>https://github.com/henrikwidlund/theodicean.unfoldedcircle.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
+        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
 
         <NoWarn>CS1591</NoWarn>
     </PropertyGroup>

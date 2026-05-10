@@ -19,7 +19,7 @@ public record CommonEvent
     [JsonPropertyName("msg")]
     [StringLength(32, MinimumLength = 1)]
     public required string Msg { get; init; }
-    
+
     /// <summary>
     /// Event category.
     /// </summary>

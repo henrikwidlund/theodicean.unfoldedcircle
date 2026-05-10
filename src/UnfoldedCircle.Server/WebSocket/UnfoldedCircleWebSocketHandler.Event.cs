@@ -60,57 +60,57 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         switch (messageEvent)
         {
             case MessageEvent.Connect:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<ConnectEvent>(MessageEvent.Connect)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.ConnectEvent)!;
-                try
                 {
-                    await HandleConnectOrExitStandbyAsync(socket, wsId, cancellationToken);
-                    await OnConnectAsync(payload, wsId, cancellationToken);
-                }
-                finally
-                {
-                    await cancellationTokenWrapper.StartEventProcessingAsync();
-                }
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<ConnectEvent>(MessageEvent.Connect)
+                                                           ?? UnfoldedCircleJsonSerializerContext.Default.ConnectEvent)!;
+                    try
+                    {
+                        await HandleConnectOrExitStandbyAsync(socket, wsId, cancellationToken);
+                        await OnConnectAsync(payload, wsId, cancellationToken);
+                    }
+                    finally
+                    {
+                        await cancellationTokenWrapper.StartEventProcessingAsync();
+                    }
 
-                return;
-            }
+                    return;
+                }
             case MessageEvent.Disconnect:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<DisconnectEvent>(MessageEvent.Disconnect)
-                                                           ?? UnfoldedCircleJsonSerializerContext.Default.DisconnectEvent)!;
-                bool success;
-                try
                 {
-                    success = await OnDisconnectAsync(payload, wsId, cancellationToken);
-                }
-                finally
-                {
-                    await cancellationTokenWrapper.StopEventProcessingAsync();
-                }
-                SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<DisconnectEvent>(MessageEvent.Disconnect)
+                                                               ?? UnfoldedCircleJsonSerializerContext.Default.DisconnectEvent)!;
+                    bool success;
+                    try
+                    {
+                        success = await OnDisconnectAsync(payload, wsId, cancellationToken);
+                    }
+                    finally
+                    {
+                        await cancellationTokenWrapper.StopEventProcessingAsync();
+                    }
+                    SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out _);
 
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateConnectEventResponsePayload(success ? DeviceState.Disconnected : DeviceState.Error),
-                    wsId,
-                    cancellationToken);
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateConnectEventResponsePayload(success ? DeviceState.Disconnected : DeviceState.Error),
+                        wsId,
+                        cancellationToken);
 
-                return;
-            }
+                    return;
+                }
             case MessageEvent.AbortDriverSetup:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<AbortDriverSetupEvent>(MessageEvent.AbortDriverSetup)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.AbortDriverSetupEvent)!;
-                await OnAbortDriverSetupAsync(payload, wsId, cancellationToken);
-                SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
-                if (SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out var entityId))
                 {
-                    await RemoveConfigurationAsync(wsId, new RemoveInstruction(DeviceId: null, EntityIds: null, entityId), cancellationTokenWrapper.ApplicationStopping);
-                    _logger.RemovedConfiguration(wsId, entityId);
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<AbortDriverSetupEvent>(MessageEvent.AbortDriverSetup)
+                                                           ?? UnfoldedCircleJsonSerializerContext.Default.AbortDriverSetupEvent)!;
+                    await OnAbortDriverSetupAsync(payload, wsId, cancellationToken);
+                    SessionHolder.NextSetupSteps.TryRemove(wsId, out _);
+                    if (SessionHolder.ReconfigureEntityMap.TryRemove(wsId, out var entityId))
+                    {
+                        await RemoveConfigurationAsync(wsId, new RemoveInstruction(DeviceId: null, EntityIds: null, entityId), cancellationTokenWrapper.ApplicationStopping);
+                        _logger.RemovedConfiguration(wsId, entityId);
+                    }
+
+                    return;
                 }
-                
-                return;
-            }
             case MessageEvent.EnterStandby:
                 {
                     var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<EnterStandbyEvent>(MessageEvent.EnterStandby)

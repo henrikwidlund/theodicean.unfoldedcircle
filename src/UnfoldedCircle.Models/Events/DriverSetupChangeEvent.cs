@@ -6,10 +6,10 @@ public record DriverSetupChange
 {
     [JsonPropertyName("event_type")]
     public required DriverSetupChangeEventType EventType { get; init; }
-    
+
     [JsonPropertyName("state")]
     public required DriverSetupChangeState State { get; init; }
-    
+
     /// <summary>
     /// More detailed error reason for <see cref="State"/>: <see cref="DriverSetupChangeState.Error"/> condition.
     /// </summary>

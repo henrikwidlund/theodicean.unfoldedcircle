@@ -7,7 +7,7 @@ public record UnsubscribeEventsMsgData
     /// </summary>
     [JsonPropertyName("device_id")]
     public string? DeviceId { get; init; }
-    
+
     /// <summary>
     /// Unsubscribe from events only for specified entities.
     /// </summary>

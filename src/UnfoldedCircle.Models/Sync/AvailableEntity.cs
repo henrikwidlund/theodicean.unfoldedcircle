@@ -41,7 +41,7 @@ public record AvailableEntity<TFeature, TOptions> : AvailableEntity
     /// </summary>
     [JsonPropertyName("area")]
     public string? Area { get; init; }
-    
+
     [JsonPropertyName("options")]
     public TOptions? Options { get; init; }
 }

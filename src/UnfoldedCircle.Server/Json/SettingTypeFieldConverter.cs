@@ -13,7 +13,8 @@ public class SettingTypeFieldConverter : JsonConverter<SettingTypeField>
         using JsonDocument doc = JsonDocument.ParseValue(ref reader);
         var root = doc.RootElement;
 
-        return root switch {
+        return root switch
+        {
             _ when root.TryGetProperty("label", out _) => root.Deserialize<SettingTypeLabel>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeLabel)!,
             _ when root.TryGetProperty("dropdown", out _) => root.Deserialize<SettingTypeDropdown>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeDropdown)!,
             _ when root.TryGetProperty("checkbox", out _) => root.Deserialize<SettingTypeCheckbox>(UnfoldedCircleJsonSerializerContext.InstanceWithoutCustomConverters.SettingTypeCheckbox)!,

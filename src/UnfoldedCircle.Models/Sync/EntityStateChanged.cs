@@ -11,10 +11,10 @@ public abstract record EntityStateChanged
 {
     [JsonPropertyName("device_id")]
     public string? DeviceId { get; init; }
-    
+
     [JsonPropertyName("entity_type")]
     public required EntityType EntityType { get; init; }
-    
+
     [JsonPropertyName("entity_id")]
     public required string EntityId { get; init; }
 }

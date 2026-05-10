@@ -64,7 +64,7 @@ internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, 
 
                 _logger.WebSocketConnectionClosed(wsId);
             }
-            
+
             await next(context);
         }
         catch (Exception e)

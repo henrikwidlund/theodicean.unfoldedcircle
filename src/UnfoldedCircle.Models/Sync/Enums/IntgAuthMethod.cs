@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Sync;
@@ -14,7 +15,7 @@ public enum IntgAuthMethod : sbyte
 {
     [Display(Name = "HEADER")]
     Header = 1,
-    
+
     [Display(Name = "MESSAGE")]
     Message
 }

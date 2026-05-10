@@ -35,9 +35,9 @@ public static class UnfoldedCircleRegistrationExtensions
         /// <returns>A <see cref="WebApplicationBuilder"/> with the Unfolded Circle server added to it.</returns>
         // ReSharper disable once UnusedMember.Global
         public WebApplicationBuilder AddUnfoldedCircleServer<
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TUnfoldedCircleWebSocketHandler,
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TConfigurationService,
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TConfigurationItem>(Action<UnfoldedCircleOptions>? configureOptions = null)
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TUnfoldedCircleWebSocketHandler,
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConfigurationService,
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConfigurationItem>(Action<UnfoldedCircleOptions>? configureOptions = null)
             where TConfigurationItem : UnfoldedCircleConfigurationItem
             where TConfigurationService : class, IConfigurationService<TConfigurationItem>
             where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<MediaPlayerCommandId, TConfigurationItem> =>
@@ -58,10 +58,10 @@ public static class UnfoldedCircleRegistrationExtensions
         /// <returns>A <see cref="WebApplicationBuilder"/> with the Unfolded Circle server added to it.</returns>
         // ReSharper disable once MemberCanBePrivate.Global
         public WebApplicationBuilder AddUnfoldedCircleServer<
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TUnfoldedCircleWebSocketHandler,
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TMediaPlayerCommandId,
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TConfigurationService,
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]TConfigurationItem>(Action<UnfoldedCircleOptions>? configureOptions = null)
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TUnfoldedCircleWebSocketHandler,
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMediaPlayerCommandId,
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConfigurationService,
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConfigurationItem>(Action<UnfoldedCircleOptions>? configureOptions = null)
             where TConfigurationItem : UnfoldedCircleConfigurationItem
             where TConfigurationService : class, IConfigurationService<TConfigurationItem>
             where TMediaPlayerCommandId : struct, Enum

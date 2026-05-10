@@ -24,12 +24,12 @@ public static class ResponsePayloadHelpers
     /// </summary>
     public static byte[] CreateAuthResponsePayload() =>
         _createAuthResponsePayload ??= JsonSerializer.SerializeToUtf8Bytes(new AuthMsg
-            {
-                Kind = "resp",
-                ReqId = 0,
-                Msg = "authentication",
-                Code = 200
-            },
+        {
+            Kind = "resp",
+            ReqId = 0,
+            Msg = "authentication",
+            Code = 200
+        },
             UnfoldedCircleJsonSerializerContext.Default.AuthMsg);
 
     /// <summary>
@@ -41,13 +41,13 @@ public static class ResponsePayloadHelpers
         CommonReq req,
         DriverVersion driverVersion) =>
         JsonSerializer.SerializeToUtf8Bytes(new DriverVersionMsg
-            {
-                Kind = "resp",
-                ReqId = req.Id,
-                Msg = "driver_version",
-                Code = 200,
-                MsgData = driverVersion
-            },
+        {
+            Kind = "resp",
+            ReqId = req.Id,
+            Msg = "driver_version",
+            Code = 200,
+            MsgData = driverVersion
+        },
             UnfoldedCircleJsonSerializerContext.Default.DriverVersionMsg);
 
     /// <summary>
@@ -59,13 +59,13 @@ public static class ResponsePayloadHelpers
         CommonReq req,
         DriverMetadata driverMetadata) =>
         JsonSerializer.SerializeToUtf8Bytes(new DriverMetadataMsg
-            {
-                Kind = "resp",
-                ReqId = req.Id,
-                Msg = "driver_metadata",
-                Code = 200,
-                MsgData = driverMetadata
-            },
+        {
+            Kind = "resp",
+            ReqId = req.Id,
+            Msg = "driver_metadata",
+            Code = 200,
+            MsgData = driverMetadata
+        },
             UnfoldedCircleJsonSerializerContext.Default.DriverMetadataMsg);
 
     /// <summary>
@@ -98,13 +98,13 @@ public static class ResponsePayloadHelpers
         GetAvailableEntitiesMsg req,
         AvailableEntitiesMsgData availableEntitiesMsgData) =>
         JsonSerializer.SerializeToUtf8Bytes(new AvailableEntitiesMsg
-            {
-                Kind = "resp",
-                ReqId = req.Id,
-                Msg = "available_entities",
-                Code = 200,
-                MsgData = availableEntitiesMsgData
-            },
+        {
+            Kind = "resp",
+            ReqId = req.Id,
+            Msg = "available_entities",
+            Code = 200,
+            MsgData = availableEntitiesMsgData
+        },
             UnfoldedCircleJsonSerializerContext.Default.AvailableEntitiesMsg);
 
     /// <summary>
@@ -114,12 +114,12 @@ public static class ResponsePayloadHelpers
     public static byte[] CreateCommonResponsePayload(
         CommonReq req) =>
         JsonSerializer.SerializeToUtf8Bytes(new CommonResp
-            {
-                Code = 200,
-                Kind = "resp",
-                ReqId = req.Id,
-                Msg = "result"
-            },
+        {
+            Code = 200,
+            Kind = "resp",
+            ReqId = req.Id,
+            Msg = "result"
+        },
             UnfoldedCircleJsonSerializerContext.Default.CommonResp);
 
     /// <summary>
@@ -350,17 +350,17 @@ public static class ResponsePayloadHelpers
         JsonTypeInfo jsonTypeInfo,
         string? suffix) where TAttributes : StateChangedEventMessageDataAttributes =>
         JsonSerializer.SerializeToUtf8Bytes(new StateChangedEvent<TAttributes>
+        {
+            Kind = EventKind,
+            Msg = "entity_change",
+            Cat = "ENTITY",
+            TimeStamp = DateTime.UtcNow,
+            MsgData = new StateChangedEventMessageData<TAttributes>
             {
-                Kind = EventKind,
-                Msg = "entity_change",
-                Cat = "ENTITY",
-                TimeStamp = DateTime.UtcNow,
-                MsgData = new StateChangedEventMessageData<TAttributes>
-                {
-                    EntityId = entityId.GetIdentifier(entityType, suffix),
-                    EntityType = entityType,
-                    Attributes = attributes
-                }
-            },
+                EntityId = entityId.GetIdentifier(entityType, suffix),
+                EntityType = entityType,
+                Attributes = attributes
+            }
+        },
             jsonTypeInfo);
 }

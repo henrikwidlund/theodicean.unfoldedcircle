@@ -60,7 +60,7 @@ public abstract class ConfigurationService<TConfigurationItem>(IConfiguration co
                     _unfoldedCircleConfiguration,
                     GetSerializer(),
                     CancellationToken.None);
-                
+
                 return _unfoldedCircleConfiguration;
             }
         }
@@ -74,7 +74,7 @@ public abstract class ConfigurationService<TConfigurationItem>(IConfiguration co
     public async Task<UnfoldedCircleConfiguration<TConfigurationItem>> UpdateConfigurationAsync(UnfoldedCircleConfiguration<TConfigurationItem> configuration, CancellationToken cancellationToken)
     {
         await _semaphore.WaitAsync(cancellationToken);
-        
+
         try
         {
             await using var configurationFileStream = File.Create(ConfigurationFilePath);

@@ -440,7 +440,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 {
                     await SendMessageAsync(socket,
                         ResponsePayloadHelpers.CreateRemoteStateChangedResponsePayload(
-                            new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On :RemoteState.Off },
+                            new RemoteStateChangedEventMessageDataAttributes { State = entityCommandResult == EntityCommandResult.PowerOn ? RemoteState.On : RemoteState.Off },
                             entity.EntityId.GetIdentifier(EntityType.Remote)),
                         wsId,
                         commandCancellationToken);
@@ -516,7 +516,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
                 // ReSharper disable once PossiblyMistakenUseOfCancellationToken
                 await OnRemoteCommandAsync(socket, payload, command, wsId, cancellationTokenWrapper, cancellationTokenWrapper.RequestAborted);
-                if (delay> 0)
+                if (delay > 0)
                     await Task.Delay(TimeSpan.FromMilliseconds(delay), cancellationTokenWrapper.RequestAborted);
             }
         }

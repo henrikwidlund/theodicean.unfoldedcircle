@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Events;
@@ -9,16 +10,16 @@ public enum MediaType : sbyte
 {
     [Display(Name = "MUSIC")]
     Music,
-    
+
     [Display(Name = "RADIO")]
     Radio,
-    
+
     [Display(Name = "TVSHOW")]
     TvShow,
-    
+
     [Display(Name = "MOVIE")]
     Movie,
-    
+
     [Display(Name = "VIDEO")]
     Video
 }

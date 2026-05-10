@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Events;

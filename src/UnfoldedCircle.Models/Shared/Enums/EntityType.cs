@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+
 using Theodicean.SourceGenerators;
 
 namespace UnfoldedCircle.Models.Shared;
@@ -9,7 +10,7 @@ public enum EntityType : sbyte
 {
     [Display(Name = "button")]
     Button = 1,
-    
+
     [Display(Name = "climate")]
     Climate,
 
@@ -18,7 +19,7 @@ public enum EntityType : sbyte
 
     [Display(Name = "light")]
     Light,
-    
+
     [Display(Name = "media_player")]
     MediaPlayer,
 
@@ -30,7 +31,7 @@ public enum EntityType : sbyte
 
     [Display(Name = "sensor")]
     Sensor,
-    
+
     [Display(Name = "switch")]
     Switch
 }

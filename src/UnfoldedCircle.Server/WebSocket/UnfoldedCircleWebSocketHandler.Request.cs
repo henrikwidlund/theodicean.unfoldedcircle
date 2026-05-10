@@ -102,143 +102,158 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         switch (messageEvent)
         {
             case MessageEvent.GetDriverVersion:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.GetDriverVersion)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
-                var driverMetadata = await _configurationService.GetDriverMetadataAsync(cancellationToken);
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDriverVersionResponsePayload(
-                        payload,
-                        new DriverVersion
-                        {
-                            Name = driverMetadata.Name["en"],
-                            Version = new DriverVersionInner
+                {
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.GetDriverVersion)
+                                                           ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
+                    var driverMetadata = await _configurationService.GetDriverMetadataAsync(cancellationToken);
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateDriverVersionResponsePayload(
+                            payload,
+                            new DriverVersion
                             {
-                                Driver = driverMetadata.Version
-                            }
-                        }),
-                    wsId,
-                    cancellationToken);
-                
-                return;
-            }
-            case MessageEvent.GetDriverMetaData:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.GetDriverMetaData)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
-                
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDriverMetaDataResponsePayload(payload, await _configurationService.GetDriverMetadataAsync(cancellationToken)),
-                    wsId,
-                    cancellationToken);
-                
-                return;
-            }
-            case MessageEvent.GetDeviceState:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<GetDeviceStateMsg>(MessageEvent.GetDeviceState)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.GetDeviceStateMsg)!;
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceStatePayload(
-                        await OnGetDeviceStateAsync(payload, wsId, cancellationToken),
-                        payload.MsgData.DeviceId
-                    ),
-                    wsId,
-                    cancellationToken);
+                                Name = driverMetadata.Name["en"],
+                                Version = new DriverVersionInner
+                                {
+                                    Driver = driverMetadata.Version
+                                }
+                            }),
+                        wsId,
+                        cancellationToken);
 
-                return;
-            }
-            case MessageEvent.GetAvailableEntities:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<GetAvailableEntitiesMsg>(MessageEvent.GetAvailableEntities)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.GetAvailableEntitiesMsg)!;
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateGetAvailableEntitiesMsg(payload,
-                        new AvailableEntitiesMsgData
-                        {
-                            Filter = payload.MsgData.Filter,
-                            AvailableEntities = await OnGetAvailableEntitiesAsync(payload, wsId, cancellationToken)
-                        }),
-                    wsId,
-                    cancellationToken);
-
-                return;
-            }
-            case MessageEvent.SubscribeEvents:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SubscribeEventsMsg>(MessageEvent.SubscribeEvents)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.SubscribeEventsMsg)!;
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                    wsId,
-                    cancellationToken);
-                try
-                {
-                    await OnSubscribeEventsAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
-                }
-                finally
-                {
-                    await cancellationTokenWrapper.StartEventProcessingAsync();
-                }
-
-                return;
-            }
-            case MessageEvent.UnsubscribeEvents:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<UnsubscribeEventsMsg>(MessageEvent.UnsubscribeEvents)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.UnsubscribeEventsMsg)!;
-                await OnUnsubscribeEventsAsync(payload, wsId, cancellationTokenWrapper);
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                    wsId,
-                    cancellationToken);
-                await RemoveConfigurationAsync(wsId,
-                    new RemoveInstruction(
-                        payload.MsgData?.DeviceId.GetNullableBaseIdentifier(),
-                        payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), Host: null),
-                    cancellationTokenWrapper.ApplicationStopping);
-
-                return;
-            }
-            case MessageEvent.GetEntityStates:
-            {
-                GetEntityStatesMsg payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<GetEntityStatesMsg>(MessageEvent.GetEntityStates)
-                                                                      ?? UnfoldedCircleJsonSerializerContext.Default.GetEntityStatesMsg)!;
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateGetEntityStatesResponsePayload(payload,
-                        await OnGetEntityStatesAsync(payload, wsId, cancellationToken)),
-                    wsId,
-                    cancellationToken);
-                
-                return;
-            }
-            case MessageEvent.SetupDriver:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SetupDriverMsg>(MessageEvent.SetupDriver)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.SetupDriverMsg)!;
-                var setupResult = await OnSetupDriverAsync(payload, wsId, cancellationToken);
-                if (setupResult is null)
-                {
-                    _logger.DriverSetupFailed(wsId, payload.MsgData);
-
-                    await FinishSetupAsync(socket, wsId, payload, new ValidationError
-                    {
-                        Code = "ENTITY_NOT_FOUND",
-                        Message = "Entity not found."
-                    }, cancellationToken, DriverSetupChangeError.NotFound);
                     return;
                 }
-
-                if (setupResult.SetupDriverResult == SetupDriverResult.UserInputRequired)
+            case MessageEvent.GetDriverMetaData:
                 {
-                    if (setupResult.NextSetupStep is null)
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<CommonReq>(MessageEvent.GetDriverMetaData)
+                                                           ?? UnfoldedCircleJsonSerializerContext.Default.CommonReq)!;
+
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateDriverMetaDataResponsePayload(payload, await _configurationService.GetDriverMetadataAsync(cancellationToken)),
+                        wsId,
+                        cancellationToken);
+
+                    return;
+                }
+            case MessageEvent.GetDeviceState:
+                {
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<GetDeviceStateMsg>(MessageEvent.GetDeviceState)
+                                                           ?? UnfoldedCircleJsonSerializerContext.Default.GetDeviceStateMsg)!;
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateDeviceStatePayload(
+                            await OnGetDeviceStateAsync(payload, wsId, cancellationToken),
+                            payload.MsgData.DeviceId
+                        ),
+                        wsId,
+                        cancellationToken);
+
+                    return;
+                }
+            case MessageEvent.GetAvailableEntities:
+                {
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<GetAvailableEntitiesMsg>(MessageEvent.GetAvailableEntities)
+                                                           ?? UnfoldedCircleJsonSerializerContext.Default.GetAvailableEntitiesMsg)!;
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateGetAvailableEntitiesMsg(payload,
+                            new AvailableEntitiesMsgData
+                            {
+                                Filter = payload.MsgData.Filter,
+                                AvailableEntities = await OnGetAvailableEntitiesAsync(payload, wsId, cancellationToken)
+                            }),
+                        wsId,
+                        cancellationToken);
+
+                    return;
+                }
+            case MessageEvent.SubscribeEvents:
+                {
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SubscribeEventsMsg>(MessageEvent.SubscribeEvents)
+                                                           ?? UnfoldedCircleJsonSerializerContext.Default.SubscribeEventsMsg)!;
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                        wsId,
+                        cancellationToken);
+                    try
                     {
-                        _logger.UserInputNoNextStep(wsId, payload.MsgData);
+                        await OnSubscribeEventsAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
+                    }
+                    finally
+                    {
+                        await cancellationTokenWrapper.StartEventProcessingAsync();
+                    }
+
+                    return;
+                }
+            case MessageEvent.UnsubscribeEvents:
+                {
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<UnsubscribeEventsMsg>(MessageEvent.UnsubscribeEvents)
+                                                           ?? UnfoldedCircleJsonSerializerContext.Default.UnsubscribeEventsMsg)!;
+                    await OnUnsubscribeEventsAsync(payload, wsId, cancellationTokenWrapper);
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                        wsId,
+                        cancellationToken);
+                    await RemoveConfigurationAsync(wsId,
+                        new RemoveInstruction(
+                            payload.MsgData?.DeviceId.GetNullableBaseIdentifier(),
+                            payload.MsgData?.EntityIds?.Select(static x => x.GetBaseIdentifier()), Host: null),
+                        cancellationTokenWrapper.ApplicationStopping);
+
+                    return;
+                }
+            case MessageEvent.GetEntityStates:
+                {
+                    GetEntityStatesMsg payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<GetEntityStatesMsg>(MessageEvent.GetEntityStates)
+                                                                          ?? UnfoldedCircleJsonSerializerContext.Default.GetEntityStatesMsg)!;
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateGetEntityStatesResponsePayload(payload,
+                            await OnGetEntityStatesAsync(payload, wsId, cancellationToken)),
+                        wsId,
+                        cancellationToken);
+
+                    return;
+                }
+            case MessageEvent.SetupDriver:
+                {
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SetupDriverMsg>(MessageEvent.SetupDriver)
+                                                           ?? UnfoldedCircleJsonSerializerContext.Default.SetupDriverMsg)!;
+                    var setupResult = await OnSetupDriverAsync(payload, wsId, cancellationToken);
+                    if (setupResult is null)
+                    {
+                        _logger.DriverSetupFailed(wsId, payload.MsgData);
+
                         await FinishSetupAsync(socket, wsId, payload, new ValidationError
                         {
-                            Code = "INVALID_SETUP_STATE",
-                            Message = "User input required but no next setup step provided."
-                        }, cancellationToken);
+                            Code = "ENTITY_NOT_FOUND",
+                            Message = "Entity not found."
+                        }, cancellationToken, DriverSetupChangeError.NotFound);
+                        return;
+                    }
+
+                    if (setupResult.SetupDriverResult == SetupDriverResult.UserInputRequired)
+                    {
+                        if (setupResult.NextSetupStep is null)
+                        {
+                            _logger.UserInputNoNextStep(wsId, payload.MsgData);
+                            await FinishSetupAsync(socket, wsId, payload, new ValidationError
+                            {
+                                Code = "INVALID_SETUP_STATE",
+                                Message = "User input required but no next setup step provided."
+                            }, cancellationToken);
+                            return;
+                        }
+
+                        await SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                            wsId,
+                            cancellationToken);
+                        await SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateDeviceSetupChangeResponseSetupPayload(),
+                            wsId,
+                            cancellationToken);
+                        await SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.NextSetupStep),
+                            wsId,
+                            cancellationToken);
                         return;
                     }
 
@@ -247,71 +262,56 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         wsId,
                         cancellationToken);
                     await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateDeviceSetupChangeResponseSetupPayload(),
+                        ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized, setupResult.Error),
                         wsId,
                         cancellationToken);
-                    await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.NextSetupStep),
-                        wsId,
-                        cancellationToken);
+                    if (setupResult.SetupDriverResult == SetupDriverResult.Finalized)
+                    {
+                        await SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
+                            wsId,
+                            cancellationToken);
+                    }
+
                     return;
                 }
-
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                    wsId,
-                    cancellationToken);
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized, setupResult.Error),
-                    wsId,
-                    cancellationToken);
-                if (setupResult.SetupDriverResult == SetupDriverResult.Finalized)
-                {
-                    await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
-                        wsId,
-                        cancellationToken);
-                }
-
-                return;
-            }
             case MessageEvent.SetupDriverUserData:
-            {
-                var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SetDriverUserDataMsg>(MessageEvent.SetupDriverUserData)
-                                                       ?? UnfoldedCircleJsonSerializerContext.Default.SetDriverUserDataMsg)!;
+                {
+                    var payload = jsonDocument.Deserialize(GetCustomJsonTypeInfo<SetDriverUserDataMsg>(MessageEvent.SetupDriverUserData)
+                                                           ?? UnfoldedCircleJsonSerializerContext.Default.SetDriverUserDataMsg)!;
 
-                await HandleSetupDriverUserData(socket, wsId, payload, cancellationTokenWrapper);
-                return;
-            }
+                    await HandleSetupDriverUserData(socket, wsId, payload, cancellationTokenWrapper);
+                    return;
+                }
             case MessageEvent.EntityCommand:
-            {
-                var entityType = GetEntityType(jsonDocument);
-                if (entityType == EntityType.MediaPlayer)
                 {
-                    var payload = DeserializeMediaPlayerCommandPayload(jsonDocument);
-                    if (payload is not null)
+                    var entityType = GetEntityType(jsonDocument);
+                    if (entityType == EntityType.MediaPlayer)
+                    {
+                        var payload = DeserializeMediaPlayerCommandPayload(jsonDocument);
+                        if (payload is not null)
+                            await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
+                    }
+                    else if (entityType == EntityType.Remote)
+                    {
+                        var payload = GetRemoteCommandPayload(jsonDocument);
                         await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
-                }
-                else if (entityType == EntityType.Remote)
-                {
-                    var payload = GetRemoteCommandPayload(jsonDocument);
-                    await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
-                }
-                else if (entityType == EntityType.Climate)
-                {
-                    var payload = GetClimateCommandPayload(jsonDocument);
-                    await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
-                }
-                else if (entityType == EntityType.Select)
-                {
-                    var payload = GetSelectCommandPayload(jsonDocument);
-                    await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
-                }
-                else
-                    _logger.UnsupportedEntityType(wsId, entityType);
+                    }
+                    else if (entityType == EntityType.Climate)
+                    {
+                        var payload = GetClimateCommandPayload(jsonDocument);
+                        await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
+                    }
+                    else if (entityType == EntityType.Select)
+                    {
+                        var payload = GetSelectCommandPayload(jsonDocument);
+                        await HandleEntityCommandAsync(socket, payload, wsId, cancellationTokenWrapper, cancellationToken);
+                    }
+                    else
+                        _logger.UnsupportedEntityType(wsId, entityType);
 
-                return;
-            }
+                    return;
+                }
             default:
                 _logger.UnhandledMessageEvent(wsId, messageEvent);
                 return;
