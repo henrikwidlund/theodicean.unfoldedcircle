@@ -77,6 +77,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         /// <summary>
         /// Error occurred during setup.
         /// </summary>
+        // ReSharper disable once UnusedMember.Global
         Error
     }
 
