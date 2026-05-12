@@ -75,7 +75,7 @@ public class UnfoldedCircleOptions
 
     /// <summary>
     /// Additional JSON property names whose scalar value should be masked when WebSocket frames are
-    /// logged Matched case-sensitively.
+    /// logged. Matched case-sensitively.
     /// </summary>
     /// <remarks>Only read at startup.</remarks>
     // ReSharper disable once CollectionNeverUpdated.Global

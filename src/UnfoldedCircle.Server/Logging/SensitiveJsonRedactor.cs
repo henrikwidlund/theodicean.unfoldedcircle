@@ -99,11 +99,11 @@ internal static class SensitiveJsonRedactor
                 return Encoding.UTF8.GetString(written.Span);
 
             const string suffix = "…";
-            return string.Create(written.Length + suffix.Length, (Buffer: written, Suffix: suffix), static (span, state) =>
+            var charCount = Encoding.UTF8.GetCharCount(written.Span);
+            return string.Create(charCount + suffix.Length, (Buffer: written, Suffix: suffix), static (span, state) =>
             {
-                Encoding.UTF8.GetChars(state.Buffer.Span, span);
-                var charCount = Encoding.UTF8.GetCharCount(state.Buffer.Span);
-                state.Suffix.CopyTo(span[charCount..]);
+                var writtenChars = Encoding.UTF8.GetChars(state.Buffer.Span, span);
+                state.Suffix.CopyTo(span[writtenChars..]);
             });
         }
         catch (JsonException)
@@ -172,9 +172,15 @@ internal static class SensitiveJsonRedactor
     {
         switch (reader.TokenType)
         {
-            case JsonTokenType.StartObject: HandleStartObject(writer, ref depth, ref containerIsArray); break;
+            case JsonTokenType.StartObject:
+                HandleStartObject(writer, ref depth, ref containerIsArray);
+                redactNextValue = false;
+                break;
             case JsonTokenType.EndObject: HandleEndObject(writer, ref depth); break;
-            case JsonTokenType.StartArray: HandleStartArray(writer, ref depth, ref containerIsArray); break;
+            case JsonTokenType.StartArray:
+                HandleStartArray(writer, ref depth, ref containerIsArray);
+                redactNextValue = false;
+                break;
             case JsonTokenType.EndArray: HandleEndArray(writer, ref depth); break;
             case JsonTokenType.PropertyName:
                 HandlePropertyName(ref reader, writer, scratch, in cfg, ref redactNextValue, ref maskWholeNextValue);
