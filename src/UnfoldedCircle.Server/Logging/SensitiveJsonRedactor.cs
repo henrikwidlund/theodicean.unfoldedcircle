@@ -1,4 +1,5 @@
 using System.Buffers;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -392,7 +393,7 @@ internal static class SensitiveJsonRedactor
         finally
         {
             if (rented is not null)
-                ArrayPool<byte>.Shared.Return(rented);
+                ArrayPool<byte>.Shared.Return(rented, clearArray: true);
         }
     }
 
@@ -433,7 +434,7 @@ internal static class SensitiveJsonRedactor
             }
             finally
             {
-                ArrayPool<byte>.Shared.Return(rented);
+                ArrayPool<byte>.Shared.Return(rented, clearArray: true);
             }
         }
     }
@@ -470,8 +471,11 @@ internal static class SensitiveJsonRedactor
 
     private static string FallbackPlainTruncate(ReadOnlySpan<byte> utf8Json, int maxBytes)
     {
-        var slice = utf8Json.Length > maxBytes ? utf8Json[..maxBytes] : utf8Json;
-        return $"<non-json> {Encoding.UTF8.GetString(slice)}";
+        var wasTruncated = utf8Json.Length > maxBytes;
+        return wasTruncated
+            ? string.Create(CultureInfo.InvariantCulture,
+                $"<non-json length={utf8Json.Length} truncated-to={maxBytes}>")
+            : $"<non-json length={utf8Json.Length}>";
     }
 
     private readonly struct RedactConfig(
