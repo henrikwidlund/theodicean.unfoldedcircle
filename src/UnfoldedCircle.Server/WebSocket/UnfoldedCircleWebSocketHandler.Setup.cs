@@ -498,7 +498,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                 {
                     Id = RestoreData,
                     Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = "Configuration Backup Data" },
-                    Field = new SettingTypeTextArea { TextArea = new SettingTypeTextAreaInner() }
+                    Field = new SettingTypePassword { Password = new ValueRegex() }
                 }
             ]
         };

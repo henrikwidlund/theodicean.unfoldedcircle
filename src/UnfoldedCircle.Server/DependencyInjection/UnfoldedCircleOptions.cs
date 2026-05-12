@@ -73,6 +73,43 @@ public class UnfoldedCircleOptions
     // ReSharper disable once PropertyCanBeMadeInitOnly.Global
     public double MaxMessageHandlingWaitTimeInSeconds { get; set; } = 9.5;
 
+    /// <summary>
+    /// Additional JSON property names whose scalar value should be masked when WebSocket frames are
+    /// logged. Matched case-sensitively.
+    /// </summary>
+    /// <remarks>Only read at startup.</remarks>
+    // ReSharper disable once CollectionNeverUpdated.Global
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    public ICollection<string> AdditionalRedactedJsonProperties { get; set; } = [];
+
+    /// <summary>
+    /// Additional JSON property names whose entire value (including nested objects and arrays) should be
+    /// replaced with a single mask when WebSocket frames are logged. Matched case-sensitively.
+    /// </summary>
+    /// <remarks>Only read at startup.</remarks>
+    // ReSharper disable once CollectionNeverUpdated.Global
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    public ICollection<string> AdditionalMaskWholeValueJsonProperties { get; set; } = [];
+
+    /// <summary>
+    /// When <see langword="true"/> (default), the trace-log redactor will attempt to parse string values that look
+    /// like JSON (begin with <c>{</c>) and recursively redact sensitive properties inside them. Catches
+    /// secrets embedded in stringified JSON payloads (e.g. setup-flow textarea blobs) that are not covered
+    /// by an explicit whole-value mask. Set to <see langword="false"/> to disable if it ever causes measurable cost
+    /// on the embedded host.
+    /// </summary>
+    /// <remarks>Only read at startup.</remarks>
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    public bool EnableNestedJsonRedaction { get; set; } = true;
+
+    /// <summary>
+    /// Maximum recursion depth for nested-JSON-string redaction. Bounds the cost of pathologically nested
+    /// stringified payloads. Default is <c>3</c>.
+    /// </summary>
+    /// <remarks>Only read at startup.</remarks>
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
+    public int MaxJsonRedactionRecursionDepth { get; set; } = 3;
+
     private static ushort GetListeningPort()
     {
         var envPort = Environment.GetEnvironmentVariable("UC_INTEGRATION_HTTP_PORT");
