@@ -79,6 +79,7 @@ public class UnfoldedCircleOptions
     /// </summary>
     /// <remarks>Only read at startup.</remarks>
     // ReSharper disable once CollectionNeverUpdated.Global
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public ICollection<string> AdditionalRedactedJsonProperties { get; set; } = [];
 
     /// <summary>
@@ -87,6 +88,7 @@ public class UnfoldedCircleOptions
     /// </summary>
     /// <remarks>Only read at startup.</remarks>
     // ReSharper disable once CollectionNeverUpdated.Global
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public ICollection<string> AdditionalMaskWholeValueJsonProperties { get; set; } = [];
 
     /// <summary>
@@ -97,6 +99,7 @@ public class UnfoldedCircleOptions
     /// on the embedded host.
     /// </summary>
     /// <remarks>Only read at startup.</remarks>
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public bool EnableNestedJsonRedaction { get; set; } = true;
 
     /// <summary>
@@ -104,6 +107,7 @@ public class UnfoldedCircleOptions
     /// stringified payloads. Default is <c>3</c>.
     /// </summary>
     /// <remarks>Only read at startup.</remarks>
+    // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
     public int MaxJsonRedactionRecursionDepth { get; set; } = 3;
 
     private static ushort GetListeningPort()
