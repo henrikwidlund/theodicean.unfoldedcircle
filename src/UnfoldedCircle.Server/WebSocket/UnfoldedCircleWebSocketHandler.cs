@@ -47,6 +47,18 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     // ReSharper disable once MemberCanBePrivate.Global
     protected readonly ILogger<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>> _logger = logger;
 
+    private readonly byte[][] _redactedJsonPropertiesUtf8 = SensitiveJsonRedactor.BuildPropertyList(
+        SensitiveJsonRedactor.DefaultRedactedProperties,
+        options.Value.AdditionalRedactedJsonProperties);
+
+    private readonly byte[][] _maskWholeValueJsonPropertiesUtf8 = SensitiveJsonRedactor.BuildPropertyList(
+        SensitiveJsonRedactor.DefaultMaskWholeValueProperties,
+        options.Value.AdditionalMaskWholeValueJsonProperties);
+
+    private readonly bool _enableNestedJsonRedaction = options.Value.EnableNestedJsonRedaction;
+
+    private readonly int _maxJsonRedactionRecursionDepth = options.Value.MaxJsonRedactionRecursionDepth;
+
     /// <summary>
     /// Collection of entity types supported by this integration.
     /// </summary>
@@ -67,7 +79,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         CancellationToken cancellationToken)
     {
         if (_logger.IsEnabled(LogLevel.Trace))
-            _logger.SendingMessage(wsId, Encoding.UTF8.GetString(buffer.Array!, buffer.Offset, buffer.Count));
+            _logger.SendingMessage(wsId, SensitiveJsonRedactor.Redact(buffer.AsSpan(), _redactedJsonPropertiesUtf8, _maskWholeValueJsonPropertiesUtf8, nestedJsonRedaction: _enableNestedJsonRedaction, maxRecursionDepth: _maxJsonRedactionRecursionDepth));
 
         return socket.SendAsync(buffer, WebSocketMessageType.Text, endOfMessage: true, cancellationToken);
     }
@@ -111,12 +123,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             } while (result is { EndOfMessage: false, CloseStatus: null } && !cancellationTokenWrapper.RequestAborted.IsCancellationRequested);
 
             if (_logger.IsEnabled(LogLevel.Trace))
-            {
-                var logSpan = memoryStream.GetBuffer().AsSpan()[..length];
-                if (logSpan.Length > 1000)
-                    logSpan = logSpan[..1000];
-                _logger.ReceivedMessage(wsId, Encoding.UTF8.GetString(logSpan));
-            }
+                _logger.ReceivedMessage(wsId, SensitiveJsonRedactor.Redact(memoryStream.GetBuffer().AsSpan()[..length], _redactedJsonPropertiesUtf8, _maskWholeValueJsonPropertiesUtf8, nestedJsonRedaction: _enableNestedJsonRedaction, maxRecursionDepth: _maxJsonRedactionRecursionDepth));
 
             if (length == 0)
             {
