@@ -105,19 +105,21 @@ internal sealed class CustomSystemdConsoleFormatter : ConsoleFormatter, IDisposa
 
         // newline delimiter
         textWriter.Write(Environment.NewLine);
+        return;
 
         static void WriteReplacingNewLine(TextWriter writer, string message)
         {
-            string newMessage = message.Replace(Environment.NewLine, " ");
+            string newMessage = message.Replace(Environment.NewLine, " ", StringComparison.Ordinal);
             writer.Write(newMessage);
         }
     }
 
     private DateTimeOffset GetCurrentDateTime()
     {
-        return FormatterOptions.TimestampFormat != null
-            ? (FormatterOptions.UseUtcTimestamp ? DateTimeOffset.UtcNow : DateTimeOffset.Now)
-            : DateTimeOffset.MinValue;
+        if (FormatterOptions.TimestampFormat != null)
+            return FormatterOptions.UseUtcTimestamp ? DateTimeOffset.UtcNow : DateTimeOffset.Now;
+
+        return DateTimeOffset.MinValue;
     }
 
     private static string GetSyslogSeverityString(LogLevel logLevel)
