@@ -6,7 +6,7 @@ namespace Microsoft.Extensions.Configuration;
 /// <summary>
 /// Extensions for configuration handling in the Unfolded Circle server.
 /// </summary>
-public static class ConfigurationExtensions
+public static class UnfoldedCircleConfigurationExtensions
 {
     /// <summary>
     /// Gets a value from the configuration or returns a default value if the key is not found or its value cannot be parsed.
