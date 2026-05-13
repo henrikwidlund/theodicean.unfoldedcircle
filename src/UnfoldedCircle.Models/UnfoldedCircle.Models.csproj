@@ -25,7 +25,8 @@
         <RepositoryUrl>https://github.com/henrikwidlund/theodicean.unfoldedcircle.git</RepositoryUrl>
         <RepositoryType>git</RepositoryType>
         <PackageLicenseExpression>MIT</PackageLicenseExpression>
-        <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
         <NoWarn>CS1591</NoWarn>
     </PropertyGroup>
@@ -35,7 +36,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Theodicean.SourceGenerators" Version="0.0.5" PrivateAssets="all" ExcludeAssets="runtime">
+        <PackageReference Include="Theodicean.SourceGenerators" Version="0.0.7" PrivateAssets="all" ExcludeAssets="runtime">
             <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.300">
