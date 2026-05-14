@@ -67,6 +67,14 @@ public static class UnfoldedCircleRegistrationExtensions
             where TMediaPlayerCommandId : struct, Enum
             where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>
         {
+            if (builder.Configuration["UC_CONFIG_HOME"] is { } ucConfigHome && !string.IsNullOrEmpty(ucConfigHome))
+            {
+                builder.Configuration.AddJsonFile(
+                    Path.Combine(ucConfigHome, "appsettings.json"),
+                    optional: true,
+                    reloadOnChange: true);
+            }
+
             var unfoldedCircleOptions = new UnfoldedCircleOptions
             {
                 MaxMessageHandlingWaitTimeInSeconds = builder.Configuration.GetOrDefault("UC_MAX_MESSAGE_HANDLING_WAIT_TIME_IN_SECONDS", 9.5)
