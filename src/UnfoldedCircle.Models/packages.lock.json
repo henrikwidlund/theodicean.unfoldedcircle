@@ -4,9 +4,9 @@
     "net10.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[3.0.123, )",
-        "resolved": "3.0.123",
-        "contentHash": "maXbWokGTRWiBGqxxN2J1vEVGHFc6yWSjbyc0KkrJ78PcjkeWm3Y4PrKUH0tMcknpJvQkM4twMKrgSYZmRNbcQ=="
+        "requested": "[3.0.139, )",
+        "resolved": "3.0.139",
+        "contentHash": "nKy4WbBysq5B3Kz8Lehyd07683nCyOG1WIIjo53qe68moVanHhWMyUncbkp4z0guPBjzC1rAmJGFM99DlmuF5A=="
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
@@ -27,9 +27,9 @@
       },
       "Theodicean.SourceGenerators": {
         "type": "Direct",
-        "requested": "[0.0.7, )",
-        "resolved": "0.0.7",
-        "contentHash": "vv52M24uuilgutcYMhEK8rZG2xYbV8Dtt34LGxQC7OGRLOWf5vFo502ANRKrsWNXTUHfsInDmsUykkd3/MQY3w=="
+        "requested": "[0.0.8, )",
+        "resolved": "0.0.8",
+        "contentHash": "R11IMxwVRRMgUfYcUZiJqbNi3G0tu4OdOI9QMfcomMK3tQ1m1+Ub+X5t2etOuH7tWnijhDN/2Hcyuyu5xD7GBQ=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
