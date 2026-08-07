@@ -4,7 +4,7 @@
     <File Path=".github/workflows/dependency-review.yml" />
     <File Path=".github/workflows/github-release.yml" />
     <File Path=".github/workflows/qodana_code_quality.yml" />
-    <File Path=".github\workflows\sonarqube.yml" />
+    <File Path=".github/workflows/sonarqube.yml" />
   </Folder>
   <Folder Name="/Solution Items/">
     <File Path="README.md" />

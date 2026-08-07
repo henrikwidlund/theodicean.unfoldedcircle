@@ -174,11 +174,29 @@ internal static class SensitiveJsonRedactor
         switch (reader.TokenType)
         {
             case JsonTokenType.StartObject:
+                // A property in RedactedProperties normally has a scalar value - but if it's an
+                // object instead, mask the whole thing (same as MaskWholeValueProperties) rather
+                // than writing it through unredacted.
+                if (redactNextValue)
+                {
+                    reader.Skip();
+                    writer.WriteStringValue(Mask);
+                    redactNextValue = false;
+                    break;
+                }
                 HandleStartObject(writer, ref depth, ref containerIsArray);
                 redactNextValue = false;
                 break;
             case JsonTokenType.EndObject: HandleEndObject(writer, ref depth); break;
             case JsonTokenType.StartArray:
+                // Same as the StartObject case above, for array-valued sensitive properties.
+                if (redactNextValue)
+                {
+                    reader.Skip();
+                    writer.WriteStringValue(Mask);
+                    redactNextValue = false;
+                    break;
+                }
                 HandleStartArray(writer, ref depth, ref containerIsArray);
                 redactNextValue = false;
                 break;

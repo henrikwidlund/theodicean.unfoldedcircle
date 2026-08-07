@@ -271,13 +271,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="sensorSuffix">The suffix identifying the sensor.</param>
     protected static void RegisterSensor(string entityId, string sensorSuffix)
     {
-        if (!SessionHolder.SensorTypesMap.TryGetValue(entityId, out var existingSuffixes))
-        {
-            existingSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { sensorSuffix };
-            SessionHolder.SensorTypesMap[entityId] = existingSuffixes;
-        }
-        else
-            existingSuffixes.Add(sensorSuffix);
+        SessionHolder.SensorTypesMap.AddOrUpdate(entityId,
+            static (_, suffix) => new HashSet<string>(StringComparer.OrdinalIgnoreCase) { suffix },
+            static (_, existing, suffix) => new HashSet<string>(existing, StringComparer.OrdinalIgnoreCase) { suffix },
+            sensorSuffix);
     }
 
     /// <summary>
@@ -287,13 +284,10 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="selectSuffix">The suffix identifying the select.</param>
     protected static void RegisterSelect(string entityId, string selectSuffix)
     {
-        if (!SessionHolder.SelectTypesMap.TryGetValue(entityId, out var existingSuffixes))
-        {
-            existingSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { selectSuffix };
-            SessionHolder.SelectTypesMap[entityId] = existingSuffixes;
-        }
-        else
-            existingSuffixes.Add(selectSuffix);
+        SessionHolder.SelectTypesMap.AddOrUpdate(entityId,
+            static (_, suffix) => new HashSet<string>(StringComparer.OrdinalIgnoreCase) { suffix },
+            static (_, existing, suffix) => new HashSet<string>(existing, StringComparer.OrdinalIgnoreCase) { suffix },
+            selectSuffix);
     }
 
     /// <summary>

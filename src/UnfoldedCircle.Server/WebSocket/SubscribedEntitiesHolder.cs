@@ -26,11 +26,8 @@ public class SubscribedEntitiesHolder
         var entityType = entityId.GetEntityTypeFromIdentifier();
         _subscribedEntities.AddOrUpdate(baseIdentifier, static (_, arg)
             => [new SubscribedEntity(arg.entityId, arg.entityType)],
-            static (_, set, arg) =>
-        {
-            set.Add(new SubscribedEntity(arg.entityId, arg.entityType));
-            return set;
-        }, (entityId, entityType));
+            static (_, set, arg) => [.. set, new SubscribedEntity(arg.entityId, arg.entityType)],
+            (entityId, entityType));
     }
 
     /// <summary>
@@ -39,10 +36,23 @@ public class SubscribedEntitiesHolder
     /// <param name="entityId">Entity to remove.</param>
     internal void RemoveSubscribedEntity(string entityId)
     {
-        var baseIdentifier = entityId.AsSpan().GetBaseIdentifier();
-        var alternateLookup = _subscribedEntities.GetAlternateLookup<ReadOnlySpan<char>>();
-        if (alternateLookup.TryGetValue(baseIdentifier, out var subscribedEntities))
-            subscribedEntities.RemoveWhere(e => e.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase));
+        var baseIdentifier = entityId.GetBaseIdentifier();
+        while (_subscribedEntities.TryGetValue(baseIdentifier, out var current))
+        {
+            HashSet<SubscribedEntity>? updated = null;
+            foreach (var subscribedEntity in current)
+            {
+                if (!subscribedEntity.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase))
+                    (updated ??= new HashSet<SubscribedEntity>(current.Count)).Add(subscribedEntity);
+            }
+
+            updated ??= [];
+            if (updated.Count == current.Count)
+                return;
+
+            if (_subscribedEntities.TryUpdate(baseIdentifier, updated, current))
+                return;
+        }
     }
 
     internal void Clear() => _subscribedEntities.Clear();
