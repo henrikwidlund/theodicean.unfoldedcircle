@@ -27,9 +27,9 @@
       },
       "Theodicean.SourceGenerators": {
         "type": "Direct",
-        "requested": "[0.0.9, )",
-        "resolved": "0.0.9",
-        "contentHash": "kb1f/X1C1VQcZ/MuDnRDnOxPLR1DP5nvhNgV2YBdrOesyat0LoHjjSrEoL6XQzKv6HLZkVow9V3znCnOpnEqCg=="
+        "requested": "[0.0.10, )",
+        "resolved": "0.0.10",
+        "contentHash": "WsWaR8WT3tLE1666hb5s14Z+aMx1IT1idHt7Cm+yPcuw96RbVUNuE6h2iPAMOQLqDYrH4eG16keanDPj6eg31g=="
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
