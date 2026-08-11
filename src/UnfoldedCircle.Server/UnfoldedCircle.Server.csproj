@@ -40,12 +40,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Meziantou.Analyzer" Version="3.0.140">
+        <PackageReference Include="Meziantou.Analyzer" Version="3.0.144">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.12" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301">
+        <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.13" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>

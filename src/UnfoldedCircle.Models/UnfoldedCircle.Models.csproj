@@ -32,14 +32,14 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Meziantou.Analyzer" Version="3.0.140">
+        <PackageReference Include="Meziantou.Analyzer" Version="3.0.144">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Theodicean.SourceGenerators" Version="0.0.10" PrivateAssets="all" ExcludeAssets="runtime">
+        <PackageReference Include="Theodicean.SourceGenerators" Version="0.0.11" PrivateAssets="all" ExcludeAssets="runtime">
             <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.301">
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.400">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
