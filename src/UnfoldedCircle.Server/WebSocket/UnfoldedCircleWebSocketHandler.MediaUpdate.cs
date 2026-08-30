@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Server.WebSocket;
 
-public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>
+public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>
 {
     /// <summary>
     /// Method responsible for broadcasting updates about the given entity.
