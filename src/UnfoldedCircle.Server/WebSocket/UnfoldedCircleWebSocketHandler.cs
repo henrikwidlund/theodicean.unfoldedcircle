@@ -21,18 +21,20 @@ namespace UnfoldedCircle.Server.WebSocket;
 /// <param name="logger">The logger used by this class.</param>
 /// <typeparam name="TMediaPlayerCommandId">The type of commands used by the media player entity.</typeparam>
 /// <typeparam name="TConfigurationItem">The type of configuration item the <paramref name="configurationService"/> will use.</typeparam>
-public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>(
-    IConfigurationService<TConfigurationItem> configurationService,
+/// <typeparam name="TUnfoldedCircleConfiguration">The type of configuration the <paramref name="configurationService"/> will use.</typeparam>
+public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>(
+    IConfigurationService<TUnfoldedCircleConfiguration, TConfigurationItem> configurationService,
     IOptions<UnfoldedCircleOptions> options,
-    ILogger<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>> logger)
+    ILogger<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>> logger)
     where TMediaPlayerCommandId : struct, Enum
+    where TUnfoldedCircleConfiguration : UnfoldedCircleConfiguration<TConfigurationItem>, new()
     where TConfigurationItem : UnfoldedCircleConfigurationItem
 {
     /// <summary>
     /// Service providing configurations for the integration.
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
-    protected readonly IConfigurationService<TConfigurationItem> _configurationService = configurationService;
+    protected readonly IConfigurationService<TUnfoldedCircleConfiguration, TConfigurationItem> _configurationService = configurationService;
 
     /// <summary>
     /// Options for customizing the behavior of this class.
@@ -44,7 +46,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// Logger used by this class to log messages.
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
-    protected readonly ILogger<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>> _logger = logger;
+    protected readonly ILogger<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>> _logger = logger;
 
     private readonly byte[][] _redactedJsonPropertiesUtf8 = SensitiveJsonRedactor.BuildPropertyList(
         SensitiveJsonRedactor.DefaultRedactedProperties,

@@ -8,7 +8,7 @@ using UnfoldedCircle.Server.Response;
 
 namespace UnfoldedCircle.Server.WebSocket;
 
-public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>
+public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>
 {
     /// <summary>
     /// Called when a <c>get_device_state</c> request is received.

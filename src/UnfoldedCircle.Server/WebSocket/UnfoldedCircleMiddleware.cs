@@ -12,20 +12,21 @@ using UnfoldedCircle.Server.DependencyInjection;
 
 namespace UnfoldedCircle.Server.WebSocket;
 
-internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>(
-    UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem> unfoldedCircleWebSocketHandler,
+internal sealed class UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>(
+    UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem> unfoldedCircleWebSocketHandler,
     IHostApplicationLifetime applicationLifetime,
     ILoggerFactory loggerFactory,
-    ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> logger,
+    ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>> logger,
     IOptions<UnfoldedCircleOptions> options) : IMiddleware
-    where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>
+    where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>
     where TMediaPlayerCommandId : struct, Enum
+    where TUnfoldedCircleConfiguration : UnfoldedCircleConfiguration<TConfigurationItem>, new()
     where TConfigurationItem : UnfoldedCircleConfigurationItem
 {
-    private readonly UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem> _unfoldedCircleWebSocketHandler = unfoldedCircleWebSocketHandler;
+    private readonly UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem> _unfoldedCircleWebSocketHandler = unfoldedCircleWebSocketHandler;
     private readonly IHostApplicationLifetime _applicationLifetime = applicationLifetime;
     private readonly ILoggerFactory _loggerFactory = loggerFactory;
-    private readonly ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TConfigurationItem>> _logger = logger;
+    private readonly ILogger<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>> _logger = logger;
     private readonly IOptions<UnfoldedCircleOptions> _options = options;
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)

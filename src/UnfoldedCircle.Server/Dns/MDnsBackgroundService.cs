@@ -9,17 +9,18 @@ using UnfoldedCircle.Server.DependencyInjection;
 
 namespace UnfoldedCircle.Server.Dns;
 
-internal sealed class MDnsBackgroundService<TConfigurationItem>(
+internal sealed class MDnsBackgroundService<TUnfoldedCircleConfiguration, TConfigurationItem>(
     IConfiguration configuration,
     ILoggerFactory loggerFactory,
-    IConfigurationService<TConfigurationItem> configurationService,
+    IConfigurationService<TUnfoldedCircleConfiguration, TConfigurationItem> configurationService,
     IOptions<UnfoldedCircleOptions> unfoldedCircleOptions)
     : IHostedService, IDisposable
+    where TUnfoldedCircleConfiguration : UnfoldedCircleConfiguration<TConfigurationItem>, new()
     where TConfigurationItem : UnfoldedCircleConfigurationItem
 {
     private readonly IConfiguration _configuration = configuration;
     private readonly ILoggerFactory _loggerFactory = loggerFactory;
-    private readonly IConfigurationService<TConfigurationItem> _configurationService = configurationService;
+    private readonly IConfigurationService<TUnfoldedCircleConfiguration, TConfigurationItem> _configurationService = configurationService;
     private readonly IOptions<UnfoldedCircleOptions> _unfoldedCircleOptions = unfoldedCircleOptions;
     private ServiceProfile? _serviceProfile;
     private ServiceDiscovery? _serviceDiscovery;
