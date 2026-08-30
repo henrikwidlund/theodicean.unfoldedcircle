@@ -43,31 +43,31 @@ You must make sure that the file is copied as part of the publishing process.
 
 The integration requires that you implement a few abstract classes and register them in your `Program.cs`:
 
-- `UnfoldedCircle.Server.Configuration.ConfigurationService<TConfigurationItem>` - Handles configuration for the integration.
-- `UnfoldedCircle.Server.WebSocket.UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TConfigurationItem>` - Handles requests and events from and to the remotes.
+- `UnfoldedCircle.Server.Configuration.ConfigurationService<TGlobalConfiguration, TConfigurationItem>` - Handles configuration for the integration.
+- `UnfoldedCircle.Server.WebSocket.UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>` - Handles requests and events from and to the remotes.
 
 Implement the abstract methods to work with your entities and configuration. You can use [unfoldedcircle-oppo](https://github.com/henrikwidlund/unfoldedcircle-oppo) as a reference implementation.
 
 In your `Program.cs`, you can register the services like this:
 
 ```csharp
-builder.AddUnfoldedCircleServer<CustomWebSocketHandler, CustomConfigurationService, CustomConfigurationItem>();
+builder.AddUnfoldedCircleServer<CustomWebSocketHandler, CustomConfigurationService, CustomGlobalConfiguration, CustomConfigurationItem>();
 
 ...
-app.UseUnfoldedCircleServer<CustomWebSocketHandler, CustomConfigurationItem>();
+app.UseUnfoldedCircleServer<CustomWebSocketHandler, CustomGlobalConfiguration, CustomConfigurationItem>();
 
 // Or if you want to use custom media player command ids (where CustomCommandId is an enum and must have the members defined in `MediaPlayerCommandId`):
-builder.AddUnfoldedCircleServer<CustomWebSocketHandler, CustomCommandId, CustomConfigurationService, CustomConfigurationItem>();
+builder.AddUnfoldedCircleServer<CustomWebSocketHandler, CustomCommandId, CustomConfigurationService, CustomGlobalConfiguration, CustomConfigurationItem>();
 
 ...
-app.UseUnfoldedCircleServer<CustomWebSocketHandler, CustomCommandId, CustomConfigurationItem>();
+app.UseUnfoldedCircleServer<CustomWebSocketHandler, CustomCommandId, CustomGlobalConfiguration, CustomConfigurationItem>();
 ```
 
 ### Customization
-You can customize some of the behaviour of the integration by using the `configureOptions` overload when registering via `AddUnfoldedCircleServer`.
+You can customize some of the behavior of the integration by using the `configureOptions` overload when registering via `AddUnfoldedCircleServer`.
 
 ```csharp
-builder.AddUnfoldedCircleServer<CustomWebSocketHandler, CustomConfigurationService, CustomConfigurationItem>(options =>
+builder.AddUnfoldedCircleServer<CustomWebSocketHandler, CustomConfigurationService, CustomGlobalConfiguration, CustomConfigurationItem>(options =>
 {
     // Disable the prefixes for identifiers (e.g. "REMOTE:"). This is useful if you already have an integration driver and want to start using this SDK.
     DisableEntityIdPrefixing = true,

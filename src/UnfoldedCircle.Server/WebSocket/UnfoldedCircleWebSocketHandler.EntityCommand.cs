@@ -8,7 +8,7 @@ using UnfoldedCircle.Server.Response;
 
 namespace UnfoldedCircle.Server.WebSocket;
 
-public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>
+public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>
 {
     /// <summary>
     /// Executed when a <c>entity_command</c> is received for a remote entity.
