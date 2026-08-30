@@ -31,24 +31,24 @@ public static class UnfoldedCircleRegistrationExtensions
         /// <param name="configureOptions">Optional configuration options for the server.</param>
         /// <typeparam name="TUnfoldedCircleWebSocketHandler">The type of socket handler to use.</typeparam>
         /// <typeparam name="TConfigurationService">The type of configuration service to use.</typeparam>
+        /// <typeparam name="TGlobalConfiguration">The type used to store global configuration values.</typeparam>
         /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
-        /// <typeparam name="TUnfoldedCircleConfiguration">The type of root configuration to use.</typeparam>
         /// <returns>A <see cref="WebApplicationBuilder"/> with the Unfolded Circle server added to it.</returns>
         // ReSharper disable once UnusedMember.Global
         public WebApplicationBuilder AddUnfoldedCircleServer<
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TUnfoldedCircleWebSocketHandler,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConfigurationService,
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TUnfoldedCircleConfiguration,
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TGlobalConfiguration,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConfigurationItem>(Action<UnfoldedCircleOptions>? configureOptions = null)
+            where TGlobalConfiguration : UnfoldedCircleGlobalConfiguration, new()
             where TConfigurationItem : UnfoldedCircleConfigurationItem
-            where TUnfoldedCircleConfiguration : UnfoldedCircleConfiguration<TConfigurationItem>, new()
-            where TConfigurationService : class, IConfigurationService<TUnfoldedCircleConfiguration, TConfigurationItem>
-            where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<MediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem> =>
+            where TConfigurationService : class, IConfigurationService<TGlobalConfiguration, TConfigurationItem>
+            where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<MediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem> =>
             builder.AddUnfoldedCircleServer<
                 TUnfoldedCircleWebSocketHandler,
                 MediaPlayerCommandId,
                 TConfigurationService,
-                TUnfoldedCircleConfiguration,
+                TGlobalConfiguration,
                 TConfigurationItem>(configureOptions);
 
         /// <summary>
@@ -58,21 +58,21 @@ public static class UnfoldedCircleRegistrationExtensions
         /// <typeparam name="TUnfoldedCircleWebSocketHandler">The type of socket handler to use.</typeparam>
         /// <typeparam name="TMediaPlayerCommandId">The type of media player command id to use.</typeparam>
         /// <typeparam name="TConfigurationService">The type of configuration service to use.</typeparam>
+        /// <typeparam name="TGlobalConfiguration">The type used to store global configuration values.</typeparam>
         /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
-        /// <typeparam name="TUnfoldedCircleConfiguration">The type of root configuration to use.</typeparam>
         /// <returns>A <see cref="WebApplicationBuilder"/> with the Unfolded Circle server added to it.</returns>
         // ReSharper disable once MemberCanBePrivate.Global
         public WebApplicationBuilder AddUnfoldedCircleServer<
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TUnfoldedCircleWebSocketHandler,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TMediaPlayerCommandId,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConfigurationService,
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TUnfoldedCircleConfiguration,
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TGlobalConfiguration,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TConfigurationItem>(Action<UnfoldedCircleOptions>? configureOptions = null)
-            where TUnfoldedCircleConfiguration : UnfoldedCircleConfiguration<TConfigurationItem>, new()
+            where TGlobalConfiguration : UnfoldedCircleGlobalConfiguration, new()
             where TConfigurationItem : UnfoldedCircleConfigurationItem
-            where TConfigurationService : class, IConfigurationService<TUnfoldedCircleConfiguration, TConfigurationItem>
+            where TConfigurationService : class, IConfigurationService<TGlobalConfiguration, TConfigurationItem>
             where TMediaPlayerCommandId : struct, Enum
-            where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>
+            where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>
         {
             if (builder.Configuration["UC_CONFIG_HOME"] is { } ucConfigHome && !string.IsNullOrEmpty(ucConfigHome))
             {
@@ -116,12 +116,12 @@ public static class UnfoldedCircleRegistrationExtensions
                 });
             }
 
-            builder.Services.AddSingleton<IConfigurationService<TUnfoldedCircleConfiguration, TConfigurationItem>, TConfigurationService>();
+            builder.Services.AddSingleton<IConfigurationService<TGlobalConfiguration, TConfigurationItem>, TConfigurationService>();
             if (!builder.Configuration.GetOrDefault("UC_DISABLE_MDNS_PUBLISH", false))
-                builder.Services.AddHostedService<MDnsBackgroundService<TUnfoldedCircleConfiguration, TConfigurationItem>>();
+                builder.Services.AddHostedService<MDnsBackgroundService<TGlobalConfiguration, TConfigurationItem>>();
 
-            builder.Services.AddSingleton<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>, TUnfoldedCircleWebSocketHandler>();
-            builder.Services.AddSingleton<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>>();
+            builder.Services.AddSingleton<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>, TUnfoldedCircleWebSocketHandler>();
+            builder.Services.AddSingleton<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>>();
 
             return builder;
         }
@@ -135,14 +135,14 @@ public static class UnfoldedCircleRegistrationExtensions
         /// </summary>
         /// <param name="webSocketOptions">Optional options to customize the websocket behavior.</param>
         /// <typeparam name="TUnfoldedCircleWebSocketHandler">The type of socket handler to use.</typeparam>
-        /// <typeparam name="TUnfoldedCircleConfiguration">The type of configuration to use.</typeparam>
+        /// <typeparam name="TGlobalConfiguration">The type used to store global configuration values.</typeparam>
         /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
         // ReSharper disable once UnusedMember.Global
-        public IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TUnfoldedCircleConfiguration, TConfigurationItem>(WebSocketOptions? webSocketOptions = null)
-            where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<MediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>
-            where TUnfoldedCircleConfiguration : UnfoldedCircleConfiguration<TConfigurationItem>, new()
+        public IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TGlobalConfiguration, TConfigurationItem>(WebSocketOptions? webSocketOptions = null)
+            where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<MediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>
+            where TGlobalConfiguration : UnfoldedCircleGlobalConfiguration, new()
             where TConfigurationItem : UnfoldedCircleConfigurationItem =>
-            builder.UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, MediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>(webSocketOptions);
+            builder.UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, MediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>(webSocketOptions);
 
         /// <summary>
         /// Uses the Unfolded Circle server middleware in the application pipeline.
@@ -150,12 +150,12 @@ public static class UnfoldedCircleRegistrationExtensions
         /// <param name="webSocketOptions">Optional options to customize the websocket behavior.</param>
         /// <typeparam name="TUnfoldedCircleWebSocketHandler">The type of socket handler to use.</typeparam>
         /// <typeparam name="TMediaPlayerCommandId">The type of media player command id to use.</typeparam>
-        /// <typeparam name="TUnfoldedCircleConfiguration">The type of configuration to use.</typeparam>
+        /// <typeparam name="TGlobalConfiguration">The type used to store global configuration values.</typeparam>
         /// <typeparam name="TConfigurationItem">The type of configuration item to use.</typeparam>
         // ReSharper disable once MemberCanBePrivate.Global
-        public IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>(WebSocketOptions? webSocketOptions = null)
-            where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>
-            where TUnfoldedCircleConfiguration : UnfoldedCircleConfiguration<TConfigurationItem>, new()
+        public IApplicationBuilder UseUnfoldedCircleServer<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>(WebSocketOptions? webSocketOptions = null)
+            where TUnfoldedCircleWebSocketHandler : UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>
+            where TGlobalConfiguration : UnfoldedCircleGlobalConfiguration, new()
             where TConfigurationItem : UnfoldedCircleConfigurationItem
             where TMediaPlayerCommandId : struct, Enum
         {
@@ -165,7 +165,7 @@ public static class UnfoldedCircleRegistrationExtensions
             };
 
             builder.UseWebSockets(webSocketOptions);
-            builder.UseMiddleware<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>>();
+            builder.UseMiddleware<UnfoldedCircleMiddleware<TUnfoldedCircleWebSocketHandler, TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>>();
 
             return builder;
         }

@@ -6,7 +6,7 @@ using UnfoldedCircle.Server.Response;
 
 namespace UnfoldedCircle.Server.WebSocket;
 
-public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>
+public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>
 {
     private const string RestoreFailedValidationErrorCode = "RESTORE_FAILED";
     private const string RestoreFailedValidationErrorMessage = "Restore failed or invalid restore data. Please try again.";
@@ -168,7 +168,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
             SessionHolder.ReconfigureEntityMap[wsId] = entityId;
         }
 
-        TUnfoldedCircleConfiguration configuration;
+        UnfoldedCircleConfiguration<TGlobalConfiguration, TConfigurationItem> configuration;
         TConfigurationItem entity;
         switch (action)
         {
@@ -296,7 +296,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="wsId">ID of the websocket.</param>
     /// <param name="configuration">The configuration that should be reconfigured.</param>
     /// <param name="cancellationToken">The <see cref="CancellationToken"/>.</param>
-    protected virtual ValueTask<SettingsPage> CreateReconfigurePageAsync(string wsId, TUnfoldedCircleConfiguration configuration, CancellationToken cancellationToken)
+    protected virtual ValueTask<SettingsPage> CreateReconfigurePageAsync(string wsId, UnfoldedCircleConfiguration<TGlobalConfiguration, TConfigurationItem> configuration, CancellationToken cancellationToken)
     {
         // No prior entities configured, go to new entity page.
         if (configuration.Entities.Count == 0)

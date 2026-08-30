@@ -20,21 +20,21 @@ namespace UnfoldedCircle.Server.WebSocket;
 /// <param name="options">Options for customizing the behavior of this class.</param>
 /// <param name="logger">The logger used by this class.</param>
 /// <typeparam name="TMediaPlayerCommandId">The type of commands used by the media player entity.</typeparam>
+/// <typeparam name="TGlobalConfiguration">The type of configuration used to store global values.</typeparam>
 /// <typeparam name="TConfigurationItem">The type of configuration item the <paramref name="configurationService"/> will use.</typeparam>
-/// <typeparam name="TUnfoldedCircleConfiguration">The type of configuration the <paramref name="configurationService"/> will use.</typeparam>
-public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>(
-    IConfigurationService<TUnfoldedCircleConfiguration, TConfigurationItem> configurationService,
+public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>(
+    IConfigurationService<TGlobalConfiguration, TConfigurationItem> configurationService,
     IOptions<UnfoldedCircleOptions> options,
-    ILogger<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>> logger)
+    ILogger<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>> logger)
     where TMediaPlayerCommandId : struct, Enum
-    where TUnfoldedCircleConfiguration : UnfoldedCircleConfiguration<TConfigurationItem>, new()
+    where TGlobalConfiguration : UnfoldedCircleGlobalConfiguration, new()
     where TConfigurationItem : UnfoldedCircleConfigurationItem
 {
     /// <summary>
     /// Service providing configurations for the integration.
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
-    protected readonly IConfigurationService<TUnfoldedCircleConfiguration, TConfigurationItem> _configurationService = configurationService;
+    protected readonly IConfigurationService<TGlobalConfiguration, TConfigurationItem> _configurationService = configurationService;
 
     /// <summary>
     /// Options for customizing the behavior of this class.
@@ -46,7 +46,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// Logger used by this class to log messages.
     /// </summary>
     // ReSharper disable once MemberCanBePrivate.Global
-    protected readonly ILogger<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TUnfoldedCircleConfiguration, TConfigurationItem>> _logger = logger;
+    protected readonly ILogger<UnfoldedCircleWebSocketHandler<TMediaPlayerCommandId, TGlobalConfiguration, TConfigurationItem>> _logger = logger;
 
     private readonly byte[][] _redactedJsonPropertiesUtf8 = SensitiveJsonRedactor.BuildPropertyList(
         SensitiveJsonRedactor.DefaultRedactedProperties,
@@ -156,7 +156,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
 
                 var configuration = await _configurationService.GetConfigurationAsync(cancellationTokenWrapper.RequestAborted);
                 var isSetupMessage = messageEvent is MessageEvent.SetupDriver or MessageEvent.SetupDriverUserData;
-                var maxMessageHandlingWaitTimeInSeconds = configuration.MaxMessageHandlingWaitTimeInSeconds ?? _options.Value.MaxMessageHandlingWaitTimeInSeconds;
+                var maxMessageHandlingWaitTimeInSeconds = configuration.GlobalConfiguration.MaxMessageHandlingWaitTimeInSeconds ?? _options.Value.MaxMessageHandlingWaitTimeInSeconds;
                 using var cancellationTokenSource = new CancellationTokenSource(isSetupMessage ? Timeout.InfiniteTimeSpan : TimeSpan.FromSeconds(maxMessageHandlingWaitTimeInSeconds));
                 using var linkedCancellationToken = CancellationTokenSource.CreateLinkedTokenSource(
                     cancellationTokenWrapper.ApplicationStopping,
