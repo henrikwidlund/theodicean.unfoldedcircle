@@ -57,7 +57,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <param name="NextSetupStep">Information about the next setup step. Must be sent if <paramref name="SetupDriverResult"/> is set to <see cref="SetupDriverResult.UserInputRequired"/>.</param>
     /// <param name="Error">Failure reason. Used when <paramref name="SetupDriverResult"/> is <see cref="SetupDriverResult.Error"/>.</param>
     // ReSharper disable once ClassNeverInstantiated.Global
-    protected sealed record OnSetupResult(in SetupDriverResult SetupDriverResult, RequireUserAction? NextSetupStep = null, DriverSetupChangeError Error = DriverSetupChangeError.Other);
+    protected sealed record OnSetupResult(SetupDriverResult SetupDriverResult, RequireUserAction? NextSetupStep = null, DriverSetupChangeError Error = DriverSetupChangeError.Other);
 
     /// <summary>
     /// Setup driver result.

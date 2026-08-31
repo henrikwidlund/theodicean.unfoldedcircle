@@ -80,7 +80,7 @@ internal static partial class UnfoldedCircleLogger
 
     [LoggerMessage(EventId = 15, EventName = nameof(UnsupportedEntityTypeWithEntityId), Level = LogLevel.Error,
         Message = "[{WSId}] WS: Unsupported entity type {EntityType} for entity {EntityId}.")]
-    public static partial void UnsupportedEntityTypeWithEntityId(this ILogger logger, string wsId, in EntityType entityType, string entityId);
+    public static partial void UnsupportedEntityTypeWithEntityId(this ILogger logger, string wsId, EntityType entityType, string entityId);
 
     [LoggerMessage(EventId = 16, EventName = nameof(RemovedConfiguration), Level = LogLevel.Information,
         Message = "[{WSId}] WS: Removed configuration for {EntityId}")]
@@ -116,7 +116,7 @@ internal static partial class UnfoldedCircleLogger
 
     [LoggerMessage(EventId = 25, EventName = nameof(NoValidSetupStepFound), Level = LogLevel.Error,
         Message = "[{WSId}] No valid setup step found. Current step: {SetupStep}.")]
-    public static partial void NoValidSetupStepFound(this ILogger logger, string wsId, in SetupStep setupStep);
+    public static partial void NoValidSetupStepFound(this ILogger logger, string wsId, SetupStep setupStep);
 
     private static readonly Action<ILogger, string, Exception> ErrorDuringSetupProcessAction = LoggerMessage.Define<string>(
         LogLevel.Error,

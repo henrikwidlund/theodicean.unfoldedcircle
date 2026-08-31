@@ -36,7 +36,7 @@ public static class ValueExtensions
     /// </param>
     /// <returns>A prefixed identifier based on the <paramref name="entityType"/> value.</returns>
     /// <exception cref="ArgumentOutOfRangeException">An unknown value for <see cref="EntityType"/> was specified.</exception>
-    public static string GetIdentifier(this string baseIdentifier, in EntityType entityType, string? suffix = null)
+    public static string GetIdentifier(this string baseIdentifier, EntityType entityType, string? suffix = null)
     {
         var identifierSpan = baseIdentifier.AsSpan().GetBaseIdentifier();
 
@@ -90,7 +90,7 @@ public static class ValueExtensions
     /// </param>
     /// <exception cref="ArgumentOutOfRangeException">An unknown value for <see cref="EntityType"/> was specified.</exception>
     // ReSharper disable once UnusedMember.Global
-    public static ReadOnlyMemory<char> GetIdentifier(this ReadOnlyMemory<char> baseIdentifier, in EntityType entityType, string? suffix = null)
+    public static ReadOnlyMemory<char> GetIdentifier(this ReadOnlyMemory<char> baseIdentifier, EntityType entityType, string? suffix = null)
     {
         var identifierMemory = baseIdentifier.GetBaseIdentifier();
 
@@ -160,7 +160,7 @@ public static class ValueExtensions
     /// or null if the <paramref name="baseIdentifier"/> is null or whitespace.
     /// </returns>
     // ReSharper disable once MemberCanBePrivate.Global
-    public static string? GetNullableIdentifier(this string? baseIdentifier, in EntityType entityType, string? suffix = null)
+    public static string? GetNullableIdentifier(this string? baseIdentifier, EntityType entityType, string? suffix = null)
         => string.IsNullOrWhiteSpace(baseIdentifier) ? null : baseIdentifier.GetIdentifier(entityType, suffix);
 
     /// <summary>

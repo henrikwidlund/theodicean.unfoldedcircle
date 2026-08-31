@@ -200,7 +200,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         await _configurationService.UpdateConfigurationAsync(configuration, cancellationToken);
     }
 
-    private JsonTypeInfo<T>? GetCustomJsonTypeInfo<T>(in MessageEvent messageEvent)
+    private JsonTypeInfo<T>? GetCustomJsonTypeInfo<T>(MessageEvent messageEvent)
         where T : class
         => _options.Value.MessageEventDeserializeOverrides.GetValueOrDefault(messageEvent) as JsonTypeInfo<T>;
 
