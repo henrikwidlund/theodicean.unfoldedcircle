@@ -54,7 +54,8 @@ public abstract class ConfigurationService<TGlobalConfiguration, TConfigurationI
                 {
                     _unfoldedCircleConfiguration = _unfoldedCircleConfiguration with
                     {
-                        GlobalConfiguration = _unfoldedCircleConfiguration.GlobalConfiguration with
+                        // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract // Needed for deserialization
+                        GlobalConfiguration = (_unfoldedCircleConfiguration.GlobalConfiguration ?? new TGlobalConfiguration()) with
                         {
                             MaxMessageHandlingWaitTimeInSeconds = maxMessageHandlingWaitTimeInSeconds
                         },
