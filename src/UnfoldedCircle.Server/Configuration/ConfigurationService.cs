@@ -43,10 +43,13 @@ public abstract class ConfigurationService<TGlobalConfiguration, TConfigurationI
 
             if (File.Exists(ConfigurationFilePath))
             {
-                await using var configurationFile = File.Open(ConfigurationFilePath, FileMode.Open);
-                var deserialized = await JsonSerializer.DeserializeAsync(configurationFile,
-                    GetSerializer(),
-                    cancellationToken);
+                UnfoldedCircleConfiguration<TGlobalConfiguration, TConfigurationItem>? deserialized;
+                await using (var configurationFile = File.Open(ConfigurationFilePath, FileMode.Open))
+                {
+                    deserialized = await JsonSerializer.DeserializeAsync(configurationFile,
+                        GetSerializer(),
+                        cancellationToken);
+                }
 
                 _unfoldedCircleConfiguration = deserialized ?? throw new InvalidOperationException("Failed to deserialize configuration");
 #pragma warning disable CS0618 // Needed for migration
