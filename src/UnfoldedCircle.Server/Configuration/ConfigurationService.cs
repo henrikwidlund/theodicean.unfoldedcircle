@@ -67,6 +67,14 @@ public abstract class ConfigurationService<TGlobalConfiguration, TConfigurationI
                     await using var migratedConfigurationFile = File.Create(ConfigurationFilePath);
                     await JsonSerializer.SerializeAsync(migratedConfigurationFile, _unfoldedCircleConfiguration, GetSerializer(), CancellationToken.None);
                 }
+                // ReSharper disable once ConditionIsAlwaysTrueOrFalseAccordingToNullableAPIContract // source generated deserialize doesn't care about default values
+                else if (_unfoldedCircleConfiguration.GlobalConfiguration is null)
+                {
+                    // A file that predates GlobalConfiguration, and never had the obsolete top-level wait-time set, skips the branch above.
+                    _unfoldedCircleConfiguration = _unfoldedCircleConfiguration with { GlobalConfiguration = new TGlobalConfiguration() };
+                    await using var migratedConfigurationFile = File.Create(ConfigurationFilePath);
+                    await JsonSerializer.SerializeAsync(migratedConfigurationFile, _unfoldedCircleConfiguration, GetSerializer(), CancellationToken.None);
+                }
 #pragma warning restore CS0618
                 return _unfoldedCircleConfiguration;
             }
