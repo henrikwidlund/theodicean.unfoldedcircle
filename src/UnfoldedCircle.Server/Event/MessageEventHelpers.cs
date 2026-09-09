@@ -5,21 +5,21 @@ namespace UnfoldedCircle.Server.Event;
 /// </summary>
 public static class MessageEventHelpers
 {
-    private static readonly byte[] GetDriverVersion = "get_driver_version"u8.ToArray();
-    private static readonly byte[] GetDriverMetaData = "get_driver_metadata"u8.ToArray();
-    private static readonly byte[] Connect = "connect"u8.ToArray();
-    private static readonly byte[] Disconnect = "disconnect"u8.ToArray();
-    private static readonly byte[] GetDeviceState = "get_device_state"u8.ToArray();
-    private static readonly byte[] GetAvailableEntities = "get_available_entities"u8.ToArray();
-    private static readonly byte[] SubscribeEvents = "subscribe_events"u8.ToArray();
-    private static readonly byte[] UnsubscribeEvents = "unsubscribe_events"u8.ToArray();
-    private static readonly byte[] GetEntityStates = "get_entity_states"u8.ToArray();
-    private static readonly byte[] SetupDriver = "setup_driver"u8.ToArray();
-    private static readonly byte[] SetupDriverUserData = "set_driver_user_data"u8.ToArray();
-    private static readonly byte[] AbortDriverSetup = "abort_driver_setup"u8.ToArray();
-    private static readonly byte[] EntityCommand = "entity_command"u8.ToArray();
-    private static readonly byte[] EnterStandby = "enter_standby"u8.ToArray();
-    private static readonly byte[] ExitStandby = "exit_standby"u8.ToArray();
+    private static readonly byte[] GetDriverVersion = [.. "get_driver_version"u8];
+    private static readonly byte[] GetDriverMetaData = [.. "get_driver_metadata"u8];
+    private static readonly byte[] Connect = [.. "connect"u8];
+    private static readonly byte[] Disconnect = [.. "disconnect"u8];
+    private static readonly byte[] GetDeviceState = [.. "get_device_state"u8];
+    private static readonly byte[] GetAvailableEntities = [.. "get_available_entities"u8];
+    private static readonly byte[] SubscribeEvents = [.. "subscribe_events"u8];
+    private static readonly byte[] UnsubscribeEvents = [.. "unsubscribe_events"u8];
+    private static readonly byte[] GetEntityStates = [.. "get_entity_states"u8];
+    private static readonly byte[] SetupDriver = [.. "setup_driver"u8];
+    private static readonly byte[] SetupDriverUserData = [.. "set_driver_user_data"u8];
+    private static readonly byte[] AbortDriverSetup = [.. "abort_driver_setup"u8];
+    private static readonly byte[] EntityCommand = [.. "entity_command"u8];
+    private static readonly byte[] EnterStandby = [.. "enter_standby"u8];
+    private static readonly byte[] ExitStandby = [.. "exit_standby"u8];
 
     /// <summary>
     /// Gets the <see cref="MessageEvent"/> type from the provided JSON element.

@@ -22,13 +22,8 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Connection closed")]
     public static partial void WebSocketConnectionClosed(this ILogger logger, string wsId);
 
-    private static readonly Action<ILogger, Exception> UnfoldedCircleMiddlewareExceptionAction = LoggerMessage.Define(
-        LogLevel.Error,
-        new EventId(4, nameof(UnfoldedCircleMiddlewareException)),
-        "An error occurred while handling WebSocket connection");
-
-    public static void UnfoldedCircleMiddlewareException(this ILogger logger, Exception exception) =>
-        UnfoldedCircleMiddlewareExceptionAction(logger, exception);
+    [LoggerMessage(EventId = 4, Level = LogLevel.Error, Message = "An error occurred while handling WebSocket connection")]
+    public static partial void UnfoldedCircleMiddlewareException(this ILogger logger, Exception exception);
 
     [LoggerMessage(EventId = 5, EventName = nameof(SendingMessage), Level = LogLevel.Trace,
         Message = "[{WSId}] WS: Sending message '{Message}'")]
@@ -54,13 +49,8 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Received message does not contain 'kind' property.")]
     public static partial void MissingKindProperty(this ILogger logger, string wsId);
 
-    private static readonly Action<ILogger, string, Exception> HandleWebSocketAsyncExceptionAction = LoggerMessage.Define<string>(
-        LogLevel.Error,
-        new EventId(11, nameof(HandleWebSocketAsyncException)),
-        "[{WSId}] WS: Error while handling message.");
-
-    public static void HandleWebSocketAsyncException(this ILogger logger, string wsId, Exception exception) =>
-        HandleWebSocketAsyncExceptionAction(logger, wsId, exception);
+    [LoggerMessage(EventId = 11, Level = LogLevel.Error, Message = "[{WSId}] WS: Error while handling message.")]
+    public static partial void HandleWebSocketAsyncException(this ILogger logger, string wsId, Exception exception);
 
     [LoggerMessage(EventId = 12, EventName = nameof(RemovingEntity), Level = LogLevel.Information,
         Message = "[{WSId}] Removing entity {@Entity}")]
@@ -70,13 +60,8 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Unknown entity command type {PayloadType}")]
     public static partial void UnknownEntityCommand(this ILogger logger, string wsId, string payloadType);
 
-    private static readonly Action<ILogger, string, EntityCommandMsgData<string, RemoteEntityCommandParams>, Exception> RemoteEntityCommandHandlingExceptionAction = LoggerMessage.Define<string, EntityCommandMsgData<string, RemoteEntityCommandParams>>(
-        LogLevel.Error,
-        new EventId(14, nameof(RemoteEntityCommandHandlingException)),
-        "[{WSId}] WS: Error while handling remote entity command {@MsgData}");
-
-    public static void RemoteEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<string, RemoteEntityCommandParams> msgData, Exception exception) =>
-        RemoteEntityCommandHandlingExceptionAction(logger, wsId, msgData, exception);
+    [LoggerMessage(EventId = 14, Level = LogLevel.Error, Message = "[{WSId}] WS: Error while handling remote entity command {@MsgData}")]
+    public static partial void RemoteEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<string, RemoteEntityCommandParams> msgData, Exception exception);
 
     [LoggerMessage(EventId = 15, EventName = nameof(UnsupportedEntityTypeWithEntityId), Level = LogLevel.Error,
         Message = "[{WSId}] WS: Unsupported entity type {EntityType} for entity {EntityId}.")]
@@ -118,41 +103,21 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] No valid setup step found. Current step: {SetupStep}.")]
     public static partial void NoValidSetupStepFound(this ILogger logger, string wsId, SetupStep setupStep);
 
-    private static readonly Action<ILogger, string, Exception> ErrorDuringSetupProcessAction = LoggerMessage.Define<string>(
-        LogLevel.Error,
-        new EventId(26, nameof(ErrorDuringSetupProcess)),
-        "[{WSId}] Error during setup process.");
-
-    public static void ErrorDuringSetupProcess(this ILogger logger, string wsId, Exception exception) =>
-        ErrorDuringSetupProcessAction(logger, wsId, exception);
+    [LoggerMessage(EventId = 26, Level = LogLevel.Error, Message = "[{WSId}] Error during setup process.")]
+    public static partial void ErrorDuringSetupProcess(this ILogger logger, string wsId, Exception exception);
 
     [LoggerMessage(EventId = 30, EventName = nameof(ResettingEventProcessing), Level = LogLevel.Information,
         Message = "[{WSId}] WS: Resetting event processing due to task status {TaskStatus}.")]
     public static partial void ResettingEventProcessing(this ILogger logger, string wsId, TaskStatus taskStatus);
 
-    private static readonly Action<ILogger, string, Exception> UnhandledExceptionDuringEventAction = LoggerMessage.Define<string>(
-        LogLevel.Error,
-        new EventId(31, nameof(UnhandledExceptionDuringEvent)),
-        "[{WSId}] Unhandled exception during event.");
+    [LoggerMessage(EventId = 31, Level = LogLevel.Error, Message = "[{WSId}] Unhandled exception during event.")]
+    public static partial void UnhandledExceptionDuringEvent(this ILogger logger, string wsId, Exception exception);
 
-    public static void UnhandledExceptionDuringEvent(this ILogger logger, string wsId, Exception exception) =>
-        UnhandledExceptionDuringEventAction(logger, wsId, exception);
+    [LoggerMessage(EventId = 33, Level = LogLevel.Error, Message = "[{WSId}] Unhandled exception during start event.")]
+    public static partial void UnhandledExceptionDuringStartEvent(this ILogger logger, string wsId, Exception exception);
 
-    private static readonly Action<ILogger, string, Exception> UnhandledExceptionDuringStartEventAction = LoggerMessage.Define<string>(
-        LogLevel.Error,
-        new EventId(33, nameof(UnhandledExceptionDuringStartEvent)),
-        "[{WSId}] Unhandled exception during start event.");
-
-    public static void UnhandledExceptionDuringStartEvent(this ILogger logger, string wsId, Exception exception) =>
-        UnhandledExceptionDuringStartEventAction(logger, wsId, exception);
-
-    private static readonly Action<ILogger, string, Exception> UnhandledExceptionDuringStopEventAction = LoggerMessage.Define<string>(
-        LogLevel.Error,
-        new EventId(34, nameof(UnhandledExceptionDuringStopEvent)),
-        "[{WSId}] Unhandled exception during stop event.");
-
-    public static void UnhandledExceptionDuringStopEvent(this ILogger logger, string wsId, Exception exception) =>
-        UnhandledExceptionDuringStopEventAction(logger, wsId, exception);
+    [LoggerMessage(EventId = 34, Level = LogLevel.Error, Message = "[{WSId}] Unhandled exception during stop event.")]
+    public static partial void UnhandledExceptionDuringStopEvent(this ILogger logger, string wsId, Exception exception);
 
     [LoggerMessage(EventId = 35, EventName = nameof(StartEventProcessorSemaphoreTimeout), Level = LogLevel.Information,
         Message = "[{WSId}] WS: Failed to acquire semaphore lock for start event within the timeout.")]
@@ -166,21 +131,11 @@ internal static partial class UnfoldedCircleLogger
         Message = "[{WSId}] WS: Events are already running.")]
     public static partial void EventProcessingAlreadyRunning(this ILogger logger, string wsId);
 
-    private static readonly Action<ILogger, string, EntityCommandMsgData<ClimateCommandId, ClimateEntityCommandParams>, Exception> ClimateEntityCommandHandlingExceptionAction = LoggerMessage.Define<string, EntityCommandMsgData<ClimateCommandId, ClimateEntityCommandParams>>(
-        LogLevel.Error,
-        new EventId(38, nameof(ClimateEntityCommandHandlingException)),
-        "[{WSId}] WS: Error while handling climate entity command {@MsgData}");
+    [LoggerMessage(EventId = 38, Level = LogLevel.Error, Message = "[{WSId}] WS: Error while handling climate entity command {@MsgData}")]
+    public static partial void ClimateEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<ClimateCommandId, ClimateEntityCommandParams> msgData, Exception exception);
 
-    public static void ClimateEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<ClimateCommandId, ClimateEntityCommandParams> msgData, Exception exception) =>
-        ClimateEntityCommandHandlingExceptionAction(logger, wsId, msgData, exception);
-
-    private static readonly Action<ILogger, string, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams>, Exception> SelectEntityCommandHandlingExceptionAction = LoggerMessage.Define<string, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams>>(
-        LogLevel.Error,
-        new EventId(39, nameof(SelectEntityCommandHandlingException)),
-        "[{WSId}] WS: Error while handling select entity command {@MsgData}");
-
-    public static void SelectEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams> msgData, Exception exception) =>
-        SelectEntityCommandHandlingExceptionAction(logger, wsId, msgData, exception);
+    [LoggerMessage(EventId = 39, Level = LogLevel.Error, Message = "[{WSId}] WS: Error while handling select entity command {@MsgData}")]
+    public static partial void SelectEntityCommandHandlingException(this ILogger logger, string wsId, EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams> msgData, Exception exception);
 
     [LoggerMessage(EventId = 40, EventName = nameof(MessageTooLarge), Level = LogLevel.Warning,
         Message = "[{WSId}] WS: Received message is too large to process.")]

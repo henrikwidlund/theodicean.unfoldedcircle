@@ -315,11 +315,13 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     {
                         Dropdown = new SettingTypeDropdownInner
                         {
-                            Items = configuration.Entities.Select(static x => new SettingTypeDropdownItem
-                            {
-                                Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = $"{x.EntityName} ({x.Host})" },
-                                Value = x.EntityId
-                            }).ToArray(),
+                            Items =
+                            [
+                                .. configuration.Entities.Select(static x => new SettingTypeDropdownItem
+                                {
+                                    Label = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase) { ["en"] = $"{x.EntityName} ({x.Host})" }, Value = x.EntityId
+                                })
+                            ],
                             Value = configuration.Entities[0].EntityId
                         }
                     }

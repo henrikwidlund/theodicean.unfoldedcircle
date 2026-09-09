@@ -41,7 +41,7 @@ internal static class SensitiveJsonRedactor
         "backup_data"
     ];
 
-    private static readonly byte[] Mask = "***"u8.ToArray();
+    private static readonly byte[] Mask = [.. "***"u8];
 
     private static readonly ObjectPool<ArrayBufferWriter<byte>> BufferPool =
         new DefaultObjectPool<ArrayBufferWriter<byte>>(new BufferWriterPolicy(), 8);
