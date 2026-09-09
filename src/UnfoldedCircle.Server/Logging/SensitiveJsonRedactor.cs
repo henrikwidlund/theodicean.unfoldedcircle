@@ -301,6 +301,10 @@ internal static class SensitiveJsonRedactor
         {
             writer.WriteStringValue(Mask);
         }
+        else if (IsDataUri(ref reader))
+        {
+            writer.WriteStringValue(Mask);
+        }
         else if (cfg.NestedJsonRedaction
                  && recursionDepth < cfg.MaxRecursionDepth
                  && TryWriteNestedJsonString(ref reader, writer, scratch, in cfg, recursionDepth + 1))
@@ -312,6 +316,22 @@ internal static class SensitiveJsonRedactor
             WriteStringValueRaw(ref reader, writer, scratch);
         }
         redactNextValue = false;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static bool IsDataUri(ref Utf8JsonReader reader)
+    {
+        const int prefixLength = 5; // "data:"
+
+        if (!reader.HasValueSequence)
+            return reader.ValueSpan.StartsWith("data:"u8);
+
+        if (reader.ValueSequence.Length < prefixLength)
+            return false;
+
+        Span<byte> buffer = stackalloc byte[prefixLength];
+        reader.ValueSequence.Slice(0, prefixLength).CopyTo(buffer);
+        return buffer.SequenceEqual("data:"u8);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
