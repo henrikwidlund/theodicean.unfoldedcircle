@@ -44,7 +44,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.15" />
+        <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.16" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="10.0.401">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

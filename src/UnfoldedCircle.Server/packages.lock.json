@@ -27,11 +27,11 @@
       },
       "Theodicean.Makaretu.Dns.Multicast": {
         "type": "Direct",
-        "requested": "[0.0.15, )",
-        "resolved": "0.0.15",
-        "contentHash": "Z8qij+O/9pZWpiVU9CcWhj+e8E1/zQtVJ60Bu9zvYRDt4ZTXZIFN5Wz5k241MSlrGbC44Rc16vW54qMCT80a9w==",
+        "requested": "[0.0.16, )",
+        "resolved": "0.0.16",
+        "contentHash": "THzypU77NGIVENb5Z7AAZBHP8r7rMcXZY5TQ/BOaz1iQN9xotppw9ay404P2nNXtDAnoaZvDXbRObabgT3a93Q==",
         "dependencies": {
-          "Theodicean.Makaretu.Dns": "0.0.15"
+          "Theodicean.Makaretu.Dns": "0.0.16"
         }
       },
       "Microsoft.Build.Tasks.Git": {
@@ -54,8 +54,8 @@
       },
       "Theodicean.Makaretu.Dns": {
         "type": "Transitive",
-        "resolved": "0.0.15",
-        "contentHash": "zVgbS3juPOKn085sqqg1UIwUxHFag9sUnO4lwBVljdp1bBuCr4aAYpMAR6A1rzrCAnYO3JoomUCzE6Itg8pvGg=="
+        "resolved": "0.0.16",
+        "contentHash": "7tKm0Wr+tCQUAEYJbMWdOxd1fLU6MDX2tsNzxcIl0hwWkVLZihiBgNvoyUoXkPT8R311DM7qCYZZLazQZ/t7Mw=="
       },
       "Theodicean.UnfoldedCircle.Models": {
         "type": "Project"
