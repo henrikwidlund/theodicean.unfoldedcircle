@@ -28,6 +28,7 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <EmbedUntrackedSources>true</EmbedUntrackedSources>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <Features>runtime-async=on</Features>
     </PropertyGroup>
 
     <ItemGroup>
@@ -44,7 +45,7 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.16" />
+        <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.19" />
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="11.0.100-rc.1.26425.128">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
