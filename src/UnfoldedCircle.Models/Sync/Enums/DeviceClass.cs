@@ -10,7 +10,7 @@ namespace UnfoldedCircle.Models.Sync;
 /// </summary>
 [EnumJsonConverter<DeviceClass>(CaseSensitive = false, PropertyName = "device_class")]
 [JsonConverter(typeof(DeviceClassJsonConverter))]
-public enum DeviceClass : sbyte
+public enum DeviceClass : byte
 {
     [Display(Name = "custom")]
     Custom = 1,

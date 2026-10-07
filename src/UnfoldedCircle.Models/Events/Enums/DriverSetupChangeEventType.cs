@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Events;
 
 [EnumJsonConverter<DriverSetupChangeEventType>(CaseSensitive = false, PropertyName = "event_type")]
 [JsonConverter(typeof(DriverSetupChangeEventTypeJsonConverter))]
-public enum DriverSetupChangeEventType : sbyte
+public enum DriverSetupChangeEventType : byte
 {
     /// <summary>
     /// setup started

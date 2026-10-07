@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Sync;
 
 [EnumJsonConverterAttribute<MediaPlayerEntityAttribute>(CaseSensitive = false, PropertyName = "attributes")]
 [JsonConverter(typeof(MediaPlayerEntityAttributeJsonConverter))]
-public enum MediaPlayerEntityAttribute : sbyte
+public enum MediaPlayerEntityAttribute : byte
 {
     /// <summary>
     /// State of the media player, influenced by the play and power commands.

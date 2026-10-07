@@ -7,7 +7,7 @@ namespace UnfoldedCircle.Models.Sync;
 [JsonDerivedType(typeof(SettingTypeTextArea))]
 [JsonDerivedType(typeof(SettingTypeNumber))]
 [JsonDerivedType(typeof(SettingTypeText))]
-public abstract record SettingTypeField;
+public closed record SettingTypeField;
 
 public record SettingTypeLabel : SettingTypeField
 {

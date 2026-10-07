@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Events;
 
 [EnumJsonConverter<UserInterfaceItemType>(CaseSensitive = false, PropertyName = "type")]
 [JsonConverter(typeof(UserInterfaceItemTypeJsonConverter))]
-public enum UserInterfaceItemType : sbyte
+public enum UserInterfaceItemType : byte
 {
     [Display(Name = "icon")]
     Icon,

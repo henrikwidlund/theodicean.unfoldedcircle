@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Sync;
 
 [EnumJsonConverter<SensorEntityAttribute>(CaseSensitive = false, PropertyName = "attributes")]
 [JsonConverter(typeof(SensorEntityAttributeEntityAttributeJsonConverter))]
-public enum SensorEntityAttribute : sbyte
+public enum SensorEntityAttribute : byte
 {
     /// <summary>
     /// Optional state of the sensor.

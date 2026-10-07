@@ -4,7 +4,7 @@ using UnfoldedCircle.Models.Shared;
 
 namespace UnfoldedCircle.Models.Events;
 
-public abstract record MediaPlayerStateChangedEventMessageDataAttributesBase : StateChangedEventMessageDataAttributes;
+public closed record MediaPlayerStateChangedEventMessageDataAttributesBase : StateChangedEventMessageDataAttributes;
 
 public sealed record DeltaMediaPlayerStateChangedEventMessageDataAttributes : MediaPlayerStateChangedEventMessageDataAttributesBase
 {

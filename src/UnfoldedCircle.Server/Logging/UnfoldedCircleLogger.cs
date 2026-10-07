@@ -62,10 +62,6 @@ internal static partial class UnfoldedCircleLogger
     [LoggerMessage(EventId = 18, Level = LogLevel.Error, Message = "[{WSId}] WS: Setup driver failed. MsgData: {@MsgData}.")]
     public static partial void DriverSetupFailed(this ILogger logger, string wsId, SetupDriverMsgData msgData);
 
-    [LoggerMessage(EventId = 19, Level = LogLevel.Error,
-        Message = "[{WSId}] WS: Setup driver user input required but no next setup step provided. Setup will be aborted. MsgData: {@MsgData}.")]
-    public static partial void UserInputNoNextStep(this ILogger logger, string wsId, SetupDriverMsgData msgData);
-
     [LoggerMessage(EventId = 20, Level = LogLevel.Error, Message = "[{WSId}] WS: Unsupported entity type {EntityType}.")]
     public static partial void UnsupportedEntityType(this ILogger logger, string wsId, EntityType? entityType);
 

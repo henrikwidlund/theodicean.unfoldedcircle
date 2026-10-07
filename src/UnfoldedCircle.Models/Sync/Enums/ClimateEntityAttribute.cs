@@ -8,7 +8,7 @@ namespace UnfoldedCircle.Models.Sync;
 
 [EnumJsonConverter<ClimateEntityAttribute>(CaseSensitive = false, PropertyName = "attributes")]
 [JsonConverter(typeof(ClimateEntityAttributeJsonConverter))]
-public enum ClimateEntityAttribute : sbyte
+public enum ClimateEntityAttribute : byte
 {
     /// <summary>
     /// State of the climate device, corresponds to <see cref="HvacMode"/>.

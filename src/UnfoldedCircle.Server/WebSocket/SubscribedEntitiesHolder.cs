@@ -9,7 +9,7 @@ namespace UnfoldedCircle.Server.WebSocket;
 /// </summary>
 public class SubscribedEntitiesHolder
 {
-    private readonly ConcurrentDictionary<string, HashSet<SubscribedEntity>> _subscribedEntities = [];
+    private readonly ConcurrentDictionary<string, HashSet<SubscribedEntity>> _subscribedEntities = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// List of subscribed entities.
@@ -43,7 +43,7 @@ public class SubscribedEntitiesHolder
             foreach (var subscribedEntity in current)
             {
                 if (!subscribedEntity.EntityId.Equals(entityId, StringComparison.OrdinalIgnoreCase))
-                    (updated ??= new HashSet<SubscribedEntity>(current.Count)).Add(subscribedEntity);
+                    (updated ??= [with(current.Count)]).Add(subscribedEntity);
             }
 
             updated ??= [];

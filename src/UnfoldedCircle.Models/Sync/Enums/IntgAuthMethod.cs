@@ -11,7 +11,7 @@ namespace UnfoldedCircle.Models.Sync;
 /// </summary>
 [EnumJsonConverter<IntgAuthMethod>(CaseSensitive = false, PropertyName = "auth_method")]
 [JsonConverter(typeof(IntgAuthMethodJsonConverter))]
-public enum IntgAuthMethod : sbyte
+public enum IntgAuthMethod : byte
 {
     [Display(Name = "HEADER")]
     Header = 1,

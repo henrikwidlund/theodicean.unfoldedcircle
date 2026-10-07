@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Events;
 
 [EnumJsonConverter<MediaType>(CaseSensitive = false, PropertyName = "media_type")]
 [JsonConverter(typeof(MediaTypeJsonConverter))]
-public enum MediaType : sbyte
+public enum MediaType : byte
 {
     [Display(Name = "MUSIC")]
     Music,

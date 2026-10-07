@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Shared;
 
 [EnumJsonConverter<RepeatMode>(CaseSensitive = false, PropertyName = "repeat")]
 [JsonConverter(typeof(RepeatModeJsonConverter))]
-public enum RepeatMode : sbyte
+public enum RepeatMode : byte
 {
     [Display(Name = "OFF")]
     Off = 1,

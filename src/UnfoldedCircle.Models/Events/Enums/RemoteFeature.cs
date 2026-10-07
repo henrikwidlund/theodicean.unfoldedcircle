@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Events;
 
 [EnumJsonConverter<RemoteFeature>(CaseSensitive = false, PropertyName = "features")]
 [JsonConverter(typeof(RemoteFeaturesJsonConverter))]
-public enum RemoteFeature : sbyte
+public enum RemoteFeature : byte
 {
     [Display(Name = "send_cmd")]
     SendCmd,

@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Shared;
 
 [EnumJsonConverter<EntityType>(CaseSensitive = false, PropertyName = "entity_type")]
 [JsonConverter(typeof(EntityTypeJsonConverter))]
-public enum EntityType : sbyte
+public enum EntityType : byte
 {
     [Display(Name = "button")]
     Button = 1,

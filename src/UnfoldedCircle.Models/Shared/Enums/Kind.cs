@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Shared;
 
 [EnumJsonConverter<Kind>(CaseSensitive = false, PropertyName = "kind")]
 [JsonConverter(typeof(KindJsonConverter))]
-public enum Kind : sbyte
+public enum Kind : byte
 {
     [Display(Name = "req")]
     Request = 1,

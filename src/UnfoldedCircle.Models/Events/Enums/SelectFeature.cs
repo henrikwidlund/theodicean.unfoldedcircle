@@ -7,4 +7,4 @@ namespace UnfoldedCircle.Models.Events;
 /// </summary>
 [EnumJsonConverter<SelectFeature>(CaseSensitive = false, PropertyName = "features")]
 [JsonConverter(typeof(SelectFeaturesJsonConverter))]
-public enum SelectFeature : sbyte;
+public enum SelectFeature : byte;

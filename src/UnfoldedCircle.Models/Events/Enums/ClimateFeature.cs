@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Events;
 
 [EnumJsonConverter<ClimateFeature>(CaseSensitive = false, PropertyName = "features")]
 [JsonConverter(typeof(ClimateFeaturesJsonConverter))]
-public enum ClimateFeature : sbyte
+public enum ClimateFeature : byte
 {
     /// <summary>
     /// The device can be turned on and off.

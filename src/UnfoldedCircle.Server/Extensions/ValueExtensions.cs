@@ -143,6 +143,7 @@ public static class ValueExtensions
 
     private static readonly FrozenSet<string> PrefixesSet =
     [
+        with(StringComparer.OrdinalIgnoreCase),
         CoverPrefix, ButtonPrefix, ClimatePrefix, LightPrefix, RemotePrefix, SelectPrefix, SensorPrefix, SwitchPrefix
     ];
 
@@ -175,18 +176,21 @@ public static class ValueExtensions
     /// </summary>
     /// <param name="identifier">The identifier to get the base identifier for.</param>
     /// <returns>The base identifier.</returns>
-    public static ReadOnlyMemory<char> GetBaseIdentifier(this in ReadOnlyMemory<char> identifier)
+    public static ReadOnlyMemory<char> GetBaseIdentifier(this ReadOnlyMemory<char> identifier)
     {
         var identifierMemory = identifier;
-        var prefix = PrefixesSet.FirstOrDefault(p => identifierMemory.Span.StartsWith(p, StringComparison.OrdinalIgnoreCase));
-        if (prefix is not null)
+        foreach (var prefix in PrefixesSet)
         {
-            identifierMemory = identifierMemory[prefix.Length..];
-            if (!prefix.Equals(RemotePrefix, StringComparison.OrdinalIgnoreCase))
+            if (identifierMemory.Span.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
             {
-                var underscoreIndex = identifierMemory.Span.LastIndexOf('_');
-                if (underscoreIndex >= 0)
-                    identifierMemory = identifierMemory[..underscoreIndex];
+                identifierMemory = identifierMemory[prefix.Length..];
+                if (!prefix.Equals(RemotePrefix, StringComparison.Ordinal))
+                {
+                    var underscoreIndex = identifierMemory.Span.LastIndexOf('_');
+                    if (underscoreIndex >= 0)
+                        identifierMemory = identifierMemory[..underscoreIndex];
+                }
+                break;
             }
         }
 
@@ -199,7 +203,7 @@ public static class ValueExtensions
     /// <param name="identifier">The identifier to get the base identifier for.</param>
     /// <returns>The base identifier.</returns>
     // ReSharper disable once MemberCanBePrivate.Global
-    public static ReadOnlySpan<char> GetBaseIdentifier(this in ReadOnlySpan<char> identifier)
+    public static ReadOnlySpan<char> GetBaseIdentifier(this ReadOnlySpan<char> identifier)
     {
         var identifierSpan = identifier;
         foreach (string se in PrefixesSet)
@@ -233,7 +237,7 @@ public static class ValueExtensions
     /// <param name="identifier">The identifier to get the base identifier for.</param>
     /// <returns>The base identifier, or null if <paramref name="identifier"/> is null or whitespace.</returns>
     // ReSharper disable once UnusedMember.Global
-    public static ReadOnlyMemory<char>? GetNullableBaseIdentifier(this in ReadOnlyMemory<char>? identifier)
+    public static ReadOnlyMemory<char>? GetNullableBaseIdentifier(this ReadOnlyMemory<char>? identifier)
         => identifier == null || identifier.Value.IsEmpty ? null : identifier.Value.GetBaseIdentifier();
 
     /// <summary>
@@ -250,7 +254,7 @@ public static class ValueExtensions
     /// The resolved <see cref="EntityType"/> based on the identifier prefix, or <see cref="EntityType.MediaPlayer"/>
     /// when the identifier is empty or its prefix is unrecognized.
     /// </returns>
-    public static EntityType GetEntityTypeFromIdentifier(this in ReadOnlySpan<char> identifier) =>
+    public static EntityType GetEntityTypeFromIdentifier(this ReadOnlySpan<char> identifier) =>
         identifier switch
         {
             _ when identifier.StartsWith(CoverPrefix, StringComparison.OrdinalIgnoreCase) => EntityType.Cover,
@@ -269,7 +273,7 @@ public static class ValueExtensions
     /// </summary>
     /// <param name="identifier">The identifier to get the suffix from.</param>
     /// <returns>The suffix of the identifier, or <see langword="null"/> if it does not have a suffix.</returns>
-    public static string? GetSuffix(this in ReadOnlySpan<char> identifier)
+    public static string? GetSuffix(this ReadOnlySpan<char> identifier)
     {
         var suffixStartIndex = identifier.LastIndexOf('_');
         return suffixStartIndex < 0 ? null : identifier[(suffixStartIndex + 1)..].ToString();

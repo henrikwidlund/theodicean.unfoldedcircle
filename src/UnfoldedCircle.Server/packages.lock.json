@@ -1,28 +1,28 @@
 {
   "version": 1,
   "dependencies": {
-    "net10.0": {
+    "net11.0": {
       "Meziantou.Analyzer": {
         "type": "Direct",
-        "requested": "[3.0.231, )",
-        "resolved": "3.0.231",
-        "contentHash": "LFW/rDMBp1ufbDg4KALGT05nZ3eoHOnYVlnWmLu1w72V1L1W4W3NTE6XFP+mtvV9TpsSUd1p2eaDJdiuD8UiFQ=="
+        "requested": "[3.0.294, )",
+        "resolved": "3.0.294",
+        "contentHash": "j78ENG75OozcuL0OPSIjvgLaYI4F5nS8mpK02PlXCCCXj8A4CAIfpKw27ZPvG4k8TweGqParV8Dwm2VAwBBmgg=="
       },
       "Microsoft.NET.ILLink.Tasks": {
         "type": "Direct",
-        "requested": "[10.0.12, )",
-        "resolved": "10.0.12",
-        "contentHash": "xi+BDjFpW+Sb+MHFHaH6Y/gV9I8BluFwRXc1QyCdoZbIK26eNiBeFuMTe/FMwc33G1wdHCyDg7CVTmb8OdQrMQ=="
+        "requested": "[11.0.0-rc.1.26425.128, )",
+        "resolved": "11.0.0-rc.1.26425.128",
+        "contentHash": "oMgihfjNcxZpR9B/O5Ke8Qmr8CJcpdzG4PnVYtA6Ja4g41NELxLRuiqqh5ys7w+ourEBNng2IIZnrlMJXfncmQ=="
       },
       "Microsoft.SourceLink.GitHub": {
         "type": "Direct",
-        "requested": "[10.0.401, )",
-        "resolved": "10.0.401",
-        "contentHash": "LGmlwgP1Cx37JEWzyjS0o1/+xs/s/e3E2TBSuogI5ePA/9L0pfIfeYX0k5in7Bfcw8Nn2y2sG9jXxydTjiR2Fg==",
+        "requested": "[11.0.100-rc.1.26425.128, )",
+        "resolved": "11.0.100-rc.1.26425.128",
+        "contentHash": "mLyW8h7J5Fp+7sEAgROP3p3AtA3BPxEBI3NuwOrtYltLl+6z6NXWVOrTv6/5v6i2UxumjjUOAHI6L3LW4cyHMQ==",
         "dependencies": {
-          "Microsoft.Build.Tasks.Git": "10.0.401",
-          "Microsoft.SourceLink.Common": "10.0.401",
-          "System.IO.Hashing": "10.0.12"
+          "Microsoft.Build.Tasks.Git": "11.0.100-rc.1.26425.128",
+          "Microsoft.SourceLink.Common": "11.0.100-rc.1.26425.128",
+          "System.IO.Hashing": "11.0.0-rc.1.26425.128"
         }
       },
       "Theodicean.Makaretu.Dns.Multicast": {
@@ -36,21 +36,21 @@
       },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
-        "resolved": "10.0.401",
-        "contentHash": "ZYctNuT10V9IYyCFydy63DXx0ggZQuynuzQOdLvW62dPgzjIz7f0ISEP75RGiq1jFQh8p6TmGSqxeQZQ87LCig==",
+        "resolved": "11.0.100-rc.1.26425.128",
+        "contentHash": "KOcSH68Xsz91oSL/rLdR6uE3qvlUNaqEovT4N3VESeEtHVvEfRx+zrfxbUTw+8o4q14iq0E0o9NTWZpt7Es7Ng==",
         "dependencies": {
-          "System.IO.Hashing": "10.0.12"
+          "System.IO.Hashing": "11.0.0-rc.1.26425.128"
         }
       },
       "Microsoft.SourceLink.Common": {
         "type": "Transitive",
-        "resolved": "10.0.401",
-        "contentHash": "u3rLxIwi/9MqDFaWGE/QQgLR1NBEzLOW2lv5+9OrZPDBYIAmFdYSWCWrR1ufpXWOqFn+x02TgKropl/oDuHmgA=="
+        "resolved": "11.0.100-rc.1.26425.128",
+        "contentHash": "OWWnZa7aUete13zMxGLMkgseGcKTdlxUH6TWtklbhBH/hknADewRugTp+ZXYvt6eHQWJbMUStRBEdBVNbyttzg=="
       },
       "System.IO.Hashing": {
         "type": "Transitive",
-        "resolved": "10.0.12",
-        "contentHash": "jDix4bBMYnpZdSPcnY+KDV6ik3SRMzpMKby/bZl/XUwIiflwRNAFZ0oOl61R/pSaveIJ8t1gs2BUlrGsPs/bcg=="
+        "resolved": "11.0.0-rc.1.26425.128",
+        "contentHash": "k2EG0GriOm2mGO+V0/9tq9JBNDI/TREnc7lM1/raddxXBLtxmTy1GrcH0jh8I4PBHV8ajD/J6AVqADeivNUXLA=="
       },
       "Theodicean.Makaretu.Dns": {
         "type": "Transitive",

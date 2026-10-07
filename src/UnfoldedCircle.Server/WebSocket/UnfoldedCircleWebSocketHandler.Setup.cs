@@ -33,13 +33,13 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         {
             // Show initial restore step first if no entities
             SessionHolder.NextSetupSteps[wsId] = SetupStep.RestoreFromBackup;
-            return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = CreateRestoreSettingsPage() });
+            return new SetupUserInputRequired(new RequireUserAction { Input = CreateRestoreSettingsPage() });
         }
 
         if (payload.MsgData.Reconfigure is true)
         {
             SessionHolder.NextSetupSteps[wsId] = SetupStep.ReconfigureEntity;
-            return new OnSetupResult(SetupDriverResult.UserInputRequired,
+            return new SetupUserInputRequired(
                 new RequireUserAction
                 {
                     Input = await CreateReconfigurePageAsync(wsId, configuration, cancellationToken)
@@ -47,44 +47,37 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         }
 
         // Otherwise, go to new entity page
-        return new OnSetupResult(SetupDriverResult.UserInputRequired, new RequireUserAction { Input = await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken) });
+        return new SetupUserInputRequired(new RequireUserAction { Input = await CreateNewEntitySettingsPageCoreAsync(wsId, cancellationToken) });
     }
 
     /// <summary>
-    /// Record representing the result of a lookup of configuration item during setup.
+    /// Result of a setup step: <see cref="SetupFinalized"/>, <see cref="SetupUserInputRequired"/> or <see cref="SetupFailed"/>.
     /// </summary>
-    /// <param name="SetupDriverResult">Result of the current setup step.</param>
-    /// <param name="NextSetupStep">Information about the next setup step. Must be sent if <paramref name="SetupDriverResult"/> is set to <see cref="SetupDriverResult.UserInputRequired"/>.</param>
-    /// <param name="Error">Failure reason. Used when <paramref name="SetupDriverResult"/> is <see cref="SetupDriverResult.Error"/>.</param>
+    protected union OnSetupResult(SetupFinalized, SetupUserInputRequired, SetupFailed);
+
+    /// <summary>
+    /// Setup finished successfully.
+    /// </summary>
     // ReSharper disable once ClassNeverInstantiated.Global
-    protected sealed record OnSetupResult(SetupDriverResult SetupDriverResult, RequireUserAction? NextSetupStep = null, DriverSetupChangeError Error = DriverSetupChangeError.Other);
+    protected sealed record SetupFinalized;
 
     /// <summary>
-    /// Setup driver result.
+    /// User input is required to continue the setup process.
     /// </summary>
-    protected enum SetupDriverResult : sbyte
-    {
-        /// <summary>
-        /// Setup finished successfully.
-        /// </summary>
-        Finalized,
+    /// <param name="NextSetupStep">Information about the next setup step.</param>
+    protected sealed record SetupUserInputRequired(RequireUserAction NextSetupStep);
 
-        /// <summary>
-        /// User input is required to continue the setup process.
-        /// </summary>
-        UserInputRequired,
-
-        /// <summary>
-        /// Error occurred during setup.
-        /// </summary>
-        // ReSharper disable once UnusedMember.Global
-        Error
-    }
+    /// <summary>
+    /// Error occurred during setup.
+    /// </summary>
+    /// <param name="Error">Failure reason.</param>
+    // ReSharper disable once ClassNeverInstantiated.Global
+    protected sealed record SetupFailed(DriverSetupChangeError Error = DriverSetupChangeError.Other);
 
     /// <summary>
     /// Setup driver user data result.
     /// </summary>
-    protected enum SetupDriverUserDataResult : sbyte
+    protected enum SetupDriverUserDataResult : byte
     {
         /// <summary>
         /// Setup finished successfully. Integration will send any necessary signals to the remote.
@@ -105,7 +98,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <summary>
     /// Result of a restore operation from backup.
     /// </summary>
-    protected enum RestoreResult : sbyte
+    protected enum RestoreResult : byte
     {
         /// <summary>
         /// Operation succeeded
@@ -272,8 +265,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected static void RegisterSensor(string entityId, string sensorSuffix)
     {
         SessionHolder.SensorTypesMap.AddOrUpdate(entityId,
-            static (_, suffix) => new HashSet<string>(StringComparer.OrdinalIgnoreCase) { suffix },
-            static (_, existing, suffix) => new HashSet<string>(existing, StringComparer.OrdinalIgnoreCase) { suffix },
+            static (_, suffix) => [with(StringComparer.OrdinalIgnoreCase), suffix],
+            static (_, existing, suffix) => [with(StringComparer.OrdinalIgnoreCase), .. existing, suffix],
             sensorSuffix);
     }
 
@@ -285,8 +278,8 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     protected static void RegisterSelect(string entityId, string selectSuffix)
     {
         SessionHolder.SelectTypesMap.AddOrUpdate(entityId,
-            static (_, suffix) => new HashSet<string>(StringComparer.OrdinalIgnoreCase) { suffix },
-            static (_, existing, suffix) => new HashSet<string>(existing, StringComparer.OrdinalIgnoreCase) { suffix },
+            static (_, suffix) => [with(StringComparer.OrdinalIgnoreCase), suffix],
+            static (_, existing, suffix) => [with(StringComparer.OrdinalIgnoreCase), .. existing, suffix],
             selectSuffix);
     }
 
@@ -756,7 +749,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     }
 }
 
-internal enum SetupStep : sbyte
+internal enum SetupStep : byte
 {
     /// <summary>
     /// Next step is to configure a new entity.

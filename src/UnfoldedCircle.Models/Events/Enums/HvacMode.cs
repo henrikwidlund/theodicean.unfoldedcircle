@@ -10,7 +10,7 @@ namespace UnfoldedCircle.Models.Events;
 /// </remarks>
 [EnumJsonConverter<HvacMode>(CaseSensitive = false, PropertyName = "hvac_mode")]
 [JsonConverter(typeof(HvacModeJsonConverter))]
-public enum HvacMode : sbyte
+public enum HvacMode : byte
 {
     /// <summary>
     /// The climate device is switched off.
