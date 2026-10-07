@@ -22,7 +22,7 @@ ASP.NET SDK for hosting integration drivers for the [Unfolded Circle Remotes](ht
 - Button, Switch, Cover, Light, IR-Emitter and Voice Assistant are not yet supported
 
 ## Requirements
-- dotnet 10 SDK
+- dotnet 11 SDK
 
 ## Install
 
