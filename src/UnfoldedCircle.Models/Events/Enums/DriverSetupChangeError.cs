@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Events;
 
 [EnumJsonConverter<DriverSetupChangeError>(CaseSensitive = false, PropertyName = "error")]
 [JsonConverter(typeof(DriverSetupChangeErrorJsonConverter))]
-public enum DriverSetupChangeError : sbyte
+public enum DriverSetupChangeError : byte
 {
     [Display(Name = "NONE")]
     None = 1,

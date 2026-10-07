@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Events;
 
 [EnumJsonConverter<RemoteState>(CaseSensitive = false, PropertyName = "state")]
 [JsonConverter(typeof(RemoteStateJsonConverter))]
-public enum RemoteState : sbyte
+public enum RemoteState : byte
 {
     [Display(Name = "ON")]
     On,

@@ -134,11 +134,30 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         CancellationToken commandCancellationToken);
 
     /// <summary>
-    /// Holder for the result of a select option command, allowing to specify both the command result and the selected option to return in the response.
+    /// Result of a select command: <see cref="SelectSucceeded"/>, <see cref="SelectHandled"/> or <see cref="SelectFailed"/>.
     /// </summary>
-    /// <param name="CommandResult">The result of the command execution.</param>
+    protected union SelectCommandResult(SelectSucceeded, SelectHandled, SelectFailed);
+
+    /// <summary>
+    /// The select command succeeded.
+    /// </summary>
     /// <param name="SelectedOption">The option that was selected as a result of the command.</param>
-    protected sealed record SelectCommandResult(EntityCommandResult CommandResult, string SelectedOption);
+    /// <param name="CommandResult">
+    /// The successful result of the command, <see cref="EntityCommandResult.PowerOn"/>, <see cref="EntityCommandResult.PowerOff"/>
+    /// or <see cref="EntityCommandResult.Other"/>.
+    /// </param>
+    protected sealed record SelectSucceeded(string SelectedOption, EntityCommandResult CommandResult = EntityCommandResult.Other);
+
+    /// <summary>
+    /// The select command was handled and a response was sent to the remote.
+    /// </summary>
+    // ReSharper disable once ClassNeverInstantiated.Global
+    protected sealed record SelectHandled;
+
+    /// <summary>
+    /// The select command failed.
+    /// </summary>
+    protected sealed record SelectFailed;
 
     /// <summary>
     /// Determines if the entity with the given <paramref name="entityId"/> is reachable.
@@ -177,7 +196,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     /// <summary>
     /// Enum representing the result of an entity command.
     /// </summary>
-    protected enum EntityCommandResult : sbyte
+    protected enum EntityCommandResult : byte
     {
         /// <summary>
         /// The command was successful and the entity was powered on.
@@ -365,26 +384,28 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                     cancellationTokenWrapper, commandCancellationToken),
                 SelectCommandId.SelectOption => await OnSelectOptionCommandAsync(socket, payload,
                     payload.MsgData.Params?.Option ?? string.Empty, wsId, cancellationTokenWrapper, commandCancellationToken),
-                _ => new SelectCommandResult(EntityCommandResult.Failure, string.Empty)
+                _ => new SelectFailed()
             };
 
-            if (result.CommandResult is not EntityCommandResult.Failure and not EntityCommandResult.Handled)
+            switch (result)
             {
-                await Task.WhenAll(SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateSelectStateChangedPayload(
-                            new SelectStateChangedEventMessageDataAttributes { CurrentOption = result.SelectedOption },
-                            payload.MsgData.EntityId.GetBaseIdentifier(),
-                            payload.MsgData.EntityId.GetSuffix()),
+                case SelectSucceeded succeeded:
+                    await Task.WhenAll(SendMessageAsync(socket,
+                            ResponsePayloadHelpers.CreateSelectStateChangedPayload(
+                                new SelectStateChangedEventMessageDataAttributes { CurrentOption = succeeded.SelectedOption },
+                                payload.MsgData.EntityId.GetBaseIdentifier(),
+                                payload.MsgData.EntityId.GetSuffix()),
+                            wsId,
+                            commandCancellationToken),
+                        HandleCommandResultCoreAsync(socket, wsId, payload, succeeded.CommandResult, cancellationTokenWrapper, commandCancellationToken));
+                    break;
+                case SelectFailed:
+                    await SendMessageAsync(socket,
+                        ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload, Constants.ValidationErrorUnknownCommand),
                         wsId,
-                        commandCancellationToken),
-                    HandleCommandResultCoreAsync(socket, wsId, payload, result.CommandResult, cancellationTokenWrapper, commandCancellationToken));
-            }
-            else if (result.CommandResult is EntityCommandResult.Failure)
-            {
-                await SendMessageAsync(socket,
-                    ResponsePayloadHelpers.CreateValidationErrorResponsePayload(payload, Constants.ValidationErrorUnknownCommand),
-                    wsId,
-                    cancellationTokenWrapper.RequestAborted);
+                        cancellationTokenWrapper.RequestAborted);
+                    break;
+                // SelectHandled: a response was already sent
             }
         }
         catch (Exception e)

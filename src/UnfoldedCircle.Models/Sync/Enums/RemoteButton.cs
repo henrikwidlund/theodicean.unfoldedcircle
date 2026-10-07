@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Sync;
 
 [EnumJsonConverter<RemoteButton>(CaseSensitive = false, PropertyName = "button")]
 [JsonConverter(typeof(RemoteCommandIdJsonConverter))]
-public enum RemoteButton : sbyte
+public enum RemoteButton : byte
 {
     [Display(Name = RemoteButtonConstants.On)]
     On = 1,

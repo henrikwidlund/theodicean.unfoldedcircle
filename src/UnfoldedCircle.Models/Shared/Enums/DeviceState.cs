@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Shared;
 
 [EnumJsonConverter<DeviceState>(CaseSensitive = false, PropertyName = "state")]
 [JsonConverter(typeof(DeviceStateJsonConverter))]
-public enum DeviceState : sbyte
+public enum DeviceState : byte
 {
     [Display(Name = "CONNECTED")]
     Connected = 1,

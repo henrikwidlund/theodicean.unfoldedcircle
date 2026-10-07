@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Sync;
 
 [EnumJsonConverter<RemoteEntityAttribute>(CaseSensitive = false, PropertyName = "attributes")]
 [JsonConverter(typeof(RemoteEntityAttributeJsonConverter))]
-public enum RemoteEntityAttribute : sbyte
+public enum RemoteEntityAttribute : byte
 {
     /// <summary>
     /// State of the controlled device, it's either on or off.

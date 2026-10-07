@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Sync;
 
 [EnumJsonConverter<MediaPlayerEntityFeature>(CaseSensitive = false, PropertyName = "features")]
 [JsonConverter(typeof(MediaPlayerEntityFeatureJsonConverter))]
-public enum MediaPlayerEntityFeature : sbyte
+public enum MediaPlayerEntityFeature : byte
 {
     [Display(Name = "on_off")]
     OnOff = 1,

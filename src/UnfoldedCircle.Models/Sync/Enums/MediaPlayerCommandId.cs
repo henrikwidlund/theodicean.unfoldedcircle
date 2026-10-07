@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Sync;
 
 [EnumJsonConverter<MediaPlayerCommandId>(CaseSensitive = false, PropertyName = "cmd_id")]
 [JsonConverter(typeof(MediaPlayerCommandIdJsonConverter))]
-public enum MediaPlayerCommandId : sbyte
+public enum MediaPlayerCommandId : byte
 {
     /// <summary>
     /// Switch on media player.

@@ -229,48 +229,46 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         return;
                     }
 
-                    if (setupResult.SetupDriverResult == SetupDriverResult.UserInputRequired)
+                    switch (setupResult.Value)
                     {
-                        if (setupResult.NextSetupStep is null)
-                        {
-                            _logger.UserInputNoNextStep(wsId, payload.MsgData);
-                            await FinishSetupAsync(socket, wsId, payload, new ValidationError
-                            {
-                                Code = "INVALID_SETUP_STATE",
-                                Message = "User input required but no next setup step provided."
-                            }, cancellationToken);
+                        case SetupUserInputRequired userInputRequired:
+                            await SendMessageAsync(socket,
+                                ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                                wsId,
+                                cancellationToken);
+                            await SendMessageAsync(socket,
+                                ResponsePayloadHelpers.CreateDeviceSetupChangeResponseSetupPayload(),
+                                wsId,
+                                cancellationToken);
+                            await SendMessageAsync(socket,
+                                ResponsePayloadHelpers.CreateDeviceSetupChangePayload(userInputRequired.NextSetupStep),
+                                wsId,
+                                cancellationToken);
                             return;
-                        }
-
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                            wsId,
-                            cancellationToken);
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateDeviceSetupChangeResponseSetupPayload(),
-                            wsId,
-                            cancellationToken);
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.NextSetupStep),
-                            wsId,
-                            cancellationToken);
-                        return;
-                    }
-
-                    await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
-                        wsId,
-                        cancellationToken);
-                    await SendMessageAsync(socket,
-                        ResponsePayloadHelpers.CreateDeviceSetupChangePayload(setupResult.SetupDriverResult == SetupDriverResult.Finalized, setupResult.Error),
-                        wsId,
-                        cancellationToken);
-                    if (setupResult.SetupDriverResult == SetupDriverResult.Finalized)
-                    {
-                        await SendMessageAsync(socket,
-                            ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
-                            wsId,
-                            cancellationToken);
+                        case SetupFinalized:
+                            await SendMessageAsync(socket,
+                                ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                                wsId,
+                                cancellationToken);
+                            await SendMessageAsync(socket,
+                                ResponsePayloadHelpers.CreateDeviceSetupChangePayload(true),
+                                wsId,
+                                cancellationToken);
+                            await SendMessageAsync(socket,
+                                ResponsePayloadHelpers.CreateConnectEventResponsePayload(DeviceState.Connected),
+                                wsId,
+                                cancellationToken);
+                            return;
+                        case SetupFailed setupFailed:
+                            await SendMessageAsync(socket,
+                                ResponsePayloadHelpers.CreateCommonResponsePayload(payload),
+                                wsId,
+                                cancellationToken);
+                            await SendMessageAsync(socket,
+                                ResponsePayloadHelpers.CreateDeviceSetupChangePayload(false, setupFailed.Error),
+                                wsId,
+                                cancellationToken);
+                            return;
                     }
 
                     return;

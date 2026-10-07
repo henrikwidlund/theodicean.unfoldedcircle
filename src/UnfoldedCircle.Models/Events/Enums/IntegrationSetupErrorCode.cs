@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Events;
 
 [EnumJsonConverter<IntegrationSetupErrorCode>(CaseSensitive = false, PropertyName = "error")]
 [JsonConverter(typeof(IntegrationSetupErrorCodeJsonConverter))]
-public enum IntegrationSetupErrorCode : sbyte
+public enum IntegrationSetupErrorCode : byte
 {
     [Display(Name = "NONE")]
     None = 1,

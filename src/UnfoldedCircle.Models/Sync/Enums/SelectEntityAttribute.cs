@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Sync;
 
 [EnumJsonConverter<SelectEntityAttribute>(CaseSensitive = false, PropertyName = "attributes")]
 [JsonConverter(typeof(SelectEntityAttributeJsonConverter))]
-public enum SelectEntityAttribute : sbyte
+public enum SelectEntityAttribute : byte
 {
     /// <summary>
     /// Optional state of the select entity.

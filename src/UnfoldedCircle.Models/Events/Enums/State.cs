@@ -6,7 +6,7 @@ namespace UnfoldedCircle.Models.Events;
 
 [EnumJsonConverter<State>(CaseSensitive = false, PropertyName = "state")]
 [JsonConverter(typeof(StateJsonConverter))]
-public enum State : sbyte
+public enum State : byte
 {
     [Display(Name = "UNAVAILABLE")]
     Unavailable,
