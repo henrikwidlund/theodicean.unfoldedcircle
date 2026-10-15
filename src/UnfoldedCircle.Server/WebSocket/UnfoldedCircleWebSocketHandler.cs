@@ -203,5 +203,5 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
         where T : class
         => _options.Value.MessageEventDeserializeOverrides.GetValueOrDefault(messageEvent) as JsonTypeInfo<T>;
 
-    private record struct RemoveInstruction(string? DeviceId, IEnumerable<string>? EntityIds, string? Host);
+    private readonly record struct RemoveInstruction(string? DeviceId, IEnumerable<string>? EntityIds, string? Host);
 }
