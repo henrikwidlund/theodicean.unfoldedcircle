@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UnfoldedCircle.Models.Sync;
 
-public record DriverDeveloper
+public sealed record DriverDeveloper
 {
     /// <summary>
     /// Optional developer information to display in UI / web-configurator.

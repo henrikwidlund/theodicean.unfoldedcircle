@@ -3,7 +3,7 @@ namespace UnfoldedCircle.Models.Sync;
 /// <summary>
 /// Optional filters
 /// </summary>
-public record AvailableEntitiesMsgData
+public sealed record AvailableEntitiesMsgData
 {
     [JsonPropertyName("filter")]
     public AvailableEntityFilterInner? Filter { get; init; }

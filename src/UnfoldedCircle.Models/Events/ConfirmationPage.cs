@@ -3,7 +3,7 @@ namespace UnfoldedCircle.Models.Events;
 /// <summary>
 /// Confirmation screen
 /// </summary>
-public record ConfirmationPage
+public sealed record ConfirmationPage
 {
     [JsonPropertyName("title")]
     public required Dictionary<string, string> Title { get; init; }

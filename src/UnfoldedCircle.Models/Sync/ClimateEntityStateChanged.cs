@@ -1,3 +1,3 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record ClimateEntityStateChanged : EntityStateChanged<ClimateEntityAttribute>;
+public sealed record ClimateEntityStateChanged : EntityStateChanged<ClimateEntityAttribute>;

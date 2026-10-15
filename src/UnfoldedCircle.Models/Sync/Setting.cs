@@ -5,7 +5,7 @@ namespace UnfoldedCircle.Models.Sync;
 /// <summary>
 /// An input setting is of a specific type defined in `field.type` which defines how it is presented to the user.
 /// </summary>
-public record Setting
+public sealed record Setting
 {
     /// <summary>
     /// Unique identifier of the setting to be returned with the entered value.

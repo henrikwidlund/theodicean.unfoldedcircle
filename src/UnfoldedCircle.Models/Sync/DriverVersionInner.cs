@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record DriverVersionInner
+public sealed record DriverVersionInner
 {
     [JsonPropertyName("api")]
     public string? Api { get; init; }

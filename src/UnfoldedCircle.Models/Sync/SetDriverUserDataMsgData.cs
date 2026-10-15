@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record SetDriverUserDataMsgData
+public sealed record SetDriverUserDataMsgData
 {
     [JsonPropertyName("input_values")]
     public Dictionary<string, string>? InputValues { get; init; }

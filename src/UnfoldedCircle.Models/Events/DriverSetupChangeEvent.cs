@@ -1,8 +1,8 @@
 namespace UnfoldedCircle.Models.Events;
 
-public record DriverSetupChangeEvent : CommonEventRequired<DriverSetupChange>;
+public sealed record DriverSetupChangeEvent : CommonEventRequired<DriverSetupChange>;
 
-public record DriverSetupChange
+public sealed record DriverSetupChange
 {
     [JsonPropertyName("event_type")]
     public required DriverSetupChangeEventType EventType { get; init; }

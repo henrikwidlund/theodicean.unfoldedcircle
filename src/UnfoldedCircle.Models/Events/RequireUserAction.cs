@@ -2,7 +2,7 @@ using UnfoldedCircle.Models.Sync;
 
 namespace UnfoldedCircle.Models.Events;
 
-public record RequireUserAction
+public sealed record RequireUserAction
 {
     [JsonPropertyName("input")]
     public SettingsPage? Input { get; init; }

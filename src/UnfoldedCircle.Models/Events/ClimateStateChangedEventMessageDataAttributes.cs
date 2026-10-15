@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Events;
 
-public record ClimateStateChangedEventMessageDataAttributes : StateChangedEventMessageDataAttributes
+public sealed record ClimateStateChangedEventMessageDataAttributes : StateChangedEventMessageDataAttributes
 {
     /// <summary>
     /// New HVAC mode.

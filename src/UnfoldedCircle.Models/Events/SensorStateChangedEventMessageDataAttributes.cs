@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Events;
 
-public record SensorStateChangedEventMessageDataAttributes<TValue> : StateChangedEventMessageDataAttributes
+public sealed record SensorStateChangedEventMessageDataAttributes<TValue> : StateChangedEventMessageDataAttributes
 {
     [JsonPropertyName("state")]
     [JsonIgnore(Condition = JsonIgnoreCondition.Never)]

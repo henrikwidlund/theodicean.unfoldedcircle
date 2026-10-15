@@ -13,7 +13,7 @@ namespace UnfoldedCircle.Models.Sync;
 /// See (https://github.com/unfoldedcircle/core-api/blob/main/doc/entities/entity_sensor.md
 /// for more information.
 /// </summary>
-public record SensorAvailableEntity : AvailableEntity<SensorFeature, SensorOptions>
+public sealed record SensorAvailableEntity : AvailableEntity<SensorFeature, SensorOptions>
 {
     [JsonPropertyName("device_class")]
     public required DeviceClass DeviceClass { get; init; }

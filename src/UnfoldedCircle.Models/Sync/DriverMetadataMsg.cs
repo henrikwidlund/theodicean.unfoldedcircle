@@ -1,3 +1,3 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record DriverMetadataMsg : CommonRespRequired<DriverMetadata>;
+public sealed record DriverMetadataMsg : CommonRespRequired<DriverMetadata>;

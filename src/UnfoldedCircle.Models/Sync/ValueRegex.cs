@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record ValueRegex
+public sealed record ValueRegex
 {
     /// <summary>
     /// Optional default value.

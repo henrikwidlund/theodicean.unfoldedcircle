@@ -1,3 +1,3 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record SetDriverUserDataMsg : CommonReq<SetDriverUserDataMsgData>;
+public sealed record SetDriverUserDataMsg : CommonReq<SetDriverUserDataMsgData>;

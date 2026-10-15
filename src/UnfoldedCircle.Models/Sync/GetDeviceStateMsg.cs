@@ -2,4 +2,4 @@ using UnfoldedCircle.Models.Shared;
 
 namespace UnfoldedCircle.Models.Sync;
 
-public record GetDeviceStateMsg : CommonReq<DeviceIdObject>;
+public sealed record GetDeviceStateMsg : CommonReq<DeviceIdObject>;

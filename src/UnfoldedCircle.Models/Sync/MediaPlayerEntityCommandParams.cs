@@ -2,7 +2,7 @@ using UnfoldedCircle.Models.Shared;
 
 namespace UnfoldedCircle.Models.Sync;
 
-public record MediaPlayerEntityCommandParams
+public sealed record MediaPlayerEntityCommandParams
 {
     [JsonPropertyName("volume")]
     public ushort? Volume { get; init; }

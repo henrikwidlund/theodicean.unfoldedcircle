@@ -1,3 +1,3 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record SelectEntityStateChanged : EntityStateChanged<SelectEntityAttribute>;
+public sealed record SelectEntityStateChanged : EntityStateChanged<SelectEntityAttribute>;

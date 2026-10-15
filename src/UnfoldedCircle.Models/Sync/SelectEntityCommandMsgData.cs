@@ -1,3 +1,3 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record SelectEntityCommandMsgData : CommonReq<EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams>>;
+public sealed record SelectEntityCommandMsgData : CommonReq<EntityCommandMsgData<SelectCommandId, SelectEntityCommandParams>>;

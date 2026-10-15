@@ -2,7 +2,7 @@ using UnfoldedCircle.Models.Shared;
 
 namespace UnfoldedCircle.Models.Events;
 
-public record StateChangedEventMessageData<TAttributes>
+public sealed record StateChangedEventMessageData<TAttributes>
     where TAttributes : StateChangedEventMessageDataAttributes
 {
     [JsonPropertyName("entity_type")]

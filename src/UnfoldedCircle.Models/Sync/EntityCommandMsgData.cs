@@ -2,7 +2,7 @@ using UnfoldedCircle.Models.Shared;
 
 namespace UnfoldedCircle.Models.Sync;
 
-public record EntityCommandMsgData<TCommandId, TEntityCommandParams>
+public sealed record EntityCommandMsgData<TCommandId, TEntityCommandParams>
 {
     [JsonPropertyName("device_id")]
     public string? DeviceId { get; init; }

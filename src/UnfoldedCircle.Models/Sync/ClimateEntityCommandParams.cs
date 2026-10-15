@@ -2,7 +2,7 @@ using UnfoldedCircle.Models.Events;
 
 namespace UnfoldedCircle.Models.Sync;
 
-public record ClimateEntityCommandParams
+public sealed record ClimateEntityCommandParams
 {
     [JsonPropertyName("hvac_mode")]
     public HvacMode? HvacMode { get; init; }

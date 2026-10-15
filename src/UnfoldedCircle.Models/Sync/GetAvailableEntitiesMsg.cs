@@ -1,3 +1,3 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record GetAvailableEntitiesMsg : CommonReq<AvailableEntityFilter>;
+public sealed record GetAvailableEntitiesMsg : CommonReq<AvailableEntityFilter>;

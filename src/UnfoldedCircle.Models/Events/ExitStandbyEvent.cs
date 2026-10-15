@@ -1,3 +1,3 @@
 namespace UnfoldedCircle.Models.Events;
 
-public record ExitStandbyEvent : CommonEvent;
+public sealed record ExitStandbyEvent : CommonEvent;

@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record DriverVersion
+public sealed record DriverVersion
 {
     [JsonPropertyName("name")]
     public required string Name { get; init; }

@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record SelectEntityCommandParams
+public sealed record SelectEntityCommandParams
 {
     [JsonPropertyName("option")]
     public string? Option { get; init; }

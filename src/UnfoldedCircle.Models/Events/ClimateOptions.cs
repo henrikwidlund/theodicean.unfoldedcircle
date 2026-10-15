@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UnfoldedCircle.Models.Events;
 
-public record ClimateOptions
+public sealed record ClimateOptions
 {
     /// <summary>
     /// The unit of temperature measurement. If not specified, the remote settings are used.

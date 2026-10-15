@@ -2,7 +2,7 @@ using UnfoldedCircle.Models.Sync;
 
 namespace UnfoldedCircle.Models.Events;
 
-public record DeviceButtonMapping
+public sealed record DeviceButtonMapping
 {
     /// <summary>
     /// Physical button identifier

@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record ValidationError
+public sealed record ValidationError
 {
     [JsonPropertyName("code")]
     public required string Code { get; init; }

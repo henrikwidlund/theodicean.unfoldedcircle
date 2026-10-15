@@ -9,25 +9,25 @@ namespace UnfoldedCircle.Models.Sync;
 [JsonDerivedType(typeof(SettingTypeText))]
 public closed record SettingTypeField;
 
-public record SettingTypeLabel : SettingTypeField
+public sealed record SettingTypeLabel : SettingTypeField
 {
     [JsonPropertyName("label")]
     public required SettingTypeLabelItem Label { get; init; }
 }
 
-public record SettingTypeLabelItem
+public sealed record SettingTypeLabelItem
 {
     [JsonPropertyName("value")]
     public required Dictionary<string, string> Value { get; init; }
 }
 
-public record SettingTypeDropdown : SettingTypeField
+public sealed record SettingTypeDropdown : SettingTypeField
 {
     [JsonPropertyName("dropdown")]
     public required SettingTypeDropdownInner Dropdown { get; init; }
 }
 
-public record SettingTypeDropdownInner
+public sealed record SettingTypeDropdownInner
 {
     [JsonPropertyName("value")]
     public string? Value { get; init; }
@@ -36,7 +36,7 @@ public record SettingTypeDropdownInner
     public required SettingTypeDropdownItem[] Items { get; init; }
 }
 
-public record SettingTypeDropdownItem
+public sealed record SettingTypeDropdownItem
 {
     /// <summary>
     /// Selection identifier.
@@ -48,13 +48,13 @@ public record SettingTypeDropdownItem
     public required Dictionary<string, string> Label { get; init; }
 }
 
-public record SettingTypeCheckbox : SettingTypeField
+public sealed record SettingTypeCheckbox : SettingTypeField
 {
     [JsonPropertyName("checkbox")]
     public required SettingTypeCheckboxInner Checkbox { get; init; }
 }
 
-public record SettingTypeCheckboxInner
+public sealed record SettingTypeCheckboxInner
 {
     /// <summary>
     /// Initial setting.
@@ -63,19 +63,19 @@ public record SettingTypeCheckboxInner
     public required bool Value { get; init; }
 }
 
-public record SettingTypePassword : SettingTypeField
+public sealed record SettingTypePassword : SettingTypeField
 {
     [JsonPropertyName("password")]
     public ValueRegex? Password { get; init; }
 }
 
-public record SettingTypeTextArea : SettingTypeField
+public sealed record SettingTypeTextArea : SettingTypeField
 {
     [JsonPropertyName("textarea")]
     public required SettingTypeTextAreaInner TextArea { get; init; }
 }
 
-public record SettingTypeTextAreaInner
+public sealed record SettingTypeTextAreaInner
 {
     /// <summary>
     /// Optional default value.
@@ -84,13 +84,13 @@ public record SettingTypeTextAreaInner
     public string? Value { get; init; }
 }
 
-public record SettingTypeNumber : SettingTypeField
+public sealed record SettingTypeNumber : SettingTypeField
 {
     [JsonPropertyName("number")]
     public required SettingTypeNumberInner Number { get; init; }
 }
 
-public record SettingTypeNumberInner
+public sealed record SettingTypeNumberInner
 {
     [JsonPropertyName("value")]
     public required double Value { get; init; }
@@ -111,7 +111,7 @@ public record SettingTypeNumberInner
     public Dictionary<string, string>? Unit { get; init; }
 }
 
-public record SettingTypeText : SettingTypeField
+public sealed record SettingTypeText : SettingTypeField
 {
     [JsonPropertyName("text")]
     public required ValueRegex Text { get; init; }

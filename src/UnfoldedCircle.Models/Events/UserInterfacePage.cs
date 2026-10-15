@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Events;
 
-public record UserInterfacePage
+public sealed record UserInterfacePage
 {
     [JsonPropertyName("page_id")]
     public required string PageId { get; init; }

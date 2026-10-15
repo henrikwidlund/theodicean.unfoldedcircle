@@ -1,7 +1,7 @@
 namespace UnfoldedCircle.Models.Sync;
 
 // ReSharper disable once ClassNeverInstantiated.Global
-public record AuthRequestMsgData
+public sealed record AuthRequestMsgData
 {
     [JsonPropertyName("token")]
     // ReSharper disable once UnusedMember.Global

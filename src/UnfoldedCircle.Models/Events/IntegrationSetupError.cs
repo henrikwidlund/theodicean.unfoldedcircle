@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Events;
 
-public record IntegrationSetupError
+public sealed record IntegrationSetupError
 {
     [JsonPropertyName("error")]
     public required IntegrationSetupErrorCode Error { get; init; }

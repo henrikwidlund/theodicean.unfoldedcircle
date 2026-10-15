@@ -5,7 +5,7 @@ namespace UnfoldedCircle.Models.Events;
 /// - Icon and text items can be static or linked to a command specified in the `command` field.
 /// - Default size is 1x1 if not specified.
 /// </summary>
-public record UserInterfaceItem
+public sealed record UserInterfaceItem
 {
     /// <summary>
     /// Type of the user interface item:

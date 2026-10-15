@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record SubscribeEventsMsgData
+public sealed record SubscribeEventsMsgData
 {
     /// <summary>
     /// Only required for multi-device integrations.

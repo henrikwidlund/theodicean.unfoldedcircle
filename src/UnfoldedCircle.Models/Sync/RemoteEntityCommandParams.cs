@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record RemoteEntityCommandParams
+public sealed record RemoteEntityCommandParams
 {
     [JsonPropertyName("command")]
     public string? Command { get; init; }

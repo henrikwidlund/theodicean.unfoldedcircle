@@ -3,7 +3,7 @@ namespace UnfoldedCircle.Models.Events;
 /// <summary>
 /// Grid layout size.
 /// </summary>
-public record Grid
+public sealed record Grid
 {
     [JsonPropertyName("width")]
     public required ushort Width { get; init; }

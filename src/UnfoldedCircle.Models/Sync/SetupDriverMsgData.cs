@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record SetupDriverMsgData
+public sealed record SetupDriverMsgData
 {
     /// <summary>
     /// If set to <see langword="true"/>: reconfigure an already configured driver.

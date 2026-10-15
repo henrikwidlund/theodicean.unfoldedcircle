@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UnfoldedCircle.Models.Sync;
 
-public record DriverMetadata
+public sealed record DriverMetadata
 {
     [JsonPropertyName("driver_id")]
     public required string DriverId { get; init; }

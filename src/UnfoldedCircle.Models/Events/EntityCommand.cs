@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Events;
 
-public record EntityCommand
+public sealed record EntityCommand
 {
     /// <summary>
     /// Simple command name or entity command identifier, as returned in the entity command metadata.

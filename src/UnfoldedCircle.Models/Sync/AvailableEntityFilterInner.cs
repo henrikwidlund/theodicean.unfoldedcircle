@@ -2,7 +2,7 @@ using UnfoldedCircle.Models.Shared;
 
 namespace UnfoldedCircle.Models.Sync;
 
-public record AvailableEntityFilterInner
+public sealed record AvailableEntityFilterInner
 {
     /// <summary>
     /// Optional device instance filter if driver supports multi instances.

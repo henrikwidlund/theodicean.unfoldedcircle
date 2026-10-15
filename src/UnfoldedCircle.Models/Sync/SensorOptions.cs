@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record SensorOptions
+public sealed record SensorOptions
 {
     /// <summary>
     /// Unit label for a custom sensor if device_class is not specified or to override a default unit.

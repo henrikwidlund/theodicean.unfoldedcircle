@@ -1,3 +1,3 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record SubscribeEventsMsg : CommonReqOptional<SubscribeEventsMsgData>;
+public sealed record SubscribeEventsMsg : CommonReqOptional<SubscribeEventsMsgData>;

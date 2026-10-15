@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Events;
 
-public record SelectStateChangedEventMessageDataAttributes : StateChangedEventMessageDataAttributes
+public sealed record SelectStateChangedEventMessageDataAttributes : StateChangedEventMessageDataAttributes
 {
     /// <summary>
     /// Optional state of the select entity.

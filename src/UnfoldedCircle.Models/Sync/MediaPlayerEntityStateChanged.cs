@@ -1,3 +1,3 @@
 namespace UnfoldedCircle.Models.Sync;
 
-public record MediaPlayerEntityStateChanged : EntityStateChanged<MediaPlayerEntityAttribute>;
+public sealed record MediaPlayerEntityStateChanged : EntityStateChanged<MediaPlayerEntityAttribute>;

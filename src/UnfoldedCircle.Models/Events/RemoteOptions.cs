@@ -1,6 +1,6 @@
 namespace UnfoldedCircle.Models.Events;
 
-public record RemoteOptions
+public sealed record RemoteOptions
 {
     /// <summary>
     /// Optional list of supported commands. If not provided, the integration driver has to document the available commands for the user.
