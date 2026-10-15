@@ -1,43 +1,38 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 using UnfoldedCircle.Models.Events;
 
 namespace UnfoldedCircle.Models.Sync;
 
-[EnumJsonConverter<ClimateCommandId>(CaseSensitive = false, PropertyName = "cmd_id")]
-[JsonConverter(typeof(ClimateCommandIdJsonConverter))]
-public enum ClimateCommandId
+[JsonConverter(typeof(StrictEnumConverter<ClimateCommandId>))]
+public enum ClimateCommandId : byte
 {
     /// <summary>
     /// Switch on the climate device.
     /// </summary>
-    [Display(Name = "on")]
+    [JsonStringEnumMemberName("on")]
     On,
 
     /// <summary>
     /// Switch off the climate device.
     /// </summary>
-    [Display(Name = "off")]
+    [JsonStringEnumMemberName("off")]
     Off,
 
     /// <summary>
     /// Set the device to heating, cooling, etc.
     /// </summary>
     /// <see cref="ClimateState"/>
-    [Display(Name = "hvac_mode")]
+    [JsonStringEnumMemberName("hvac_mode")]
     HvacMode,
 
     /// <summary>
     /// Change the target temperature
     /// </summary>
-    [Display(Name = "target_temperature")]
+    [JsonStringEnumMemberName("target_temperature")]
     TargetTemperature,
 
-    [Display(Name = "target_temperature_range")]
+    [JsonStringEnumMemberName("target_temperature_range")]
     TargetTemperatureRange,
 
-    [Display(Name = "fan_mode")]
+    [JsonStringEnumMemberName("fan_mode")]
     FanMode
 }

@@ -1,25 +1,20 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Events;
 
-[EnumJsonConverter<MediaType>(CaseSensitive = false, PropertyName = "media_type")]
-[JsonConverter(typeof(MediaTypeJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<MediaType>))]
 public enum MediaType : byte
 {
-    [Display(Name = "MUSIC")]
+    [JsonStringEnumMemberName("MUSIC")]
     Music,
 
-    [Display(Name = "RADIO")]
+    [JsonStringEnumMemberName("RADIO")]
     Radio,
 
-    [Display(Name = "TVSHOW")]
+    [JsonStringEnumMemberName("TVSHOW")]
     TvShow,
 
-    [Display(Name = "MOVIE")]
+    [JsonStringEnumMemberName("MOVIE")]
     Movie,
 
-    [Display(Name = "VIDEO")]
+    [JsonStringEnumMemberName("VIDEO")]
     Video
 }

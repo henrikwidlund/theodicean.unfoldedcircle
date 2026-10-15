@@ -1,7 +1,3 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Sync;
 
 /// <summary>
@@ -9,13 +5,12 @@ namespace UnfoldedCircle.Models.Sync;
 ///
 /// The JSON `auth` message is used if a token is configured but no authentication method is set.
 /// </summary>
-[EnumJsonConverter<IntgAuthMethod>(CaseSensitive = false, PropertyName = "auth_method")]
-[JsonConverter(typeof(IntgAuthMethodJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<IntgAuthMethod>))]
 public enum IntgAuthMethod : byte
 {
-    [Display(Name = "HEADER")]
+    [JsonStringEnumMemberName("HEADER")]
     Header = 1,
 
-    [Display(Name = "MESSAGE")]
+    [JsonStringEnumMemberName("MESSAGE")]
     Message
 }

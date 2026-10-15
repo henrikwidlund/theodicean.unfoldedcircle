@@ -53,6 +53,7 @@ namespace UnfoldedCircle.Server.Json;
 [JsonSerializable(typeof(StateChangedEvent<SensorStateChangedEventMessageDataAttributes<string>>))]
 [JsonSerializable(typeof(StateChangedEvent<ClimateStateChangedEventMessageDataAttributes>))]
 [JsonSerializable(typeof(StateChangedEvent<SelectStateChangedEventMessageDataAttributes>))]
+[JsonSourceGenerationOptions(UseStringEnumConverter = true)]
 public sealed partial class UnfoldedCircleJsonSerializerContext : JsonSerializerContext
 {
     static UnfoldedCircleJsonSerializerContext()

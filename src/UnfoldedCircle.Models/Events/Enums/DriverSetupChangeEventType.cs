@@ -1,28 +1,23 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Events;
 
-[EnumJsonConverter<DriverSetupChangeEventType>(CaseSensitive = false, PropertyName = "event_type")]
-[JsonConverter(typeof(DriverSetupChangeEventTypeJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<DriverSetupChangeEventType>))]
 public enum DriverSetupChangeEventType : byte
 {
     /// <summary>
     /// setup started
     /// </summary>
-    [Display(Name = "START")]
+    [JsonStringEnumMemberName("START")]
     Start = 1,
 
     /// <summary>
     /// setup in progress. See <see cref="DriverSetupChangeState"/> enum for current setup state.
     /// </summary>
-    [Display(Name = "SETUP")]
+    [JsonStringEnumMemberName("SETUP")]
     Setup,
 
     /// <summary>
     /// setup finished, either with: state: <see cref="DriverSetupChangeState.Ok"/> for successful setup, or state: <see cref="DriverSetupChangeState.Error"/> if setup didn't complete successfully.
     /// </summary>
-    [Display(Name = "STOP")]
+    [JsonStringEnumMemberName("STOP")]
     Stop
 }

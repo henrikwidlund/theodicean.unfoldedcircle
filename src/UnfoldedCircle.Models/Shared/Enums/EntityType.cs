@@ -1,37 +1,32 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Shared;
 
-[EnumJsonConverter<EntityType>(CaseSensitive = false, PropertyName = "entity_type")]
-[JsonConverter(typeof(EntityTypeJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<EntityType>))]
 public enum EntityType : byte
 {
-    [Display(Name = "button")]
+    [JsonStringEnumMemberName("button")]
     Button = 1,
 
-    [Display(Name = "climate")]
+    [JsonStringEnumMemberName("climate")]
     Climate,
 
-    [Display(Name = "cover")]
+    [JsonStringEnumMemberName("cover")]
     Cover,
 
-    [Display(Name = "light")]
+    [JsonStringEnumMemberName("light")]
     Light,
 
-    [Display(Name = "media_player")]
+    [JsonStringEnumMemberName("media_player")]
     MediaPlayer,
 
-    [Display(Name = "remote")]
+    [JsonStringEnumMemberName("remote")]
     Remote,
 
-    [Display(Name = "select")]
+    [JsonStringEnumMemberName("select")]
     Select,
 
-    [Display(Name = "sensor")]
+    [JsonStringEnumMemberName("sensor")]
     Sensor,
 
-    [Display(Name = "switch")]
+    [JsonStringEnumMemberName("switch")]
     Switch
 }

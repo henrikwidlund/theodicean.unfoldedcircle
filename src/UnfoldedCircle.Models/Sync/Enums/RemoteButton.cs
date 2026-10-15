@@ -1,91 +1,86 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Sync;
 
-[EnumJsonConverter<RemoteButton>(CaseSensitive = false, PropertyName = "button")]
-[JsonConverter(typeof(RemoteCommandIdJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<RemoteButton>))]
 public enum RemoteButton : byte
 {
-    [Display(Name = RemoteButtonConstants.On)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.On)]
     On = 1,
 
-    [Display(Name = RemoteButtonConstants.Off)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Off)]
     Off,
 
-    [Display(Name = RemoteButtonConstants.Toggle)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Toggle)]
     Toggle,
 
-    [Display(Name = RemoteButtonConstants.Home)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Home)]
     Home,
 
-    [Display(Name = RemoteButtonConstants.Back)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Back)]
     Back,
 
-    [Display(Name = RemoteButtonConstants.Voice)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Voice)]
     Voice,
 
-    [Display(Name = RemoteButtonConstants.DpadUp)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.DpadUp)]
     DpadUp,
 
-    [Display(Name = RemoteButtonConstants.DpadDown)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.DpadDown)]
     DpadDown,
 
-    [Display(Name = RemoteButtonConstants.DpadLeft)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.DpadLeft)]
     DpadLeft,
 
-    [Display(Name = RemoteButtonConstants.DpadRight)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.DpadRight)]
     DpadRight,
 
-    [Display(Name = RemoteButtonConstants.DpadMiddle)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.DpadMiddle)]
     DpadMiddle,
 
-    [Display(Name = RemoteButtonConstants.ChannelUp)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.ChannelUp)]
     ChannelUp,
 
-    [Display(Name = RemoteButtonConstants.ChannelDown)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.ChannelDown)]
     ChannelDown,
 
-    [Display(Name = RemoteButtonConstants.VolumeUp)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.VolumeUp)]
     VolumeUp,
 
-    [Display(Name = RemoteButtonConstants.VolumeDown)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.VolumeDown)]
     VolumeDown,
 
-    [Display(Name = RemoteButtonConstants.Power)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Power)]
     Power,
 
-    [Display(Name = RemoteButtonConstants.Mute)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Mute)]
     Mute,
 
-    [Display(Name = RemoteButtonConstants.Green)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Green)]
     Green,
 
-    [Display(Name = RemoteButtonConstants.Yellow)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Yellow)]
     Yellow,
 
-    [Display(Name = RemoteButtonConstants.Red)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Red)]
     Red,
 
-    [Display(Name = RemoteButtonConstants.Blue)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Blue)]
     Blue,
 
-    [Display(Name = RemoteButtonConstants.Previous)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Previous)]
     Previous,
 
-    [Display(Name = RemoteButtonConstants.Play)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Play)]
     Play,
 
-    [Display(Name = RemoteButtonConstants.Next)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Next)]
     Next,
 
-    [Display(Name = RemoteButtonConstants.Stop)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Stop)]
     Stop,
 
-    [Display(Name = RemoteButtonConstants.Record)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Record)]
     Record,
 
-    [Display(Name = RemoteButtonConstants.Menu)]
+    [JsonStringEnumMemberName(RemoteButtonConstants.Menu)]
     Menu
 }

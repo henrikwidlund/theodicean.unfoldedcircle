@@ -1,34 +1,29 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Events;
 
-[EnumJsonConverter<State>(CaseSensitive = false, PropertyName = "state")]
-[JsonConverter(typeof(StateJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<State>))]
 public enum State : byte
 {
-    [Display(Name = "UNAVAILABLE")]
+    [JsonStringEnumMemberName("UNAVAILABLE")]
     Unavailable,
 
-    [Display(Name = "UNKNOWN")]
+    [JsonStringEnumMemberName("UNKNOWN")]
     Unknown,
 
-    [Display(Name = "ON")]
+    [JsonStringEnumMemberName("ON")]
     On,
 
-    [Display(Name = "OFF")]
+    [JsonStringEnumMemberName("OFF")]
     Off,
 
-    [Display(Name = "PLAYING")]
+    [JsonStringEnumMemberName("PLAYING")]
     Playing,
 
-    [Display(Name = "PAUSED")]
+    [JsonStringEnumMemberName("PAUSED")]
     Paused,
 
-    [Display(Name = "STANDBY")]
+    [JsonStringEnumMemberName("STANDBY")]
     Standby,
 
-    [Display(Name = "BUFFERING")]
+    [JsonStringEnumMemberName("BUFFERING")]
     Buffering
 }

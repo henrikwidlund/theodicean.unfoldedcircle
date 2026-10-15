@@ -1,19 +1,14 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Shared;
 
-[EnumJsonConverter<Kind>(CaseSensitive = false, PropertyName = "kind")]
-[JsonConverter(typeof(KindJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<Kind>))]
 public enum Kind : byte
 {
-    [Display(Name = "req")]
+    [JsonStringEnumMemberName("req")]
     Request = 1,
 
-    [Display(Name = "resp")]
+    [JsonStringEnumMemberName("resp")]
     Response,
 
-    [Display(Name = "event")]
+    [JsonStringEnumMemberName("event")]
     Event
 }

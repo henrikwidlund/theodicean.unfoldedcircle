@@ -1,28 +1,23 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Sync;
 
-[EnumJsonConverter<SelectEntityAttribute>(CaseSensitive = false, PropertyName = "attributes")]
-[JsonConverter(typeof(SelectEntityAttributeJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<SelectEntityAttribute>))]
 public enum SelectEntityAttribute : byte
 {
     /// <summary>
     /// Optional state of the select entity.
     /// </summary>
-    [Display(Name = "state")]
+    [JsonStringEnumMemberName("state")]
     State = 1,
 
     /// <summary>
     /// The currently selected option.
     /// </summary>
-    [Display(Name = "current_option")]
+    [JsonStringEnumMemberName("current_option")]
     CurrentOption,
 
     /// <summary>
     /// The available options to choose from.
     /// </summary>
-    [Display(Name = "options")]
+    [JsonStringEnumMemberName("options")]
     Options
 }

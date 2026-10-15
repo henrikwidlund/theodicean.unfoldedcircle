@@ -1,106 +1,101 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Sync;
 
-[EnumJsonConverterAttribute<MediaPlayerEntityAttribute>(CaseSensitive = false, PropertyName = "attributes")]
-[JsonConverter(typeof(MediaPlayerEntityAttributeJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<MediaPlayerEntityAttribute>))]
 public enum MediaPlayerEntityAttribute : byte
 {
     /// <summary>
     /// State of the media player, influenced by the play and power commands.
     /// </summary>
-    [Display(Name = "state")]
+    [JsonStringEnumMemberName("state")]
     State = 1,
 
     /// <summary>
     /// Current volume level.
     /// </summary>
-    [Display(Name = "volume")]
+    [JsonStringEnumMemberName("volume")]
     Volume,
 
     /// <summary>
     /// Flag if the volume is muted.
     /// </summary>
-    [Display(Name = "muted")]
+    [JsonStringEnumMemberName("muted")]
     Muted,
 
     /// <summary>
     /// Media duration in seconds.
     /// </summary>
-    [Display(Name = "media_duration")]
+    [JsonStringEnumMemberName("media_duration")]
     MediaDuration,
 
     /// <summary>
     /// Current media position in seconds.
     /// </summary>
-    [Display(Name = "media_position")]
+    [JsonStringEnumMemberName("media_position")]
     MediaPosition,
 
     /// <summary>
     /// The type of media being played.
     /// </summary>
-    [Display(Name = "media_type")]
+    [JsonStringEnumMemberName("media_type")]
     MediaType,
 
     /// <summary>
     /// URL to retrieve the album art or an image representing what's being played.
     /// </summary>
-    [Display(Name = "media_image_url")]
+    [JsonStringEnumMemberName("media_image_url")]
     MediaImageUrl,
 
     /// <summary>
     /// Currently playing media information.
     /// </summary>
-    [Display(Name = "media_title")]
+    [JsonStringEnumMemberName("media_title")]
     MediaTitle,
 
     /// <summary>
     /// Currently playing media information.
     /// </summary>
-    [Display(Name = "media_artist")]
+    [JsonStringEnumMemberName("media_artist")]
     MediaArtist,
 
     /// <summary>
     /// Currently playing media information.
     /// </summary>
-    [Display(Name = "media_album")]
+    [JsonStringEnumMemberName("media_album")]
     MediaAlbum,
 
     /// <summary>
     /// Current repeat mode.
     /// </summary>
-    [Display(Name = "repeat")]
+    [JsonStringEnumMemberName("repeat")]
     Repeat,
 
     /// <summary>
     /// Shuffle mode on or off.
     /// </summary>
-    [Display(Name = "shuffle")]
+    [JsonStringEnumMemberName("shuffle")]
     Shuffle,
 
     /// <summary>
     /// Currently selected media or input source.
     /// </summary>
-    [Display(Name = "source")]
+    [JsonStringEnumMemberName("source")]
     Source,
 
     /// <summary>
     /// Available media or input sources.
     /// </summary>
-    [Display(Name = "source_list")]
+    [JsonStringEnumMemberName("source_list")]
     SourceList,
 
     /// <summary>
     /// Currently selected sound mode.
     /// </summary>
-    [Display(Name = "sound_mode")]
+    [JsonStringEnumMemberName("sound_mode")]
     SoundMode,
 
     /// <summary>
     /// Available sound modes.
     /// </summary>
-    [Display(Name = "sound_mode_list")]
+    [JsonStringEnumMemberName("sound_mode_list")]
     SoundModeList
 }

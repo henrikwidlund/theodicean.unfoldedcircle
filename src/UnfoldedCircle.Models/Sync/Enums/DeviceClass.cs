@@ -1,38 +1,33 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Sync;
 
 /// <summary>
 /// Sensor type. This is used by the UI to represent the sensor with a matching icon, default unit etc.
 /// To use a custom unit
 /// </summary>
-[EnumJsonConverter<DeviceClass>(CaseSensitive = false, PropertyName = "device_class")]
-[JsonConverter(typeof(DeviceClassJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<DeviceClass>))]
 public enum DeviceClass : byte
 {
-    [Display(Name = "custom")]
+    [JsonStringEnumMemberName("custom")]
     Custom = 1,
 
-    [Display(Name = "temperature")]
+    [JsonStringEnumMemberName("temperature")]
     Temperature,
 
-    [Display(Name = "humidity")]
+    [JsonStringEnumMemberName("humidity")]
     Humidity,
 
-    [Display(Name = "power")]
+    [JsonStringEnumMemberName("power")]
     Power,
 
-    [Display(Name = "energy")]
+    [JsonStringEnumMemberName("energy")]
     Energy,
 
-    [Display(Name = "voltage")]
+    [JsonStringEnumMemberName("voltage")]
     Voltage,
 
-    [Display(Name = "current")]
+    [JsonStringEnumMemberName("current")]
     Current,
 
-    [Display(Name = "battery")]
+    [JsonStringEnumMemberName("battery")]
     Battery
 }

@@ -1,28 +1,23 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Events;
 
-[EnumJsonConverter<DriverSetupChangeError>(CaseSensitive = false, PropertyName = "error")]
-[JsonConverter(typeof(DriverSetupChangeErrorJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<DriverSetupChangeError>))]
 public enum DriverSetupChangeError : byte
 {
-    [Display(Name = "NONE")]
+    [JsonStringEnumMemberName("NONE")]
     None = 1,
 
-    [Display(Name = "NOT_FOUND")]
+    [JsonStringEnumMemberName("NOT_FOUND")]
     NotFound,
 
-    [Display(Name = "CONNECTION_REFUSED")]
+    [JsonStringEnumMemberName("CONNECTION_REFUSED")]
     ConnectionRefused,
 
-    [Display(Name = "AUTHORIZATION_ERROR")]
+    [JsonStringEnumMemberName("AUTHORIZATION_ERROR")]
     AuthorizationError,
 
-    [Display(Name = "TIMEOUT")]
+    [JsonStringEnumMemberName("TIMEOUT")]
     Timeout,
 
-    [Display(Name = "OTHER")]
+    [JsonStringEnumMemberName("OTHER")]
     Other
 }

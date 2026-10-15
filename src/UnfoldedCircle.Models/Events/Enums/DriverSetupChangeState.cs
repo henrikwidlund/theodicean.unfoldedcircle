@@ -1,34 +1,29 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Events;
 
-[EnumJsonConverter<DriverSetupChangeState>(CaseSensitive = false, PropertyName = "state")]
-[JsonConverter(typeof(DriverSetupChangeStateJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<DriverSetupChangeState>))]
 public enum DriverSetupChangeState : byte
 {
     /// <summary>
     /// setup in progress
     /// </summary>
-    [Display(Name = "SETUP")]
+    [JsonStringEnumMemberName("SETUP")]
     Setup = 1,
 
     /// <summary>
     /// setup flow is waiting for user input. See require_user_action for requested input.
     /// </summary>
-    [Display(Name = "WAIT_USER_ACTION")]
+    [JsonStringEnumMemberName("WAIT_USER_ACTION")]
     WaitUserAction,
 
     /// <summary>
     /// setup finished successfully
     /// </summary>
-    [Display(Name = "OK")]
+    [JsonStringEnumMemberName("OK")]
     Ok,
 
     /// <summary>
     /// setup error
     /// </summary>
-    [Display(Name = "ERROR")]
+    [JsonStringEnumMemberName("ERROR")]
     Error
 }

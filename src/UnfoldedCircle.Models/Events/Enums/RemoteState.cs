@@ -1,22 +1,17 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Events;
 
-[EnumJsonConverter<RemoteState>(CaseSensitive = false, PropertyName = "state")]
-[JsonConverter(typeof(RemoteStateJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<RemoteState>))]
 public enum RemoteState : byte
 {
-    [Display(Name = "ON")]
+    [JsonStringEnumMemberName("ON")]
     On,
 
-    [Display(Name = "OFF")]
+    [JsonStringEnumMemberName("OFF")]
     Off,
 
-    [Display(Name = "UNAVAILABLE")]
+    [JsonStringEnumMemberName("UNAVAILABLE")]
     Unavailable,
 
-    [Display(Name = "UNKNOWN")]
+    [JsonStringEnumMemberName("UNKNOWN")]
     Unknown
 }

@@ -25,12 +25,6 @@
           "System.IO.Hashing": "11.0.0-rc.2.26504.105"
         }
       },
-      "Theodicean.SourceGenerators": {
-        "type": "Direct",
-        "requested": "[0.0.17, )",
-        "resolved": "0.0.17",
-        "contentHash": "hvdU1JEzf4adGSzvnSxNdCqHPGViLuSJvnnnbRzb8HeHLcX1p1IqFRbLy55hUKY5gczllveXBzYjUpPV/G9g/A=="
-      },
       "Microsoft.Build.Tasks.Git": {
         "type": "Transitive",
         "resolved": "11.0.100-rc.2.26504.105",

@@ -1,28 +1,23 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Sync;
 
-[EnumJsonConverter<SensorEntityAttribute>(CaseSensitive = false, PropertyName = "attributes")]
-[JsonConverter(typeof(SensorEntityAttributeEntityAttributeJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<SensorEntityAttribute>))]
 public enum SensorEntityAttribute : byte
 {
     /// <summary>
     /// Optional state of the sensor.
     /// </summary>
-    [Display(Name = "state")]
+    [JsonStringEnumMemberName("state")]
     State = 1,
 
     /// <summary>
     /// The native measurement value of the sensor.
     /// </summary>
-    [Display(Name = "value")]
+    [JsonStringEnumMemberName("value")]
     Value,
 
     /// <summary>
     /// Optional unit of the value if no default unit is set.
     /// </summary>
-    [Display(Name = "unit")]
+    [JsonStringEnumMemberName("unit")]
     Unit
 }

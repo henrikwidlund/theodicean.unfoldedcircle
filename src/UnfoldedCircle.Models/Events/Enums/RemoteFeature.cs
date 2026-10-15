@@ -1,19 +1,14 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Events;
 
-[EnumJsonConverter<RemoteFeature>(CaseSensitive = false, PropertyName = "features")]
-[JsonConverter(typeof(RemoteFeaturesJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<RemoteFeature>))]
 public enum RemoteFeature : byte
 {
-    [Display(Name = "send_cmd")]
+    [JsonStringEnumMemberName("send_cmd")]
     SendCmd,
 
-    [Display(Name = "on_off")]
+    [JsonStringEnumMemberName("on_off")]
     OnOff,
 
-    [Display(Name = "toggle")]
+    [JsonStringEnumMemberName("toggle")]
     Toggle
 }

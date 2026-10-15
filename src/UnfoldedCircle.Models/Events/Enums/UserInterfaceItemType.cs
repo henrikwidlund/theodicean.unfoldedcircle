@@ -1,19 +1,14 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Events;
 
-[EnumJsonConverter<UserInterfaceItemType>(CaseSensitive = false, PropertyName = "type")]
-[JsonConverter(typeof(UserInterfaceItemTypeJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<UserInterfaceItemType>))]
 public enum UserInterfaceItemType : byte
 {
-    [Display(Name = "icon")]
+    [JsonStringEnumMemberName("icon")]
     Icon,
 
-    [Display(Name = "text")]
+    [JsonStringEnumMemberName("text")]
     Text,
 
-    [Display(Name = "numpad")]
+    [JsonStringEnumMemberName("numpad")]
     Numpad
 }

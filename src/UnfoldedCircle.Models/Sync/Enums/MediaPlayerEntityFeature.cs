@@ -1,130 +1,125 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Sync;
 
-[EnumJsonConverter<MediaPlayerEntityFeature>(CaseSensitive = false, PropertyName = "features")]
-[JsonConverter(typeof(MediaPlayerEntityFeatureJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<MediaPlayerEntityFeature>))]
 public enum MediaPlayerEntityFeature : byte
 {
-    [Display(Name = "on_off")]
+    [JsonStringEnumMemberName("on_off")]
     OnOff = 1,
 
-    [Display(Name = "toggle")]
+    [JsonStringEnumMemberName("toggle")]
     Toggle,
 
-    [Display(Name = "volume")]
+    [JsonStringEnumMemberName("volume")]
     Volume,
 
-    [Display(Name = "volume_up_down")]
+    [JsonStringEnumMemberName("volume_up_down")]
     VolumeUpDown,
 
-    [Display(Name = "mute_toggle")]
+    [JsonStringEnumMemberName("mute_toggle")]
     MuteToggle,
 
-    [Display(Name = "mute")]
+    [JsonStringEnumMemberName("mute")]
     Mute,
 
-    [Display(Name = "unmute")]
+    [JsonStringEnumMemberName("unmute")]
     Unmute,
 
-    [Display(Name = "play_pause")]
+    [JsonStringEnumMemberName("play_pause")]
     PlayPause,
 
-    [Display(Name = "stop")]
+    [JsonStringEnumMemberName("stop")]
     Stop,
 
-    [Display(Name = "next")]
+    [JsonStringEnumMemberName("next")]
     Next,
 
-    [Display(Name = "previous")]
+    [JsonStringEnumMemberName("previous")]
     Previous,
 
-    [Display(Name = "fast_forward")]
+    [JsonStringEnumMemberName("fast_forward")]
     FastForward,
 
-    [Display(Name = "rewind")]
+    [JsonStringEnumMemberName("rewind")]
     Rewind,
 
-    [Display(Name = "repeat")]
+    [JsonStringEnumMemberName("repeat")]
     Repeat,
 
-    [Display(Name = "shuffle")]
+    [JsonStringEnumMemberName("shuffle")]
     Shuffle,
 
-    [Display(Name = "seek")]
+    [JsonStringEnumMemberName("seek")]
     Seek,
 
-    [Display(Name = "media_duration")]
+    [JsonStringEnumMemberName("media_duration")]
     MediaDuration,
 
-    [Display(Name = "media_position")]
+    [JsonStringEnumMemberName("media_position")]
     MediaPosition,
 
-    [Display(Name = "media_title")]
+    [JsonStringEnumMemberName("media_title")]
     MediaTitle,
 
-    [Display(Name = "media_artist")]
+    [JsonStringEnumMemberName("media_artist")]
     MediaArtist,
 
-    [Display(Name = "media_album")]
+    [JsonStringEnumMemberName("media_album")]
     MediaAlbum,
 
-    [Display(Name = "media_image_url")]
+    [JsonStringEnumMemberName("media_image_url")]
     MediaImageUrl,
 
-    [Display(Name = "media_type")]
+    [JsonStringEnumMemberName("media_type")]
     MediaType,
 
-    [Display(Name = "dpad")]
+    [JsonStringEnumMemberName("dpad")]
     Dpad,
 
-    [Display(Name = "numpad")]
+    [JsonStringEnumMemberName("numpad")]
     Numpad,
 
-    [Display(Name = "home")]
+    [JsonStringEnumMemberName("home")]
     Home,
 
-    [Display(Name = "menu")]
+    [JsonStringEnumMemberName("menu")]
     Menu,
 
-    [Display(Name = "context_menu")]
+    [JsonStringEnumMemberName("context_menu")]
     ContextMenu,
 
-    [Display(Name = "guide")]
+    [JsonStringEnumMemberName("guide")]
     Guide,
 
-    [Display(Name = "info")]
+    [JsonStringEnumMemberName("info")]
     Info,
 
-    [Display(Name = "color_buttons")]
+    [JsonStringEnumMemberName("color_buttons")]
     ColorButtons,
 
-    [Display(Name = "channel_switcher")]
+    [JsonStringEnumMemberName("channel_switcher")]
     ChannelSwitcher,
 
-    [Display(Name = "select_source")]
+    [JsonStringEnumMemberName("select_source")]
     SelectSource,
 
-    [Display(Name = "select_sound_mode")]
+    [JsonStringEnumMemberName("select_sound_mode")]
     SelectSoundMode,
 
-    [Display(Name = "eject")]
+    [JsonStringEnumMemberName("eject")]
     Eject,
 
-    [Display(Name = "open_close")]
+    [JsonStringEnumMemberName("open_close")]
     OpenClose,
 
-    [Display(Name = "audio_track")]
+    [JsonStringEnumMemberName("audio_track")]
     AudioTrack,
 
-    [Display(Name = "subtitle")]
+    [JsonStringEnumMemberName("subtitle")]
     Subtitle,
 
-    [Display(Name = "record")]
+    [JsonStringEnumMemberName("record")]
     Record,
 
-    [Display(Name = "settings")]
+    [JsonStringEnumMemberName("settings")]
     Settings
 }

@@ -1,19 +1,14 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Shared;
 
-[EnumJsonConverter<RepeatMode>(CaseSensitive = false, PropertyName = "repeat")]
-[JsonConverter(typeof(RepeatModeJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<RepeatMode>))]
 public enum RepeatMode : byte
 {
-    [Display(Name = "OFF")]
+    [JsonStringEnumMemberName("OFF")]
     Off = 1,
 
-    [Display(Name = "ALL")]
+    [JsonStringEnumMemberName("ALL")]
     All,
 
-    [Display(Name = "ONE")]
+    [JsonStringEnumMemberName("ONE")]
     One
 }

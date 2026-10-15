@@ -1,22 +1,17 @@
-using System.ComponentModel.DataAnnotations;
-
-using Theodicean.SourceGenerators;
-
 namespace UnfoldedCircle.Models.Shared;
 
-[EnumJsonConverter<DeviceState>(CaseSensitive = false, PropertyName = "state")]
-[JsonConverter(typeof(DeviceStateJsonConverter))]
+[JsonConverter(typeof(StrictEnumConverter<DeviceState>))]
 public enum DeviceState : byte
 {
-    [Display(Name = "CONNECTED")]
+    [JsonStringEnumMemberName("CONNECTED")]
     Connected = 1,
 
-    [Display(Name = "CONNECTING")]
+    [JsonStringEnumMemberName("CONNECTING")]
     Connecting,
 
-    [Display(Name = "DISCONNECTED")]
+    [JsonStringEnumMemberName("DISCONNECTED")]
     Disconnected,
 
-    [Display(Name = "ERROR")]
+    [JsonStringEnumMemberName("ERROR")]
     Error
 }
