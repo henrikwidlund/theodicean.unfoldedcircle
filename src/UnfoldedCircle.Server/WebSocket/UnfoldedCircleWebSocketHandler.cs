@@ -185,17 +185,16 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
     {
         var configuration = await _configurationService.GetConfigurationAsync(cancellationToken);
 
-        var entities = configuration.Entities.Where(x =>
-                (x.DeviceId != null && string.Equals(x.DeviceId, removeInstruction.DeviceId, StringComparison.Ordinal))
-                || removeInstruction.EntityIds?.Contains(x.EntityId, StringComparer.OrdinalIgnoreCase) is true
-                || x.Host.Equals(removeInstruction.Host, StringComparison.OrdinalIgnoreCase))
-            .ToArray();
-
-        foreach (var entity in entities)
+        configuration.Entities.RemoveAll(x =>
         {
-            _logger.RemovingEntity(wsId, entity);
-            configuration.Entities.Remove(entity);
-        }
+            if ((x.DeviceId == null || !string.Equals(x.DeviceId, removeInstruction.DeviceId, StringComparison.Ordinal))
+                && removeInstruction.EntityIds?.Contains(x.EntityId, StringComparer.OrdinalIgnoreCase) is not true
+                && !x.Host.Equals(removeInstruction.Host, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            _logger.RemovingEntity(wsId, x);
+            return true;
+        });
 
         await _configurationService.UpdateConfigurationAsync(configuration, cancellationToken);
     }
