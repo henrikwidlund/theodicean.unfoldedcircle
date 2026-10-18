@@ -405,7 +405,7 @@ public abstract partial class UnfoldedCircleWebSocketHandler<TMediaPlayerCommand
                         wsId,
                         cancellationTokenWrapper.RequestAborted);
                     break;
-                // SelectHandled: a response was already sent
+                    // SelectHandled: a response was already sent
             }
         }
         catch (Exception e)
