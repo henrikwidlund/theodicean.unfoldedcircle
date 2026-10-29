@@ -114,9 +114,8 @@ public sealed class CancellationTokenWrapper(
                 }
 
                 EnsureNonCanceledBroadcastCancellationTokenSource();
-                // Insert small delay to avoid starting the event processor before all entities are subscribed to
-                await Task.Delay(_options.Value.DelayBeforeStartEventBroadcasting, _broadcastCancellationTokenSource.Token);
-                _broadcastTask = _eventProcessor(_socket, _wsId, _subscribedEntities, _broadcastCancellationTokenSource.Token);
+                // Not awaited: the caller must be able to handle the next message during the delay
+                _broadcastTask = StartEventProcessorAfterDelayAsync(_broadcastCancellationTokenSource.Token);
                 return;
             }
             catch (Exception ex)
@@ -131,6 +130,13 @@ public sealed class CancellationTokenWrapper(
         }
 
         _logger.StartEventProcessorSemaphoreTimeout(_wsId);
+    }
+
+    private async Task StartEventProcessorAfterDelayAsync(CancellationToken cancellationToken)
+    {
+        // Insert small delay to avoid starting the event processor before all entities are subscribed to
+        await Task.Delay(_options.Value.DelayBeforeStartEventBroadcasting, cancellationToken);
+        await _eventProcessor(_socket, _wsId, _subscribedEntities, cancellationToken);
     }
 
     /// <summary>
