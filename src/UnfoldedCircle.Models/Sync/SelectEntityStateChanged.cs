@@ -1,3 +1,5 @@
+using UnfoldedCircle.Models.Events;
+
 namespace UnfoldedCircle.Models.Sync;
 
-public sealed record SelectEntityStateChanged : EntityStateChanged<SelectEntityAttribute>;
+public sealed record SelectEntityStateChanged : EntityStateChanged<SelectStateChangedEventMessageDataAttributes>;
