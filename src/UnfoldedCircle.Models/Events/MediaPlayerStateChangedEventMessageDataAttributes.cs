@@ -4,6 +4,8 @@ using UnfoldedCircle.Models.Shared;
 
 namespace UnfoldedCircle.Models.Events;
 
+[JsonDerivedType(typeof(MediaPlayerStateChangedEventMessageDataAttributes))]
+[JsonDerivedType(typeof(DeltaMediaPlayerStateChangedEventMessageDataAttributes))]
 public closed record MediaPlayerStateChangedEventMessageDataAttributesBase : StateChangedEventMessageDataAttributes;
 
 public sealed record DeltaMediaPlayerStateChangedEventMessageDataAttributes : MediaPlayerStateChangedEventMessageDataAttributesBase

@@ -1,3 +1,5 @@
+using UnfoldedCircle.Models.Events;
+
 namespace UnfoldedCircle.Models.Sync;
 
-public sealed record RemoteEntityStateChanged : EntityStateChanged<RemoteEntityAttribute>;
+public sealed record RemoteEntityStateChanged : EntityStateChanged<RemoteStateChangedEventMessageDataAttributes>;
