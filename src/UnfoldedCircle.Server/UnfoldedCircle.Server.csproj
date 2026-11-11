@@ -41,12 +41,12 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Meziantou.Analyzer" Version="3.0.317">
+        <PackageReference Include="Meziantou.Analyzer" Version="3.0.324">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.20-pre03" />
-        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="11.0.100-rc.3.26522.148">
+        <PackageReference Include="Theodicean.Makaretu.Dns.Multicast" Version="0.0.20-pre04" />
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="11.0.100">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
