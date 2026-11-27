@@ -27,12 +27,12 @@
       },
       "Theodicean.Makaretu.Dns.Multicast": {
         "type": "Direct",
-        "requested": "[0.0.20, )",
-        "resolved": "0.0.20",
-        "contentHash": "cwvvUL9EeWa9zKpN84OZYuTr/+p2wX8V368XF63R2NDrnej8sYegnDNmMNjlZWJQvslsz6GXPrlV0Xbk6PgrWg==",
+        "requested": "[0.0.21, )",
+        "resolved": "0.0.21",
+        "contentHash": "Nhb/iAYMByMonYe5lHPcdo7T1v5/3Vy4Dw7YvAncN7eUgcUnRN4bKgFvUZpDY72pF+TDjfP9ftZt5RkIErCxrA==",
         "dependencies": {
           "Microsoft.NET.ILLink.Tasks": "11.0.0",
-          "Theodicean.Makaretu.Dns": "0.0.20"
+          "Theodicean.Makaretu.Dns": "0.0.21"
         }
       },
       "Microsoft.Build.Tasks.Git": {
@@ -55,8 +55,8 @@
       },
       "Theodicean.Makaretu.Dns": {
         "type": "Transitive",
-        "resolved": "0.0.20",
-        "contentHash": "GZ/NTBUowgJWQhQ7w7h8HaFGyOAjzGJOahC7V/rrpKhTN0VYxTCL12MTypDZ/Y0Ehr/Xrq0mcxAQp2DhWQ4WKA==",
+        "resolved": "0.0.21",
+        "contentHash": "pb2wiLnjaCVqhjAKqBypEiD0ny9REgNUoDTKpb+1ahpTbYarIkAUzMtsDOUocfWP5fh2NX5JDo4ywk1lR+QB4w==",
         "dependencies": {
           "Microsoft.NET.ILLink.Tasks": "11.0.0"
         }
